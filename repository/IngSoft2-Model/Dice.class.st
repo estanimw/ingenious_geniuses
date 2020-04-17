@@ -1,5 +1,5 @@
 "
-A Dice
+this object models a dice
 "
 Class {
 	#name : #Dice,
@@ -10,20 +10,10 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #rolling }
-Dice class >> roll [
-	^sides atRandom.
-]
-
 { #category : #'instance creation' }
 Dice class >> withAll: aDiceSet [
 	
 	^ self new initializeWithAll: aDiceSet
-]
-
-{ #category : #'instance creation' }
-Dice class >> withSides: anInteger [ 
-	sides := anInteger.
 ]
 
 { #category : #composing }
@@ -38,13 +28,8 @@ Dice >> initializeWithAll: aDiceSet [
 	dice := aDiceSet
 ]
 
-{ #category : #initialization }
-Dice >> initializeWithSides: anInteger [ 
-	sides := anInteger.
-]
-
 { #category : #rolling }
 Dice >> roll [
 	
-	^ dice sumNumbers: #roll
+	^ dice sumNumbers: #roll "es equivalente a hacer dice sumNumbers: [:dice | dice roll ]"
 ]

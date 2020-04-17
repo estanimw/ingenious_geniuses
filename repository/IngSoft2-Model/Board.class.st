@@ -1,5 +1,5 @@
 "
-This represents a board.
+This class represents a board with slots
 "
 Class {
 	#name : #Board,
@@ -12,11 +12,11 @@ Class {
 
 { #category : #initialization }
 Board class >> withSlots: anInteger [ 
-	^(self new) initializeWithSlots: anInteger.
+	^ (self new) initializeWithSlots: anInteger.
 ]
 
-{ #category : #'instance initialization' }
-Board >> initializeWithSlots: anInteger [ 
+{ #category : #initialization }
+Board >> initializeWithSlots: anInteger [
 	slots := anInteger.
 ]
 

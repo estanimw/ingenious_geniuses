@@ -1,5 +1,5 @@
 "
-This class represents a player in the game.
+This class models a player.
 "
 Class {
 	#name : #Player,
@@ -14,51 +14,57 @@ Class {
 }
 
 { #category : #initialize }
-Player class >> creation: dice [ 
-	^(self new) initializeWithPositionAndDice: (OrderedCollection with: 0 with: dice).
+Player class >> creation: dice [
+	^ (self new) initializeWithPositionAndDice: (OrderedCollection with: 0 with: dice).
 ]
 
 { #category : #'as yet unclassified' }
-Player >> boardSlots [
-	^boardSlots.
-]
-
-{ #category : #'as yet unclassified' }
-Player >> boardSlots: anInteger [ 
-	boardSlots := anInteger
+Player class >> move [
+	self shouldBeImplemented.
 ]
 
 { #category : #accessing }
+Player >> boardSlots [
+	^ boardSlots
+]
+
+{ #category : #'as yet unclassified' }
+Player >> boardSlots: numberOfSlots [
+	boardSlots := numberOfSlots.
+]
+
+{ #category : #'as yet unclassified' }
 Player >> dice [
 	^ dice
 ]
 
 { #category : #initialization }
-Player >> initializeWithPositionAndDice: aBlockClosure [ 
-	position := aBlockClosure removeFirst.
-	dice := aBlockClosure removeFirst.
+Player >> initializeWithPositionAndDice: information [ 
+	position := information removeFirst.
+	dice := information removeFirst.
 	winner := false.
 ]
 
-{ #category : #moving }
+{ #category : #accessing }
 Player >> move: anInteger [ 
 	position := position + anInteger.
-	(position > boardSlots) ifTrue: [ position := boardSlots. winner := true ].
+	(position > boardSlots) ifTrue: [ position := boardSlots . winner := true].
+	
 ]
 
-{ #category : #accessing }
+{ #category : #'as yet unclassified' }
 Player >> position [
 	^ position
 ]
 
-{ #category : #advancing }
+{ #category : #'as yet unclassified' }
 Player >> throwDice [
 	| number |
 	number := dice roll.
-	self move:number.
+	self move: number.
 ]
 
-{ #category : #accesing }
+{ #category : #'as yet unclassified' }
 Player >> winner [
 	^winner.
 ]

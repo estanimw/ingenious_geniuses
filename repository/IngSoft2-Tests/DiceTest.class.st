@@ -5,40 +5,6 @@ Class {
 }
 
 { #category : #tests }
-DiceTest >> test01RollDice [
-	"comment stating purpose of instance-side message"
-	"scope: class-variables  &  instance-variables"	
-			
-	| result dice |
-	dice := LoadedDice newWithValue: 1.
-	result := dice roll.
-	self assert: result equals: 1.
-]
-
-{ #category : #tests }
-DiceTest >> test02RollDiceTwo [
-	"comment stating purpose of instance-side message"
-	"scope: class-variables  &  instance-variables"	
-			
-	| result dice |
-	dice := LoadedDice newWithValue: 2.
-	result := dice roll.
-	self assert: result equals: 2.
-]
-
-{ #category : #tests }
-DiceTest >> test03RollRandomDice [
-	"comment stating purpose of instance-side message"
-	"scope: class-variables  &  instance-variables"	
-			
-	| result dice |
-	dice := Dice withSides: 6.
-	1 to: 6 do: [ :i |
-	result := dice roll.
-	self assert: (result between: 1 and: 6) equals: true].
-]
-
-{ #category : #tests }
 DiceTest >> testD20Notation [
 
 	| die |
@@ -86,8 +52,8 @@ DiceTest >> testRollDice [
 		assert: dice roll equals: 4;
 		assert: dice roll equals: 9;
 		assert: dice roll equals: 6.
-
-	self assert: (dice + d4) roll equals: 8
+	self
+		assert: (dice + d4) roll equals: 8.
 ]
 
 { #category : #tests }
@@ -102,11 +68,10 @@ DiceTest >> testRollSequence [
 		assert: die roll equals: 2.
 
 	die := Die of: 6 rolling: #(1 2 7).
-
 	self
 		assert: die roll equals: 1;
 		assert: die roll equals: 2;
-		assert: die roll equals: 1
+		assert: die roll equals: 1.
 ]
 
 { #category : #tests }

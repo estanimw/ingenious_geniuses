@@ -46,6 +46,17 @@ SequentialNaturalNumberProviderTest >> testCreationFailsWithEmptySequence [
 ]
 
 { #category : #tests }
+SequentialNaturalNumberProviderTest >> testPlayerInitialization [
+
+	| player dice die1 die2 |
+	die1 := Die of: 4.
+	die2 := Die of: 6.
+	dice := die1 + die2.
+	player := Player creation: dice.
+	self assert: (player position) equals: 0.
+]
+
+{ #category : #tests }
 SequentialNaturalNumberProviderTest >> testProviding [
 
 	| provider maximum |

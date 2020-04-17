@@ -1,3 +1,6 @@
+"
+this object models a die
+"
 Class {
 	#name : #Die,
 	#superclass : #Object,
@@ -78,10 +81,7 @@ Die class >> of: aNumberOfSides source: aNumberProvider [
 { #category : #composing }
 Die >> + aDie [
 
-	^ Dice
-		withAll:
-			{self.
-			aDie}
+	^ Dice withAll: {self . aDie}
 ]
 
 { #category : #initialization }
