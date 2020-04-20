@@ -12,28 +12,9 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #tests }
-Game class >> setUpGameValuesExample1 [
-	| player2 die4 die1 dice2 player1 players die3 dice1 die2 game board |
-	board := Board withSlots: 30.
-	die1 := Die of: 4 rolling: #(1 4 2).
-	die2 := Die of: 6 rolling: #(1 5 3).
-	dice1 := die1 + die2.
-	player1 := Player creation: dice1.
-	die3 := Die of: 8 rolling: #(3 7 2).
-	die4 := Die of: 4 rolling: #(1 2 3).
-	dice2 := die3 + die4.
-	player2 := Player creation: dice2.
-	player1 boardSlots: board slots.
-	player2 boardSlots: board slots.
-	players := CircularIterator cyclingOver: (OrderedCollection with: player1 with: player2).
-	game := self withBoardAndPlayers: (OrderedCollection with: board with: players).
-	^ game
-]
-
 { #category : #initialization }
-Game class >> withBoardAndPlayers: aCollection [ 
-	^ (self new) initializeWithBoardAndPlayers: aCollection.
+Game class >> playedBy: players on: aBoard [
+	^ (self new) initializeWith: players and: aBoard.
 ]
 
 { #category : #accessing }
@@ -41,27 +22,42 @@ Game >> board [
 	^ board
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> chooseNextShift [
+{ #category : #'turn managing' }
+Game >> chooseNextTurn [
 	players next.
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> hasAWinner [
-	((players current) winner) ifTrue: [ winner := players current].
-	^(players current) winner
+{ #category : #'player information' }
+Game >> currentPlayer [
+	^players current.
+]
+
+{ #category : #'player information' }
+Game >> currentPlayerIsWinner [
+	^(self currentPlayer) isWinner.
+]
+
+{ #category : #'player information' }
+Game >> currentPlayerPosition [
+	^(self currentPlayer) currentPosition.
+]
+
+{ #category : #'game status' }
+Game >> hasWinner [
+	(self currentPlayerIsWinner) ifTrue: [ winner := (self currentPlayer)].
+	^(self currentPlayerIsWinner).
 ]
 
 { #category : #initialization }
-Game >> initializeWithBoardAndPlayers: aCollection [ 
-	board := aCollection removeFirst.
-	players := aCollection removeFirst.
+Game >> initializeWith: allThePlayers and: aBoard [ 
+	board := aBoard.
+	players := allThePlayers.
 	winner := 0.
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> playShift [
-	(players current) throwDice.
+{ #category : #'turn managing' }
+Game >> playTurn [
+	self currentPlayer throwDice.
 ]
 
 { #category : #accessing }
@@ -69,7 +65,7 @@ Game >> players [
 	^ players
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> whoIsTheWinner [
-	^winner
+{ #category : #accessing }
+Game >> winner [
+	(winner isMemberOf: Player) ifTrue: [ ^winner ] ifFalse: [ ^'error' ].
 ]

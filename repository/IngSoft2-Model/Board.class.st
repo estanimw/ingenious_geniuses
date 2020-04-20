@@ -5,22 +5,22 @@ Class {
 	#name : #Board,
 	#superclass : #Object,
 	#instVars : [
-		'slots'
+		'numberOfSlots'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-Board class >> withSlots: anInteger [ 
-	^ (self new) initializeWithSlots: anInteger.
+Board class >> withSlots: slots [ 
+	^ (self new) initializeWithSlots: slots.
 ]
 
 { #category : #initialization }
-Board >> initializeWithSlots: anInteger [
-	slots := anInteger.
+Board >> initializeWithSlots: slots [
+	numberOfSlots := slots.
 ]
 
 { #category : #accessing }
-Board >> slots [
-	^ slots
+Board >> numberOfSlots [
+	^ numberOfSlots.
 ]

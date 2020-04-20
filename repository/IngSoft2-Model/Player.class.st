@@ -5,66 +5,62 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'position',
 		'dice',
-		'boardSlots',
-		'winner'
+		'boardOfTheGame',
+		'currentPosition',
+		'isWinner'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialize }
-Player class >> creation: dice [
-	^ (self new) initializeWithPositionAndDice: (OrderedCollection with: 0 with: dice).
-]
-
-{ #category : #'as yet unclassified' }
-Player class >> move [
-	self shouldBeImplemented.
+Player class >> playsWith: aDice on: aBoard [
+	^ (self new) initializeWith: 0 and: aDice on: aBoard.
 ]
 
 { #category : #accessing }
-Player >> boardSlots [
-	^ boardSlots
+Player >> boardOfTheGame [ 
+	^ boardOfTheGame.
 ]
 
-{ #category : #'as yet unclassified' }
-Player >> boardSlots: numberOfSlots [
-	boardSlots := numberOfSlots.
+{ #category : #accessing }
+Player >> currentPosition [
+	^ currentPosition.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Player >> dice [
 	^ dice
 ]
 
 { #category : #initialization }
-Player >> initializeWithPositionAndDice: information [ 
-	position := information removeFirst.
-	dice := information removeFirst.
-	winner := false.
+Player >> initializeWith: aPosition and: aDice on: aBoard [ 
+	currentPosition := aPosition.
+	dice := aDice.
+	boardOfTheGame := aBoard.
+	isWinner := false.
 ]
 
 { #category : #accessing }
-Player >> move: anInteger [ 
-	position := position + anInteger.
-	(position > boardSlots) ifTrue: [ position := boardSlots . winner := true].
+Player >> isWinner [
+	^isWinner.
+]
+
+{ #category : #positioning }
+Player >> move: slotsQuantity [ 
+	currentPosition := currentPosition + slotsQuantity.
+	(currentPosition > (boardOfTheGame numberOfSlots)) ifTrue: [ currentPosition := (boardOfTheGame numberOfSlots). isWinner := true].
 	
 ]
 
-{ #category : #'as yet unclassified' }
-Player >> position [
-	^ position
+{ #category : #accessing }
+Player >> slotsOfTheBoardOfTheGame [
+	^boardOfTheGame numberOfSlots.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 Player >> throwDice [
 	| number |
 	number := dice roll.
 	self move: number.
-]
-
-{ #category : #'as yet unclassified' }
-Player >> winner [
-	^winner.
 ]
