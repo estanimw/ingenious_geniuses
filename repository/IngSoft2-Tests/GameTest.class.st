@@ -68,5 +68,5 @@ GameTest >> testStartGame [
 	game := Game playedBy: players on: aBoard.
 	self assert: (game board) equals: aBoard.
 	self assert: (game players) equals: players.
-	self assert: (game winner) equals: 'error'.
+	self should: [game winner] raise: TheresNoWinnerYet withMessageText: 'No winner yet.'.
 ]

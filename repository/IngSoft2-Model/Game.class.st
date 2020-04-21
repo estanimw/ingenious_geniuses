@@ -76,5 +76,5 @@ Game >> players [
 
 { #category : #accessing }
 Game >> winner [
-	(winner isMemberOf: Player) ifTrue: [ ^winner ] ifFalse: [ ^'error' ].
+	(self hasWinner) ifTrue: [ ^winner ] ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ].
 ]
