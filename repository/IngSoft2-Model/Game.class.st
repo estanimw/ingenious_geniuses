@@ -23,7 +23,7 @@ Game >> board [
 ]
 
 { #category : #'turn managing' }
-Game >> chooseNextTurn [
+Game >> chooseNextPlayer [
 	players next.
 ]
 
@@ -53,6 +53,15 @@ Game >> initializeWith: allThePlayers and: aBoard [
 	board := aBoard.
 	players := allThePlayers.
 	winner := 0.
+]
+
+{ #category : #playing }
+Game >> play [
+	[self hasWinner]
+		whileFalse: [ 
+			self playTurn.
+			(self hasWinner) ifFalse: [ self chooseNextPlayer. ]
+		]
 ]
 
 { #category : #'turn managing' }

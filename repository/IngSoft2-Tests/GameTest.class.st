@@ -27,7 +27,7 @@ GameTest >> testGameSelectPlayersToMove [
 	game := GameTest setUpGameValuesExample1.
 	game playTurn.
 	self assert: game currentPlayerPosition equals: 2.
-	game chooseNextTurn.
+	game chooseNextPlayer.
 	game playTurn.
 	self assert: game currentPlayerPosition equals: 4
 ]
@@ -37,15 +37,16 @@ GameTest >> testOnePlayerWinsAndTheOtherLoses [
 
 	| game |
 	game := GameTest setUpGameValuesExample1.
-	game playTurn.
+	"game playTurn.
 	[game hasWinner] whileFalse:[
 		game chooseNextTurn.
 		game playTurn.
-		].
+		]."
+	game play.
 	self assert: game currentPlayerIsWinner.
 	self assert: game currentPlayerPosition equals: 30.
 	self assert: game winner equals: game currentPlayer.
-	game chooseNextTurn.
+	game chooseNextPlayer.
 	self assert: game currentPlayerIsWinner equals: false.
 	self assert: game currentPlayerPosition equals: 27.
 ]
