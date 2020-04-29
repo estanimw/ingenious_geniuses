@@ -22,6 +22,11 @@ Dice >> + aDie [
 	^ Dice withAll: { self . aDie }
 ]
 
+{ #category : #accessing }
+Dice >> dice [
+	^ dice
+]
+
 { #category : #initialization }
 Dice >> initializeWithAll: aDiceSet [
 	

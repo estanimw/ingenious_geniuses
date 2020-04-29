@@ -30,6 +30,11 @@ CircularIterator >> current [
 	^options at: currentIndex + 1
 ]
 
+{ #category : #accessing }
+CircularIterator >> currentIndex [
+	^ currentIndex
+]
+
 { #category : #testing }
 CircularIterator >> includes: anObject [
 

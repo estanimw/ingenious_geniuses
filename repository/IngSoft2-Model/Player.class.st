@@ -6,7 +6,6 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'dice',
-		'boardOfTheGame',
 		'currentPosition',
 		'isWinner'
 	],
@@ -14,13 +13,8 @@ Class {
 }
 
 { #category : #initialize }
-Player class >> playsWith: aDice on: aBoard [
-	^ (self new) initializeWith: 0 and: aDice on: aBoard.
-]
-
-{ #category : #accessing }
-Player >> boardOfTheGame [ 
-	^ boardOfTheGame.
+Player class >> playsWith: aDice [
+	^ (self new) initializeWith: 0 and: aDice.
 ]
 
 { #category : #accessing }
@@ -34,10 +28,9 @@ Player >> dice [
 ]
 
 { #category : #initialization }
-Player >> initializeWith: aPosition and: aDice on: aBoard [ 
+Player >> initializeWith: aPosition and: aDice [
 	currentPosition := aPosition.
 	dice := aDice.
-	boardOfTheGame := aBoard.
 	isWinner := false.
 ]
 
@@ -47,20 +40,15 @@ Player >> isWinner [
 ]
 
 { #category : #positioning }
-Player >> move: slotsQuantity [ 
+Player >> move: slotsQuantity on: aBoard [
 	currentPosition := currentPosition + slotsQuantity.
-	(currentPosition > (boardOfTheGame numberOfSlots)) ifTrue: [ currentPosition := (boardOfTheGame numberOfSlots). isWinner := true].
+	(currentPosition > aBoard) ifTrue: [ currentPosition := aBoard. isWinner := true].
 	
 ]
 
-{ #category : #accessing }
-Player >> slotsOfTheBoardOfTheGame [
-	^boardOfTheGame numberOfSlots.
-]
-
 { #category : #playing }
-Player >> throwDice [
+Player >> throwDiceOn: aBoard [
 	| number |
 	number := dice roll.
-	self move: number.
+	self move: number on: aBoard.
 ]

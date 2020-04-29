@@ -50,9 +50,27 @@ Game >> hasWinner [
 
 { #category : #initialization }
 Game >> initializeWith: allThePlayers and: aBoard [ 
-	board := aBoard.
-	players := allThePlayers.
-	winner := 0.
+	| auxPlayer aux return |
+	return := true.
+	auxPlayer := allThePlayers current.
+	"aux := allThePlayers currentIndex."
+	
+	(self validateDice: auxPlayer)
+				ifTrue: (allThePlayers next)
+				ifFalse: [return := false. Error signal: 'Error con los dados'.].
+	
+	[ (allThePlayers currentIndex ~= 0) & (return == true)]
+		whileTrue: [
+			(self validateDice: auxPlayer)
+				ifTrue: (allThePlayers next)
+				ifFalse: [return := false. Error signal: 'Error con los dados'.].
+			].
+		
+	return 
+		ifTrue: [
+			board := aBoard.
+			players := allThePlayers.
+			winner := 0.]
 ]
 
 { #category : #playing }
@@ -66,12 +84,30 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	self currentPlayer throwDice.
+	self currentPlayer throwDiceOn: (self board).
 ]
 
 { #category : #accessing }
 Game >> players [
 	^ players
+]
+
+{ #category : #'as yet unclassified' }
+Game >> validateDice: aPlayer [
+	| index return aDice aux |
+	aDice := aPlayer dice.
+	return := true.
+	index := 1.
+	aux := aDice dice at: 1.
+	[ index <= aDice dice size & (return ~= false) ]
+		whileTrue: [ | aux2 |
+			aux2 := (aDice dice at: index) sides.
+			
+			((aux2 >= 4) & (aux2<=10))
+				ifTrue: [ index := index + 1 ]
+				ifFalse: [ return := false ]
+		].
+	^ return
 ]
 
 { #category : #accessing }

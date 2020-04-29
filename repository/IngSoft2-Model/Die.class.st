@@ -96,3 +96,8 @@ Die >> roll [
 
 	^ numberProvider nextInt: sides 
 ]
+
+{ #category : #accessing }
+Die >> sides [
+	^ sides
+]
