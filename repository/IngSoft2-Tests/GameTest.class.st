@@ -6,15 +6,15 @@ Class {
 
 { #category : #tests }
 GameTest class >> setUpGameValuesExample1 [
-	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf12 diceOfPancho pancho players |
+	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf10 diceOfPancho pancho players |
 	aBoard := 30.
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
 	dieOf6 := Die of: 6 rolling: #(1 5 3).
 	diceOfJuan := dieOf4 + dieOf6.
 	juan:= Player playsWith: diceOfJuan.
 	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf12 := Die of: 12 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf12.
+	diceOf10 := Die of: 10 rolling: #(1 2 3).
+	diceOfPancho := dieOf8 + diceOf10.
 	pancho:= Player playsWith: diceOfPancho.
 	players:= CircularIterator cyclingOver: (OrderedCollection with: juan with: pancho).
 	game := Game playedBy: players on: aBoard.
@@ -23,15 +23,15 @@ GameTest class >> setUpGameValuesExample1 [
 
 { #category : #tests }
 GameTest class >> setUpGameValuesExample2 [
-	| dieOf8 dieOf6 dieOf4 juan pancho aBoard diceOfJuan diceOf12 diceOfPancho |
+	| dieOf8 dieOf6 dieOf4 juan pancho aBoard diceOfJuan diceOf10 diceOfPancho |
 	aBoard := 30.
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
 	dieOf6 := Die of: 6 rolling: #(1 5 3).
 	diceOfJuan := dieOf4 + dieOf6.
 	juan := Player playsWith: diceOfJuan.
 	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf12 := Die of: 12 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf12.
+	diceOf10 := Die of: 10 rolling: #(1 2 3).
+	diceOfPancho := dieOf8 + diceOf10.
 	pancho := Player playsWith: diceOfPancho.
 	^ OrderedCollection with: aBoard with: juan with: pancho.
 ]

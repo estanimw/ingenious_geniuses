@@ -117,15 +117,16 @@ Game >> validateDiceOfAllPlayers: allThePlayers using: aBoard [
 		ifTrue: allThePlayers next
 		ifFalse: [ 
 			allDiceAreOk := false.
-			Error signal: 'Error con los dados' 
+			ThePlayerHasAnInvalidDie signal: 'The die are invalid' 
 		].
 	[ (allThePlayers currentIndex ~= 0) & allDiceAreOk ]
 		whileTrue: [ 
+			aPlayer := allThePlayers current.
 			(self validateDiceOf: aPlayer using: aBoard)
 				ifTrue: allThePlayers next
 				ifFalse: [ 
 					allDiceAreOk := false.
-					Error signal: 'Error con los dados' ] 
+					ThePlayerHasAnInvalidDie signal: 'The die are invalid' ] 
 				].
 	^ allDiceAreOk
 ]

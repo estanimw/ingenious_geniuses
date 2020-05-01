@@ -525,6 +525,15 @@ TestAsserter >> should: aBlock raise: anException withExceptionDo: anotherBlock 
 ]
 
 { #category : #asserting }
+TestAsserter >> should: aBlock raise: anException withMessageText: aString [
+
+    self
+        should: aBlock
+        raise: anException
+        withExceptionDo: [ :error | self assert: error messageText equals: aString ]
+]
+
+{ #category : #asserting }
 TestAsserter >> shouldFix: aBlock [
 	"Run the block expecting an Exception. Throw an assertion failure if the block does NOT throw an exception."
 	<debuggerCompleteToSender>

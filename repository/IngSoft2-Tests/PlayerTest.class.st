@@ -35,8 +35,8 @@ PlayerTest >> testPlayerHasInvalidDie [
 	players:= CircularIterator cyclingOver: (OrderedCollection with: aPlayer).
 	self
 		should: [ game := Game playedBy: players on: aBoard ]
-		raise: Error
-		withMessageText: 'Error con los dados'
+		raise: ThePlayerHasAnInvalidDie
+		withMessageText: 'The die are invalid'
 
 ]
 
