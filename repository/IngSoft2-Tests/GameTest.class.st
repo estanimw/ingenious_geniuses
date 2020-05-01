@@ -8,7 +8,6 @@ Class {
 GameTest class >> setUpGameValuesExample1 [
 	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf12 diceOfPancho pancho players |
 	aBoard := 30.
-	"dieOf4 := Die of: 4 rolling: #(1 4 2)."
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
 	dieOf6 := Die of: 6 rolling: #(1 5 3).
 	diceOfJuan := dieOf4 + dieOf6.

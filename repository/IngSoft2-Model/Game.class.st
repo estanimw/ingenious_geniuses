@@ -17,6 +17,11 @@ Game class >> playedBy: players on: aBoard [
 	^ (self new) initializeWith: players and: aBoard.
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> allTheDieHaveBeenCheckedUsing: index and: numberOfDie [
+	^index <= numberOfDie
+]
+
 { #category : #accessing }
 Game >> board [
 	^ board
@@ -25,6 +30,16 @@ Game >> board [
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
 	players next.
+]
+
+{ #category : #'as yet unclassified' }
+Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return [
+(return)	
+		ifTrue: [ 
+				board := aBoard.
+				players := allThePlayers.
+				winner := 0 
+			]
 ]
 
 { #category : #'player information' }
@@ -49,28 +64,10 @@ Game >> hasWinner [
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: aBoard [ 
-	| auxPlayer aux return |
-	return := true.
-	auxPlayer := allThePlayers current.
-	"aux := allThePlayers currentIndex."
-	
-	(self validateDice: auxPlayer)
-				ifTrue: (allThePlayers next)
-				ifFalse: [return := false. Error signal: 'Error con los dados'.].
-	
-	[ (allThePlayers currentIndex ~= 0) & (return == true)]
-		whileTrue: [
-			(self validateDice: auxPlayer)
-				ifTrue: (allThePlayers next)
-				ifFalse: [return := false. Error signal: 'Error con los dados'.].
-			].
-		
-	return 
-		ifTrue: [
-			board := aBoard.
-			players := allThePlayers.
-			winner := 0.]
+Game >> initializeWith: allThePlayers and: aBoard [
+	| return |
+	return := self validateDiceOfAllPlayers: allThePlayers using: aBoard.
+	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return.
 ]
 
 { #category : #playing }
@@ -92,22 +89,45 @@ Game >> players [
 	^ players
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> validateDice: aPlayer [
-	| index return aDice aux |
+{ #category : #accessing }
+Game >> validateDiceOf: aPlayer using: aBoard [
+	| index allDieAreOk aDice aDie sidesOfTheDie numberOfDie condition |
 	aDice := aPlayer dice.
-	return := true.
+	allDieAreOk := true.
 	index := 1.
-	aux := aDice dice at: 1.
-	[ index <= aDice dice size & (return ~= false) ]
-		whileTrue: [ | aux2 |
-			aux2 := (aDice dice at: index) sides.
-			
-			((aux2 >= 4) & (aux2<=10))
+	numberOfDie := aDice dice size.
+	[ (self allTheDieHaveBeenCheckedUsing: index and: numberOfDie) & allDieAreOk ]
+		whileTrue: [ 
+			aDie := aDice dice at: index.
+			sidesOfTheDie := aDie sides.
+			condition := sidesOfTheDie between: 4 and: (aBoard * (1/3)).
+			(condition)
 				ifTrue: [ index := index + 1 ]
-				ifFalse: [ return := false ]
+				ifFalse: [ allDieAreOk := false ] 
 		].
-	^ return
+	^ allDieAreOk
+]
+
+{ #category : #initialization }
+Game >> validateDiceOfAllPlayers: allThePlayers using: aBoard [
+	| aPlayer allDiceAreOk |
+	allDiceAreOk := true.
+	aPlayer := allThePlayers current.
+	(self validateDiceOf: aPlayer using: aBoard)
+		ifTrue: allThePlayers next
+		ifFalse: [ 
+			allDiceAreOk := false.
+			Error signal: 'Error con los dados' 
+		].
+	[ (allThePlayers currentIndex ~= 0) & allDiceAreOk ]
+		whileTrue: [ 
+			(self validateDiceOf: aPlayer using: aBoard)
+				ifTrue: allThePlayers next
+				ifFalse: [ 
+					allDiceAreOk := false.
+					Error signal: 'Error con los dados' ] 
+				].
+	^ allDiceAreOk
 ]
 
 { #category : #accessing }
