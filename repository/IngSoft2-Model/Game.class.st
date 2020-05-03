@@ -7,14 +7,17 @@ Class {
 	#instVars : [
 		'board',
 		'players',
-		'winner'
+		'winner',
+		'roundsForTheGameToBeOver',
+		'boardOfPositions',
+		'boardOfRoundsMade'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-Game class >> playedBy: players on: aBoard [
-	^ (self new) initializeWith: players and: aBoard.
+Game class >> playedBy: players on: aBoard until: xRounds [
+	^ (self new) initializeWith: players and: aBoard until: xRounds.
 ]
 
 { #category : #'as yet unclassified' }
@@ -27,18 +30,31 @@ Game >> board [
 	^ board
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> boardOfPositions [
+	^boardOfPositions.
+]
+
+{ #category : #accessing }
+Game >> boardOfRoundsMade [
+	^boardOfRoundsMade
+]
+
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
 	players next.
 ]
 
 { #category : #'as yet unclassified' }
-Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return [
+Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return and: xRounds [
 (return)	
 		ifTrue: [ 
 				board := aBoard.
 				players := allThePlayers.
-				winner := 0 
+				winner := 0.
+				roundsForTheGameToBeOver := xRounds.
+				self initializeBoardOfPositionsUsing: allThePlayers.
+				self initializeBoardOfRoundsMadeUsing: allThePlayers.
 			]
 ]
 
@@ -52,6 +68,11 @@ Game >> currentPlayerIsWinner [
 	^(self currentPlayer) isWinner.
 ]
 
+{ #category : #accesing }
+Game >> currentPlayerNumberOfRoundsMade [
+	^self currentPlayer numberOfRoundsMade
+]
+
 { #category : #'player information' }
 Game >> currentPlayerPosition [
 	^(self currentPlayer) currentPosition.
@@ -63,11 +84,41 @@ Game >> hasWinner [
 	^(self currentPlayerIsWinner).
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> initializeBoardOfPositionsUsing: allThePlayers [
+	| aPlayer |
+	boardOfPositions := Dictionary new.
+	aPlayer := allThePlayers current.
+	boardOfPositions at: aPlayer put: aPlayer currentPosition.
+	allThePlayers next.
+	[ (allThePlayers currentIndex ~= 0) ]
+		whileTrue: [ 
+			aPlayer := allThePlayers current.
+			boardOfPositions at: aPlayer put: aPlayer currentPosition.
+			allThePlayers next.
+		].
+]
+
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: aBoard [
+Game >> initializeBoardOfRoundsMadeUsing: allThePlayers [
+	| aPlayer |
+	boardOfRoundsMade := Dictionary new.
+	aPlayer := allThePlayers current.
+	boardOfRoundsMade at: aPlayer put: aPlayer numberOfRoundsMade.
+	allThePlayers next.
+	[ (allThePlayers currentIndex ~= 0) ]
+		whileTrue: [ 
+			aPlayer := allThePlayers current.
+			boardOfRoundsMade at: aPlayer put: aPlayer numberOfRoundsMade.
+			allThePlayers next.
+		].
+]
+
+{ #category : #initialization }
+Game >> initializeWith: allThePlayers and: aBoard until: xRounds [
 	| return |
 	return := self validateDiceOfAllPlayers: allThePlayers using: aBoard.
-	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return.
+	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return and: xRounds.
 ]
 
 { #category : #playing }
@@ -81,12 +132,22 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	self currentPlayer throwDiceOn: (self board).
+	| previousNumberOfRoundsMade currentNumberOfRoundsMade |
+	previousNumberOfRoundsMade := self currentPlayerNumberOfRoundsMade.
+	self currentPlayer throwDiceOn: self board until: self roundsForTheGameToBeOver.
+	boardOfPositions at: (self currentPlayer) put: (self currentPlayerPosition).
+	currentNumberOfRoundsMade := self currentPlayerNumberOfRoundsMade.
+	(previousNumberOfRoundsMade ~= currentNumberOfRoundsMade) ifTrue: [ boardOfRoundsMade at: (self currentPlayer) put: (self currentPlayerNumberOfRoundsMade) ]
 ]
 
 { #category : #accessing }
 Game >> players [
 	^ players
+]
+
+{ #category : #accessing }
+Game >> roundsForTheGameToBeOver [
+	^roundsForTheGameToBeOver.
 ]
 
 { #category : #accessing }

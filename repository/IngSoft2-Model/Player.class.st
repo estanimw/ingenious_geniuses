@@ -7,14 +7,15 @@ Class {
 	#instVars : [
 		'dice',
 		'currentPosition',
-		'isWinner'
+		'isWinner',
+		'numberOfRoundsMade'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialize }
 Player class >> playsWith: aDice [
-	^ (self new) initializeWith: 0 and: aDice.
+	^ (self new) initializeWith: 0 and: aDice and: 0.
 ]
 
 { #category : #accessing }
@@ -28,9 +29,10 @@ Player >> dice [
 ]
 
 { #category : #initialization }
-Player >> initializeWith: aPosition and: aDice [
+Player >> initializeWith: aPosition and: aDice and: roundsMade [
 	currentPosition := aPosition.
 	dice := aDice.
+	numberOfRoundsMade := roundsMade.
 	isWinner := false.
 ]
 
@@ -40,15 +42,26 @@ Player >> isWinner [
 ]
 
 { #category : #positioning }
-Player >> move: slotsQuantity on: aBoard [
+Player >> move: slotsQuantity on: aBoard until: xRounds [
 	currentPosition := currentPosition + slotsQuantity.
-	(currentPosition > aBoard) ifTrue: [ currentPosition := aBoard. isWinner := true].
+	(currentPosition > aBoard) ifTrue: [ 
+		currentPosition := (currentPosition - aBoard).
+		numberOfRoundsMade := numberOfRoundsMade + 1.
+		(numberOfRoundsMade == xRounds) ifTrue:[
+			isWinner := true.
+			].
+		].
 	
 ]
 
+{ #category : #accessing }
+Player >> numberOfRoundsMade [
+	^numberOfRoundsMade
+]
+
 { #category : #playing }
-Player >> throwDiceOn: aBoard [
+Player >> throwDiceOn: aBoard until: xRounds [
 	| number |
 	number := dice roll.
-	self move: number on: aBoard.
+	self move: number on: aBoard until: xRounds
 ]
