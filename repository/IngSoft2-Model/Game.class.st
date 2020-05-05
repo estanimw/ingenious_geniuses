@@ -40,6 +40,35 @@ Game >> boardOfRoundsMade [
 	^boardOfRoundsMade
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> boardOfWhoIsWinning [
+	| keysOfPositions keysOfRoundsMade retorno aux auxLen iterator unPlayer |
+	keysOfPositions := boardOfPositions keys.
+	keysOfRoundsMade := boardOfRoundsMade keys.
+	retorno := boardOfRoundsMade copy.
+	
+	keysOfRoundsMade do: [ :each | 
+		retorno at: each put: ((boardOfRoundsMade at: each)*board).
+	].
+	keysOfPositions do: [ :each |
+		retorno at: each put: ((retorno at: each)+(boardOfPositions at: each)).
+	].
+	aux := retorno values.
+	auxLen := retorno size.
+	aux := aux sort.
+	iterator := 1.
+	"(iterator to: 1) do: [ (retorno keyAtValue: (aux at: iterator)==(aux at: iterator)) ifTrue: [retorno at: (retorno keyAtValue: (aux at: iterator)) put: iterator]. iterator:=iterator-1]."
+	[iterator<=auxLen] whileTrue: [ 
+		unPlayer := retorno keyAtValue: (aux at: (auxLen-iterator+1)).
+		retorno at: unPlayer put: iterator.
+		iterator := iterator+1.
+	].
+	"(1 to: auxLen) do: [ newRetorno at: iterator put: (retorno keyAtValue: (aux at: iterator)). iterator:=iterator+1 ].
+	newRetorno := retorno keyAtValue: (aux at: 1)."
+	Transcript show: retorno.
+	^retorno.
+]
+
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
 	players next.
