@@ -10,17 +10,18 @@ Class {
 		'winner',
 		'roundsForTheGameToBeOver',
 		'boardOfPositions',
-		'boardOfRoundsMade'
+		'boardOfRoundsMade',
+		'boardOfWhoIsWinning'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #initialization }
-Game class >> playedBy: players on: aBoard until: xRounds [
-	^ (self new) initializeWith: players and: aBoard until: xRounds.
+Game class >> playedBy: players on: aBoard until: aNumberOfRounds [
+	^ (self new) initializeWith: players and: aBoard until: aNumberOfRounds.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'argument validation' }
 Game >> allTheDieHaveBeenCheckedUsing: index and: numberOfDie [
 	^index <= numberOfDie
 ]
@@ -30,7 +31,7 @@ Game >> board [
 	^ board
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Game >> boardOfPositions [
 	^boardOfPositions.
 ]
@@ -40,33 +41,9 @@ Game >> boardOfRoundsMade [
 	^boardOfRoundsMade
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Game >> boardOfWhoIsWinning [
-	| keysOfPositions keysOfRoundsMade retorno aux auxLen iterator unPlayer |
-	keysOfPositions := boardOfPositions keys.
-	keysOfRoundsMade := boardOfRoundsMade keys.
-	retorno := boardOfRoundsMade copy.
-	
-	keysOfRoundsMade do: [ :each | 
-		retorno at: each put: ((boardOfRoundsMade at: each)*board).
-	].
-	keysOfPositions do: [ :each |
-		retorno at: each put: ((retorno at: each)+(boardOfPositions at: each)).
-	].
-	aux := retorno values.
-	auxLen := retorno size.
-	aux := aux sort.
-	iterator := 1.
-	"(iterator to: 1) do: [ (retorno keyAtValue: (aux at: iterator)==(aux at: iterator)) ifTrue: [retorno at: (retorno keyAtValue: (aux at: iterator)) put: iterator]. iterator:=iterator-1]."
-	[iterator<=auxLen] whileTrue: [ 
-		unPlayer := retorno keyAtValue: (aux at: (auxLen-iterator+1)).
-		retorno at: unPlayer put: iterator.
-		iterator := iterator+1.
-	].
-	"(1 to: auxLen) do: [ newRetorno at: iterator put: (retorno keyAtValue: (aux at: iterator)). iterator:=iterator+1 ].
-	newRetorno := retorno keyAtValue: (aux at: 1)."
-	Transcript show: retorno.
-	^retorno.
+	^ boardOfWhoIsWinning
 ]
 
 { #category : #'turn managing' }
@@ -74,17 +51,17 @@ Game >> chooseNextPlayer [
 	players next.
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return and: xRounds [
-(return)	
-		ifTrue: [ 
-				board := aBoard.
-				players := allThePlayers.
-				winner := 0.
-				roundsForTheGameToBeOver := xRounds.
-				self initializeBoardOfPositionsUsing: allThePlayers.
-				self initializeBoardOfRoundsMadeUsing: allThePlayers.
-			]
+{ #category : #initialization }
+Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: aCondition and: aNumberOfRounds [
+	aCondition
+		ifTrue: [ board := aBoard.
+			players := allThePlayers.
+			winner := 0.
+			roundsForTheGameToBeOver := aNumberOfRounds.
+			self initializeBoardOfPositionsUsing: allThePlayers.
+			self initializeBoardOfRoundsMadeUsing: allThePlayers.
+			self initializeBoardOfWhoIsWinning.
+		]
 ]
 
 { #category : #'player information' }
@@ -97,7 +74,7 @@ Game >> currentPlayerIsWinner [
 	^(self currentPlayer) isWinner.
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 Game >> currentPlayerNumberOfRoundsMade [
 	^self currentPlayer numberOfRoundsMade
 ]
@@ -107,47 +84,92 @@ Game >> currentPlayerPosition [
 	^(self currentPlayer) currentPosition.
 ]
 
+{ #category : #update }
+Game >> fill: theBoardOfWhoIsWinning using: iterator and: totalNumberOfSlotsPassedByAllThePlayers and: numberOfPlayers [
+	| aPlayer |
+	aPlayer := theBoardOfWhoIsWinning keyAtValue: (totalNumberOfSlotsPassedByAllThePlayers at: numberOfPlayers - iterator + 1).
+	self update: theBoardOfWhoIsWinning at: aPlayer  with: iterator.
+]
+
+{ #category : #accessing }
+Game >> fillBoardOfWhoIsWinning [
+	| allThePlayers totalNumberOfSlotsPassedByAllThePlayers numberOfPlayers iterator |
+	allThePlayers := boardOfPositions keys.
+	self fillTotalNumberOfSlotsPassedFrom: allThePlayers into: boardOfWhoIsWinning.
+	totalNumberOfSlotsPassedByAllThePlayers := boardOfWhoIsWinning values.
+	numberOfPlayers := boardOfWhoIsWinning size.
+	self sortArray: totalNumberOfSlotsPassedByAllThePlayers.
+	iterator := 1.
+	[ self thereArePlayersLeftToBeCheckedUsing: iterator and: numberOfPlayers ]
+		whileTrue: [
+			self fill: boardOfWhoIsWinning using: iterator and: totalNumberOfSlotsPassedByAllThePlayers and: numberOfPlayers.
+			iterator := iterator + 1
+		].
+	^ boardOfWhoIsWinning.
+]
+
+{ #category : #update }
+Game >> fillPositionOfAPlayerInTheBoardOfPositionsFrom: allThePlayers [
+	| aPlayer |
+	aPlayer := allThePlayers current.
+	self update: boardOfPositions at: aPlayer  with: (aPlayer currentPosition).
+	allThePlayers next.
+]
+
+{ #category : #initialization }
+Game >> fillRoundsMadeOfAPlayerInTheBoardOfRoundsMadeFrom: allThePlayers [
+	| aPlayer |
+	aPlayer := allThePlayers current.
+	self update: boardOfRoundsMade at: aPlayer  with: aPlayer numberOfRoundsMade.
+	allThePlayers next.
+]
+
+{ #category : #update }
+Game >> fillTotalNumberOfSlotsPassedFrom: allThePlayers into: theBoardOfWhoIsWinning [
+	allThePlayers
+		do: [ :each | 
+			self update: theBoardOfWhoIsWinning at: each  with: (boardOfRoundsMade at: each) * board
+		].
+	allThePlayers
+		do: [ :each | 
+			self update: theBoardOfWhoIsWinning at: each with: ((theBoardOfWhoIsWinning at: each) + (boardOfPositions at: each))
+		].
+]
+
 { #category : #'game status' }
 Game >> hasWinner [
 	(self currentPlayerIsWinner) ifTrue: [ winner := (self currentPlayer)].
 	^(self currentPlayerIsWinner).
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 Game >> initializeBoardOfPositionsUsing: allThePlayers [
-	| aPlayer |
 	boardOfPositions := Dictionary new.
-	aPlayer := allThePlayers current.
-	boardOfPositions at: aPlayer put: aPlayer currentPosition.
-	allThePlayers next.
-	[ (allThePlayers currentIndex ~= 0) ]
-		whileTrue: [ 
-			aPlayer := allThePlayers current.
-			boardOfPositions at: aPlayer put: aPlayer currentPosition.
-			allThePlayers next.
-		].
+	self fillPositionOfAPlayerInTheBoardOfPositionsFrom: allThePlayers.
+	[ allThePlayers currentIndex ~= 0 ]
+		whileTrue: [ self fillPositionOfAPlayerInTheBoardOfPositionsFrom: allThePlayers. ]
 ]
 
 { #category : #initialization }
 Game >> initializeBoardOfRoundsMadeUsing: allThePlayers [
-	| aPlayer |
 	boardOfRoundsMade := Dictionary new.
-	aPlayer := allThePlayers current.
-	boardOfRoundsMade at: aPlayer put: aPlayer numberOfRoundsMade.
-	allThePlayers next.
-	[ (allThePlayers currentIndex ~= 0) ]
-		whileTrue: [ 
-			aPlayer := allThePlayers current.
-			boardOfRoundsMade at: aPlayer put: aPlayer numberOfRoundsMade.
-			allThePlayers next.
-		].
+	self fillRoundsMadeOfAPlayerInTheBoardOfRoundsMadeFrom: allThePlayers.
+	[ allThePlayers currentIndex ~= 0 ]
+		whileTrue: [ self fillRoundsMadeOfAPlayerInTheBoardOfRoundsMadeFrom: allThePlayers. ]
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: aBoard until: xRounds [
-	| return |
-	return := self validateDiceOfAllPlayers: allThePlayers using: aBoard.
-	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return and: xRounds.
+Game >> initializeBoardOfWhoIsWinning [
+	boardOfWhoIsWinning := Dictionary new.
+	self fillBoardOfWhoIsWinning.
+	
+]
+
+{ #category : #initialization }
+Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
+	| aCondition |
+	aCondition := self validateDiceOfAllPlayers: allThePlayers using: aBoard.
+	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: aCondition and: aNumberOfRounds.
 ]
 
 { #category : #playing }
@@ -164,9 +186,9 @@ Game >> playTurn [
 	| previousNumberOfRoundsMade currentNumberOfRoundsMade |
 	previousNumberOfRoundsMade := self currentPlayerNumberOfRoundsMade.
 	self currentPlayer throwDiceOn: self board until: self roundsForTheGameToBeOver.
-	boardOfPositions at: (self currentPlayer) put: (self currentPlayerPosition).
+	self update: boardOfPositions at: (self currentPlayer)  with: (self currentPlayerPosition).
 	currentNumberOfRoundsMade := self currentPlayerNumberOfRoundsMade.
-	(previousNumberOfRoundsMade ~= currentNumberOfRoundsMade) ifTrue: [ boardOfRoundsMade at: (self currentPlayer) put: (self currentPlayerNumberOfRoundsMade) ]
+	(previousNumberOfRoundsMade ~= currentNumberOfRoundsMade) ifTrue: [ self update: boardOfRoundsMade at: (self currentPlayer)  with: (self currentPlayerNumberOfRoundsMade) ].
 ]
 
 { #category : #accessing }
@@ -177,6 +199,21 @@ Game >> players [
 { #category : #accessing }
 Game >> roundsForTheGameToBeOver [
 	^roundsForTheGameToBeOver.
+]
+
+{ #category : #sorting }
+Game >> sortArray: anArray [
+	anArray sort.
+]
+
+{ #category : #'argument validation' }
+Game >> thereArePlayersLeftToBeCheckedUsing: iterator and: numberOfPlayers [
+	^ iterator <= numberOfPlayers.
+]
+
+{ #category : #update }
+Game >> update: aBoard at: anIndex with: aValue [
+	aBoard at: anIndex put: aValue.
 ]
 
 { #category : #accessing }

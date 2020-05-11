@@ -178,9 +178,9 @@ GameTest >> testTablaGanadores [
 	game play.
 	self assert: game currentPlayerIsWinner.
 	self assert: game currentPlayerNumberOfRoundsMade equals: 3.
-	self assert: (game boardOfWhoIsWinning at: (game currentPlayer)) equals: 1. "chequeo que quede primero :)"
+	self assert: (game fillBoardOfWhoIsWinning at: (game currentPlayer)) equals: 1. "chequeo que quede primero :)"
 	game chooseNextPlayer.
 	self assert: game currentPlayerIsWinner equals: false.
 	self assert: (game currentPlayerNumberOfRoundsMade ~= 3).
-	self assert: (game boardOfWhoIsWinning at: (game currentPlayer)) ~= 1.
+	self assert: (game fillBoardOfWhoIsWinning at: (game currentPlayer)) ~= 1.
 ]
