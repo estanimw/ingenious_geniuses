@@ -9,7 +9,9 @@ Class {
 		'players',
 		'winner',
 		'roundsForTheGameToBeOver',
-		'leaderBoard'
+		'boardOfPositions',
+		'boardOfRoundsMade',
+		'boardOfWhoIsWinning'
 	],
 	#category : #'IngSoft2-Model'
 }
