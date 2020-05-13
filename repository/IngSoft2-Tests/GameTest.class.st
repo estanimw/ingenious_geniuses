@@ -17,8 +17,7 @@ GameTest class >> setUpGameValuesExample1 [
 	diceOf10 := Die of: 10 rolling: #(1 2 3).
 	diceOfPancho := dieOf8 + diceOf10.
 	pancho := Player playsWith: diceOfPancho.
-	players := CircularIterator
-		cyclingOver: (OrderedCollection with: juan with: pancho).
+	players := CircularIterator cyclingOver: (OrderedCollection with: juan with: pancho).
 	game := Game playedBy: players on: aBoard until: xRounds.
 	^ game
 ]
@@ -93,19 +92,19 @@ GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
 	| game player1 player2 |
 	game := GameTest setUpGameValuesExample1.
 	player1 := game currentPlayer.
-	self assert: (game boardOfPositions at: player1) equals: 0.
+	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 0.
 	game chooseNextPlayer.
 	player2 := game currentPlayer.
-	self assert: (game boardOfPositions at: player2) equals: 0.
+	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 0.
 	game chooseNextPlayer.
 	game playTurn.
-	self assert: (game boardOfPositions at: player1) equals: 2.
+	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 2.
 	game chooseNextPlayer.
-	self assert: (game boardOfPositions at: player2) equals: 0.
+	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 0.
 	game playTurn.
-	self assert: (game boardOfPositions at: player2) equals: 4.
+	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 4.
 	game chooseNextPlayer.
-	self assert: (game boardOfPositions at: player1) equals: 2.
+	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 2.
 ]
 
 { #category : #tests }
@@ -113,23 +112,37 @@ GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
 	| game player1 player2 |
 	game := GameTest setUpGameValuesExample3.
 	player1 := game currentPlayer.
-	self assert: (game boardOfRoundsMade at: player1) equals: 0.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
 	game chooseNextPlayer.
 	player2 := game currentPlayer.
-	self assert: (game boardOfRoundsMade at: player2) equals: 0.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
 	game chooseNextPlayer.
 	game playTurn.
-	self assert: (game boardOfRoundsMade at: player1) equals: 0.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
 	game chooseNextPlayer.
-	self assert: (game boardOfRoundsMade at: player2) equals: 0.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
 	game playTurn.
-	self assert: (game boardOfRoundsMade at: player2) equals: 0.
-	game chooseNextPlayer.
-	game playTurn.
-	self assert: (game boardOfRoundsMade at: player1) equals: 0.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
 	game chooseNextPlayer.
 	game playTurn.
-	self assert: (game boardOfRoundsMade at: player2) equals: 1.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
+	game chooseNextPlayer.
+	game playTurn.
+	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 1.
+]
+
+{ #category : #tests }
+GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
+	| game |
+	game := GameTest setUpGameValuesExample4.
+	game play.
+	self assert: game currentPlayerIsWinner.
+	self assert: game currentPlayerNumberOfRoundsMade equals: 3.
+	self assert: ((game leaderBoard) winnersBoard  at: (game currentPlayer)) equals: 1. "chequeo que quede primero :)"
+	game chooseNextPlayer.
+	self assert: game currentPlayerIsWinner equals: false.
+	self assert: (game currentPlayerNumberOfRoundsMade ~= 3).
+	self assert: ((game leaderBoard) winnersBoard  at: (game currentPlayer)) ~= 1.
 ]
 
 { #category : #tests }
@@ -169,18 +182,4 @@ GameTest >> testStartGame [
 		should: [ game winner ]
 		raise: TheresNoWinnerYet
 		withMessageText: 'No winner yet.'
-]
-
-{ #category : #tests }
-GameTest >> testTablaGanadores [
-	| game |
-	game := GameTest setUpGameValuesExample4.
-	game play.
-	self assert: game currentPlayerIsWinner.
-	self assert: game currentPlayerNumberOfRoundsMade equals: 3.
-	self assert: (game boardOfWhoIsWinning at: (game currentPlayer)) equals: 1. "chequeo que quede primero :)"
-	game chooseNextPlayer.
-	self assert: game currentPlayerIsWinner equals: false.
-	self assert: (game currentPlayerNumberOfRoundsMade ~= 3).
-	self assert: (game boardOfWhoIsWinning at: (game currentPlayer)) ~= 1.
 ]

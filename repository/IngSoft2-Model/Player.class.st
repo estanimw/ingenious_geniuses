@@ -18,14 +18,30 @@ Player class >> playsWith: aDice [
 	^ (self new) initializeWith: 0 and: aDice and: 0.
 ]
 
+{ #category : #playing }
+Player >> changeNumberOfRoundsMadeAndPositionIn: slotsQuantity on: aBoard [
+	currentPosition := currentPosition + slotsQuantity.
+	(currentPosition > aBoard) ifTrue: [ 
+		currentPosition := (currentPosition - aBoard).
+		numberOfRoundsMade := numberOfRoundsMade + 1.
+	]
+]
+
 { #category : #accessing }
 Player >> currentPosition [
-	^ currentPosition.
+	^currentPosition.
 ]
 
 { #category : #accessing }
 Player >> dice [
-	^ dice
+	^dice
+]
+
+{ #category : #playing }
+Player >> hasWonWith: aNumberOfRounds [
+	(numberOfRoundsMade == aNumberOfRounds) ifTrue:[
+		isWinner := true.
+	].
 ]
 
 { #category : #initialization }
@@ -41,16 +57,10 @@ Player >> isWinner [
 	^isWinner.
 ]
 
-{ #category : #positioning }
-Player >> move: slotsQuantity on: aBoard until: xRounds [
-	currentPosition := currentPosition + slotsQuantity.
-	(currentPosition > aBoard) ifTrue: [ 
-		currentPosition := (currentPosition - aBoard).
-		numberOfRoundsMade := numberOfRoundsMade + 1.
-		(numberOfRoundsMade == xRounds) ifTrue:[
-			isWinner := true.
-			].
-		].
+{ #category : #playing }
+Player >> move: slotsQuantity on: aBoard until: aNumberOfRounds [
+		self changeNumberOfRoundsMadeAndPositionIn: slotsQuantity on: aBoard.
+		self hasWonWith: aNumberOfRounds
 	
 ]
 
@@ -60,8 +70,8 @@ Player >> numberOfRoundsMade [
 ]
 
 { #category : #playing }
-Player >> throwDiceOn: aBoard until: xRounds [
+Player >> throwDiceOn: aBoard until: aNumberOfRounds [
 	| number |
 	number := dice roll.
-	self move: number on: aBoard until: xRounds
+	self move: number on: aBoard until: aNumberOfRounds
 ]

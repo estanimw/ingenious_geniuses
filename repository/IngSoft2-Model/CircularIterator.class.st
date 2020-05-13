@@ -55,6 +55,11 @@ CircularIterator >> next [
 	^self current 
 ]
 
+{ #category : #accessing }
+CircularIterator >> options [
+	^ options
+]
+
 { #category : #iterating }
 CircularIterator >> reset [
 
