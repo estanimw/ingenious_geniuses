@@ -9,7 +9,8 @@ Class {
 		'players',
 		'winner',
 		'roundsForTheGameToBeOver',
-		'leaderBoard'
+		'leaderBoard',
+		'turnsIterator'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -22,7 +23,8 @@ Game class >> playedBy: players on: aBoard until: aNumberOfRounds [
 
 { #category : #initialization }
 Game class >> validateDiceOfAll: players forThis: board [
-	(players options) do: [ :player | self validateDiceOfOne: player forThis: board. ] "¿¿¿delegar o no todos los metodos de validacion al dado????"
+	players
+		do: [ :player | self validateDiceOfOne: player forThis: board ]
 ]
 
 { #category : #initialization }
@@ -48,12 +50,12 @@ Game >> board [
 
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
-	players next.
+	turnsIterator next.
 ]
 
 { #category : #'player information' }
 Game >> currentPlayer [
-	^players current
+	^turnsIterator current
 ]
 
 { #category : #'player information' }
@@ -81,6 +83,7 @@ Game >> hasWinner [
 Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
 	board := aBoard.
 	players := allThePlayers.
+	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	winner := 0.
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard creationWith: players forThis: board.
@@ -93,17 +96,14 @@ Game >> leaderBoard [
 
 { #category : #playing }
 Game >> play [
-	[self hasWinner]
-		whileFalse: [ 
-			self playTurn.
-			(self hasWinner) ifFalse: [ self chooseNextPlayer. ]
-		]
+	[ self hasWinner ] whileFalse: [ self playTurn ]
 ]
 
 { #category : #'turn managing' }
 Game >> playTurn [
 	self currentPlayer throwDiceOn: board until: roundsForTheGameToBeOver.
 	leaderBoard fillBoardsWith: players forThis: board.
+	self chooseNextPlayer.
 ]
 
 { #category : #accessing }

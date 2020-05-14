@@ -1,3 +1,6 @@
+"
+The Object that stores the information associated to winnersBoard, positionsBoard, roundsMadeBoard and has the duty to fill and update them.
+"
 Class {
 	#name : #LeaderBoard,
 	#superclass : #Object,
@@ -15,6 +18,18 @@ LeaderBoard class >> creationWith: allThePlayers forThis: board [.
 ]
 
 { #category : #update }
+LeaderBoard >> assignRankingPositionAccordingTo: numberOfSlotsPassedByAllThePlayers [
+	| playerAtAGivenPosition meter |
+	meter := 1.
+	numberOfSlotsPassedByAllThePlayers
+		reverseDo: [ :posc | 
+			playerAtAGivenPosition := self findThePlayerWithPosition: posc.
+			self update: winnersBoard at: playerAtAGivenPosition with: meter.
+			meter := meter + 1 
+			]
+]
+
+{ #category : #update }
 LeaderBoard >> fill: theBoardOfWhoIsWinning using: iterator and: totalNumberOfSlotsPassedByAllThePlayers and: numberOfPlayers [
 	| aPlayer |
 	aPlayer := theBoardOfWhoIsWinning keyAtValue: (totalNumberOfSlotsPassedByAllThePlayers at: numberOfPlayers - iterator + 1).
@@ -25,42 +40,30 @@ LeaderBoard >> fill: theBoardOfWhoIsWinning using: iterator and: totalNumberOfSl
 LeaderBoard >> fillBoardsWith: allThePlayers forThis: board [
 	self fillPositionsBoardWith: allThePlayers.
 	self fillRoundsMadeBoardWith: allThePlayers.
-	self fillWinnersBoardForThis: board
+	self fillWinnersBoardWith: allThePlayers forThis: board
 ]
 
 { #category : #update }
 LeaderBoard >> fillPositionsBoardWith: allThePlayers [
-	(allThePlayers options) do: [ :player | self update: positionsBoard at: player with: player currentPosition ]
+	allThePlayers do: [ :player | self update: positionsBoard at: player with: player currentPosition ]
 ]
 
 { #category : #update }
 LeaderBoard >> fillRoundsMadeBoardWith: allThePlayers [
-	(allThePlayers options) do: [ :player | self update: roundsMadeBoard at: player with: player numberOfRoundsMade ]
+	allThePlayers do: [ :player | self update: roundsMadeBoard at: player with: player numberOfRoundsMade ]
 ]
 
 { #category : #update }
-LeaderBoard >> fillTotalNumberOfSlotsPassedByFrom: allThePlayers into: theBoardOfWhoIsWinning forThis: board [
-	allThePlayers
-		do: [ :each | self update: theBoardOfWhoIsWinning at: each with: (roundsMadeBoard at: each) * board].
-	allThePlayers
-		do: [ :each | self update: theBoardOfWhoIsWinning at: each with: (theBoardOfWhoIsWinning at: each) + (positionsBoard at: each)]
+LeaderBoard >> fillWinnersBoardWith: allThePlayers forThis: board [
+	| slotsPassedByAllThePlayersOrdered |
+	self numberOfSlotsPassedBy: allThePlayers onThis: board.
+	slotsPassedByAllThePlayersOrdered := self numberOfSlotsPassedByThePlayersInOrder.
+	self assignRankingPositionAccordingTo: slotsPassedByAllThePlayersOrdered.
 ]
 
 { #category : #update }
-LeaderBoard >> fillWinnersBoardForThis: board [
-	| allThePlayers totalNumberOfSlotsPassedByAllThePlayers numberOfPlayers iterator |
-	allThePlayers := positionsBoard keys.	"the keys of the dictionary boardOfPositions are all the players of the game"
-	self fillTotalNumberOfSlotsPassedByFrom: allThePlayers into: winnersBoard forThis: board.
-	totalNumberOfSlotsPassedByAllThePlayers := winnersBoard values.
-	numberOfPlayers := winnersBoard size.
-	self sortArray: totalNumberOfSlotsPassedByAllThePlayers.
-	iterator := 1.
-	[ iterator <= numberOfPlayers ]
-		whileTrue: [ 
-			self fill: winnersBoard using: iterator and: totalNumberOfSlotsPassedByAllThePlayers and: numberOfPlayers.
-			iterator := iterator + 1 
-		].
-	^ winnersBoard
+LeaderBoard >> findThePlayerWithPosition: aPosition [
+	 ^winnersBoard keyAtValue: aPosition.
 ]
 
 { #category : #initialization }
@@ -71,14 +74,42 @@ LeaderBoard >> initializeWith: allThePlayers forThis: board [.
 	self fillBoardsWith: allThePlayers forThis: board
 ]
 
+{ #category : #update }
+LeaderBoard >> numberOfSlotsPassedBy: allThePlayers onThis: board [
+	allThePlayers
+		do: [ :each | self update: winnersBoard at: each with: (roundsMadeBoard at: each) * board].
+	allThePlayers
+		do: [ :each | self update: winnersBoard at: each with: (winnersBoard at: each) + (positionsBoard at: each)]
+]
+
+{ #category : #update }
+LeaderBoard >> numberOfSlotsPassedByThePlayersInOrder [
+	^(winnersBoard values) sort.
+]
+
+{ #category : #quering }
+LeaderBoard >> positionOf: aPlayer [ 
+	^ positionsBoard at: aPlayer.
+]
+
 { #category : #accessing }
 LeaderBoard >> positionsBoard [
 	^ positionsBoard
 ]
 
+{ #category : #query }
+LeaderBoard >> rankingOf: aPlayer [ 
+	^winnersBoard at: aPlayer.
+]
+
 { #category : #accessing }
 LeaderBoard >> roundsMadeBoard [
 	^ roundsMadeBoard
+]
+
+{ #category : #query }
+LeaderBoard >> roundsMadeBy: aPlayer [ 
+	^roundsMadeBoard at: aPlayer.
 ]
 
 { #category : #sorting }

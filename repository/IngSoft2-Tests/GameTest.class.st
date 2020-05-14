@@ -1,26 +1,13 @@
 Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'game',
+		'juan',
+		'pancho'
+	],
 	#category : #'IngSoft2-Tests'
 }
-
-{ #category : #tests }
-GameTest class >> setUpGameValuesExample1 [
-	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf10 diceOfPancho pancho players xRounds |
-	aBoard := 30.
-	xRounds := 3.
-	dieOf4 := Die of: 4 rolling: #(1 4 2).
-	dieOf6 := Die of: 6 rolling: #(1 5 3).
-	diceOfJuan := dieOf4 + dieOf6.
-	juan := Player playsWith: diceOfJuan.
-	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf10 := Die of: 10 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf10.
-	pancho := Player playsWith: diceOfPancho.
-	players := CircularIterator cyclingOver: (OrderedCollection with: juan with: pancho).
-	game := Game playedBy: players on: aBoard until: xRounds.
-	^ game
-]
 
 { #category : #tests }
 GameTest class >> setUpGameValuesExample2 [
@@ -50,8 +37,7 @@ GameTest class >> setUpGameValuesExample3 [
 	diceOf10 := Die of: 10 rolling: #(10 10 10).
 	diceOfPancho := dieOf8 + diceOf10.
 	pancho := Player playsWith: diceOfPancho.
-	players := CircularIterator
-		cyclingOver: (OrderedCollection with: juan with: pancho).
+	players := OrderedCollection with: juan with: pancho.
 	game := Game playedBy: players on: aBoard until: xRounds.
 	^ game
 ]
@@ -81,54 +67,86 @@ GameTest class >> setUpGameValuesExample4 [
 	renzo := Player playsWith: diceOfRenzo.
 	
 	
-	players := CircularIterator
-		cyclingOver: (OrderedCollection with: juan with: pancho with: pedrito with: renzo).
+	players := OrderedCollection with: juan with: pancho with: pedrito with: renzo.
 	game := Game playedBy: players on: aBoard until: xRounds.
 	^ game
 ]
 
 { #category : #tests }
+GameTest >> assertCurrentNumberOfRoundsMadeOf: aPlayer equals: numberOfRoundsMade [
+	self
+		assert: (game leaderBoard roundsMadeBy: aPlayer)
+		equals: numberOfRoundsMade.
+]
+
+{ #category : #tests }
+GameTest >> assertCurrentPositionOf: player1 equals: finalPosition [
+	self
+		assert: (game leaderBoard positionOf: player1)
+		equals: finalPosition
+]
+
+{ #category : #tests }
+GameTest >> assertRankingOf: aPlayer equals: numberOfRoundsMade [
+	self
+		assert: (game leaderBoard rankingOf: aPlayer)
+		equals: numberOfRoundsMade.
+]
+
+{ #category : #tests }
+GameTest >> setUp [
+	| aBoard dieOf4 dieOf6 diceOfJuan dieOf8 diceOf10 diceOfPancho players xRounds |
+	aBoard := 30.
+	xRounds := 3.
+	dieOf4 := Die of: 4 rolling: #(1 4 2).
+	dieOf6 := Die of: 6 rolling: #(1 5 3).
+	diceOfJuan := dieOf4 + dieOf6.
+	juan := Player playsWith: diceOfJuan.
+	dieOf8 := Die of: 8 rolling: #(3 7 2).
+	diceOf10 := Die of: 10 rolling: #(1 2 3).
+	diceOfPancho := dieOf8 + diceOf10.
+	pancho := Player playsWith: diceOfPancho.
+	players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: xRounds.
+]
+
+{ #category : #tests }
 GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
-	| game player1 player2 |
-	game := GameTest setUpGameValuesExample1.
-	player1 := game currentPlayer.
-	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 0.
-	game chooseNextPlayer.
-	player2 := game currentPlayer.
-	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 0.
-	game chooseNextPlayer.
+	| juancito pepe |
+	juancito := game currentPlayer.
+	self assertCurrentPositionOf: juancito equals: 0.
 	game playTurn.
-	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 2.
-	game chooseNextPlayer.
-	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 0.
+	pepe := game currentPlayer.
+	self assertCurrentPositionOf: pepe equals: 0.
 	game playTurn.
-	self assert: ((game leaderBoard) positionsBoard at: player2) equals: 4.
-	game chooseNextPlayer.
-	self assert: ((game leaderBoard) positionsBoard at: player1) equals: 2.
+	self assertCurrentPositionOf: pepe equals: 4.
+	self assertCurrentPositionOf: juancito equals: 2.
+	game playTurn.
+	self assertCurrentPositionOf: juancito equals: 11.
+	self assertCurrentPositionOf: pepe equals: 4.
+	
 ]
 
 { #category : #tests }
 GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
-	| game player1 player2 |
-	game := GameTest setUpGameValuesExample3.
+	| game3 player1 player2 |
+	game3 := GameTest setUpGameValuesExample3.
 	player1 := game currentPlayer.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
-	game chooseNextPlayer.
+	self assertCurrentNumberOfRoundsMadeOf: player1 equals: 0.
+	game playTurn.
 	player2 := game currentPlayer.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
-	game chooseNextPlayer.
+	self assertCurrentNumberOfRoundsMadeOf: player2 equals: 0.
 	game playTurn.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
-	game chooseNextPlayer.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
 	game playTurn.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 0.
-	game chooseNextPlayer.
 	game playTurn.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player1) equals: 0.
-	game chooseNextPlayer.
 	game playTurn.
-	self assert: ((game leaderBoard) roundsMadeBoard at: player2) equals: 1.
+	game playTurn.
+	game playTurn.
+	game playTurn.
+	game playTurn.
+	game playTurn.
+	self assertCurrentNumberOfRoundsMadeOf: player1 equals: 0.
+	self assertCurrentNumberOfRoundsMadeOf: player2 equals: 1.
 ]
 
 { #category : #tests }
@@ -147,26 +165,21 @@ GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
 
 { #category : #tests }
 GameTest >> testGameSelectPlayersToMove [
-	| game |
-	game := GameTest setUpGameValuesExample1.
+
+	| juancito pepe |
+	juancito := game currentPlayer.
 	game playTurn.
-	self assert: game currentPlayerPosition equals: 2.
-	game chooseNextPlayer.
+	pepe := game currentPlayer.
 	game playTurn.
-	self assert: game currentPlayerPosition equals: 4
+	self assertCurrentPositionOf: juancito equals: 2.
+	self assertCurrentPositionOf: pepe equals: 4.
 ]
 
 { #category : #tests }
 GameTest >> testOnePlayerWinsAndTheOtherLoses [
-
-	| game |
-	self shouldnt: [game := GameTest setUpGameValuesExample1] raise: Error.
 	game play.
-	self assert: game currentPlayerIsWinner.
-	self assert: game currentPlayerNumberOfRoundsMade equals: 3.
-	game chooseNextPlayer.
-	self assert: game currentPlayerIsWinner equals: false.
-	self assert: (game currentPlayerNumberOfRoundsMade) ~= 3.
+	self assertRankingOf: pancho equals: 1.
+	self assertRankingOf: juan equals: 2.
 ]
 
 { #category : #tests }
