@@ -1,3 +1,6 @@
+"
+A block for a Player.
+"
 Class {
 	#name : #LeaderBoardBlock,
 	#superclass : #Object,
@@ -10,21 +13,26 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
-LeaderBoardBlock class >> creationWithA: aPlayer [
+{ #category : #'instance creation' }
+LeaderBoardBlock class >> forA: aPlayer [
 	^(self new) initializeWithA: aPlayer.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #comparing }
 LeaderBoardBlock >> <= aLeaderBoardBlock [
 	^ slotsPassedByThePlayer <= aLeaderBoardBlock slotsPassedByThePlayer
 ]
 
-{ #category : #'as yet unclassified' }
-LeaderBoardBlock >> changePositionAndRoundsMadeOf: aPlayer forThis: board [
+{ #category : #update }
+LeaderBoardBlock >> calculateTotalNumberOfSlotsAdvancedIn: board [
+	slotsPassedByThePlayer := playerRoundsMade * board + playerPosition
+]
+
+{ #category : #update }
+LeaderBoardBlock >> changePositionAndRoundsMadeBy: aPlayer forThis: board [
 	playerPosition := aPlayer currentPosition.
 	playerRoundsMade := aPlayer numberOfRoundsMade.
-	slotsPassedByThePlayer := playerRoundsMade * board + playerPosition
+	self calculateTotalNumberOfSlotsAdvancedIn: board
 ]
 
 { #category : #initialization }
@@ -35,7 +43,7 @@ LeaderBoardBlock >> initializeWithA: aPlayer [
 	slotsPassedByThePlayer := 0.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'player information' }
 LeaderBoardBlock >> playerId [
 	^ player id
 ]

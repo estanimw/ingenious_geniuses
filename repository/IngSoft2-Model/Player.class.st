@@ -14,12 +14,12 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialize }
+{ #category : #'instance creation' }
 Player class >> playsWith: aDice [
 	^ (self new) initializeWith: 0 and: aDice and: 0.
 ]
 
-{ #category : #playing }
+{ #category : #updating }
 Player >> changeNumberOfRoundsMadeAndPositionIn: slotsQuantity on: aBoard [
 	currentPosition := currentPosition + slotsQuantity.
 	(currentPosition > aBoard) ifTrue: [ 

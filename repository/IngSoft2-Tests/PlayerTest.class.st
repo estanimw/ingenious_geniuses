@@ -1,40 +1,56 @@
 Class {
 	#name : #PlayerTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'aBoard',
+		'aDice'
+	],
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
-PlayerTest >> testPlayerChangesPositionUsingTwoDieAndWins [
-	| aPlayer aDice aDieOf4 aDieOf5 aBoard players game xRounds|
+{ #category : #running }
+PlayerTest >> setUp [
+	| aDieOf4 aDieOf5 |
+	super setUp.
+	
 	aBoard := 15.
-	xRounds := 1.
 	aDieOf4 := Die of: 4 rolling: #(1 4 2).
 	aDieOf5 := Die of: 5 rolling: #(1 5 3).
 	aDice := aDieOf4 + aDieOf5.
-	aPlayer := Player playsWith: aDice.
-	players := OrderedCollection with: aPlayer.
-	game := Game playedBy: players on: aBoard until: xRounds.
+
+]
+
+{ #category : #tests }
+PlayerTest >> testPlayerChangesPositionUsingADiceAndWins [
+	| pedro players game numberOfRoundsToBePlayed |
+	
+	numberOfRoundsToBePlayed := 1.
+	pedro := Player playsWith: aDice.
+	players := OrderedCollection with: pedro.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	
 	game playTurn.
-	self assert: aPlayer currentPosition equals: 2.
+	self assert: pedro currentPosition equals: 2.
+	
 	game playTurn.
-	self assert: aPlayer currentPosition equals: 11.
+	self assert: pedro currentPosition equals: 11.
+	
 	game playTurn.
-	self assert: (aPlayer numberOfRoundsMade) equals: 1.
+	self assert: pedro isWinner.
 ]
 
 { #category : #tests }
 PlayerTest >> testPlayerHasInvalidDie [
-	| aPlayer aDice aDieOf4 aDieOf6 aBoard players game xRounds|
-	aBoard := 15.
-	xRounds := 3.
-	aDieOf4 := Die of: 4 rolling: #(1 4 2).
+	| francisco aDieOf6 players game numberOfRoundsToBePlayed|
+	numberOfRoundsToBePlayed := 3.
+
 	aDieOf6 := Die of: 6 rolling: #(1 5 3).
-	aDice := aDieOf4 + aDieOf6.
-	aPlayer := Player playsWith: aDice.
-	players := OrderedCollection with: aPlayer.
+	aDice := aDieOf6 + aDieOf6.
+	francisco := Player playsWith: aDice.
+	players := OrderedCollection with: francisco.
+	
 	self
-		should: [ game := Game playedBy: players on: aBoard until: xRounds ]
+		should: [ game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed ]
 		raise: ThePlayerHasAnInvalidDie
 		withMessageText: 'The die are invalid'
 ]
@@ -42,10 +58,7 @@ PlayerTest >> testPlayerHasInvalidDie [
 { #category : #tests }
 PlayerTest >> testPlayerInitialization [
 
-	| aPlayer aDice aDieOf4 aDieOf6 |
-	aDieOf4 := Die of: 4.
-	aDieOf6 := Die of: 6.
-	aDice := aDieOf4 + aDieOf6.
-	aPlayer := Player playsWith: aDice.
-	self assert: (aPlayer currentPosition) equals: 0.
+	| martin |
+	martin := Player playsWith: aDice.
+	self assert: (martin currentPosition) equals: 0.
 ]

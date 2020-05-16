@@ -2,60 +2,109 @@ Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'game',
 		'juan',
-		'pancho'
+		'pancho',
+		'aBoard',
+		'numberOfRoundsToBePlayed',
+		'dieOf4',
+		'dieOf6',
+		'dieOf8',
+		'diceOf10',
+		'diceOfJuan',
+		'diceOfPancho'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
-GameTest class >> setUpGameValuesExample2 [
-	| dieOf8 dieOf6 dieOf4 juan pancho aBoard diceOfJuan diceOf10 diceOfPancho |
-	aBoard := 30.
-	dieOf4 := Die of: 4 rolling: #(1 4 2).
-	dieOf6 := Die of: 6 rolling: #(1 5 3).
-	diceOfJuan := dieOf4 + dieOf6.
-	juan := Player playsWith: diceOfJuan.
-	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf10 := Die of: 10 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf10.
-	pancho := Player playsWith: diceOfPancho.
-	^ OrderedCollection with: aBoard with: juan with: pancho.
+{ #category : #assertions }
+GameTest >> assertCurrentNumberOfRoundsMadeBy: aPlayer in: aGame equals: numberOfRoundsMade [
+	self
+		assert: (aGame numberOfRoundsMadeBy: aPlayer)
+		equals: numberOfRoundsMade.
 ]
 
-{ #category : #tests }
-GameTest class >> setUpGameValuesExample3 [
-	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf10 diceOfPancho pancho players xRounds |
-	aBoard := 30.
-	xRounds := 3.
-	dieOf4 := Die of: 4 rolling: #(4 4 4).
-	dieOf6 := Die of: 6 rolling: #(6 6 5).
-	diceOfJuan := dieOf4 + dieOf6.
-	juan := Player playsWith: diceOfJuan.
-	dieOf8 := Die of: 8 rolling: #(8 8 8).
-	diceOf10 := Die of: 10 rolling: #(10 10 10).
-	diceOfPancho := dieOf8 + diceOf10.
-	pancho := Player playsWith: diceOfPancho.
-	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: xRounds.
-	^ game
+{ #category : #assertions }
+GameTest >> assertCurrentPositionOf: aPlayer in: aGame equals: finalPosition [
+	self
+		assert: (aGame positionOf: aPlayer)
+		equals: finalPosition
 ]
 
-{ #category : #tests }
-GameTest class >> setUpGameValuesExample4 [
-	| game aBoard dieOf4 dieOf6 diceOfJuan juan dieOf8 diceOf10 diceOfPancho pancho players xRounds dieOf5 dieOf7 diceOfPedrito pedrito dieOf9 diceOfRenzo renzo |
-	aBoard := 30.
-	xRounds := 3.
-	dieOf4 := Die of: 4 rolling: #(1 4 2).
-	dieOf6 := Die of: 6 rolling: #(1 5 3).
-	diceOfJuan := dieOf4 + dieOf6.
-	juan := Player playsWith: diceOfJuan.
+{ #category : #assertions }
+GameTest >> assertRankingOf: aPlayer in: aGame  equals: aRankPosition [
+	self
+		assert: (aGame rankingOf: aPlayer)
+		equals: aRankPosition.
+]
+
+{ #category : #utilities }
+GameTest >> play: aNumber turnsIn: game [
+	1 to: aNumber do: [ :each | game playTurn ]
+]
+
+{ #category : #running }
+GameTest >> setUp [
+	super setUp.
 	
+	aBoard := 30.
+	numberOfRoundsToBePlayed := 3.
+	
+	dieOf4 := Die of: 4 rolling: #(1 4 2).
+	dieOf6 := Die of: 6 rolling: #(1 5 3).
 	dieOf8 := Die of: 8 rolling: #(3 7 2).
 	diceOf10 := Die of: 10 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf10.
+	
+	diceOfJuan := dieOf4 + dieOf6.
+   diceOfPancho := dieOf8 + diceOf10.
+	
+	juan := Player playsWith: diceOfJuan.
 	pancho := Player playsWith: diceOfPancho.
+	
+	"players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed."
+]
+
+{ #category : #tests }
+GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	
+	self assertCurrentPositionOf: juan in: game equals: 0.
+	self assertCurrentPositionOf: pancho in: game equals: 0.
+	
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 2.
+	self assertCurrentPositionOf: pancho in: game equals: 0.
+	
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 2.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+	
+	
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 11.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+]
+
+{ #category : #tests }
+GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
+	
+	self play: 10 turnsIn: game.
+	
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1
+]
+
+{ #category : #tests }
+GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
+	| thePlayers aGame dieOf5 dieOf7 diceOfPedrito pedrito dieOf9 diceOfRenzo renzo |
 	
 	dieOf5 := Die of: 5 rolling: #(5 4 4).
 	dieOf7 := Die of: 7 rolling: #(6 5 3).
@@ -66,133 +115,42 @@ GameTest class >> setUpGameValuesExample4 [
 	diceOfRenzo := dieOf9 + dieOf9.
 	renzo := Player playsWith: diceOfRenzo.
 	
+	thePlayers := OrderedCollection with: juan with: pancho with: pedrito with: renzo.
+	aGame := Game playedBy: thePlayers on: aBoard until: numberOfRoundsToBePlayed.
 	
-	players := OrderedCollection with: juan with: pancho with: pedrito with: renzo.
-	game := Game playedBy: players on: aBoard until: xRounds.
-	^ game
+	aGame playTurn.
+	self assertRankingOf: juan in: aGame equals: 1.
+	
+	aGame playTurn.
+	self assertRankingOf: pancho in: aGame equals: 1.
+	self assertRankingOf: juan in: aGame equals: 2.
+	
+	self play: 3 turnsIn: aGame.
+	self assertRankingOf: renzo in: aGame equals: 1.
+	self assertRankingOf: juan in: aGame equals: 2.
+	self assertRankingOf: pedrito in: aGame equals: 3.
+	self assertRankingOf: pancho in: aGame equals: 4.
 ]
 
 { #category : #tests }
-GameTest >> assertCurrentNumberOfRoundsMadeOf: aPlayer equals: numberOfRoundsMade [
-	self
-		assert: (game leaderBoard roundsMadeBy: aPlayer)
-		equals: numberOfRoundsMade.
-]
-
-{ #category : #tests }
-GameTest >> assertCurrentPositionOf: player1 equals: finalPosition [
-	self
-		assert: (game leaderBoard positionOf: player1)
-		equals: finalPosition
-]
-
-{ #category : #tests }
-GameTest >> assertRankingOf: aPlayer equals: numberOfRoundsMade [
-	self
-		assert: (game leaderBoard rankingOf: aPlayer)
-		equals: numberOfRoundsMade.
-]
-
-{ #category : #tests }
-GameTest >> setUp [
-	| aBoard dieOf4 dieOf6 diceOfJuan dieOf8 diceOf10 diceOfPancho players xRounds |
-	aBoard := 30.
-	xRounds := 3.
-	dieOf4 := Die of: 4 rolling: #(1 4 2).
-	dieOf6 := Die of: 6 rolling: #(1 5 3).
-	diceOfJuan := dieOf4 + dieOf6.
-	juan := Player playsWith: diceOfJuan.
-	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf10 := Die of: 10 rolling: #(1 2 3).
-	diceOfPancho := dieOf8 + diceOf10.
-	pancho := Player playsWith: diceOfPancho.
+GameTest >> testGameHasNoWinnerYet [
+	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: xRounds.
-]
-
-{ #category : #tests }
-GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
-	| juancito pepe |
-	juancito := game currentPlayer.
-	"self assertCurrentPositionOf: juancito equals: 0."
-	game playTurn.
-	pepe := game currentPlayer.
-	self assertCurrentPositionOf: pepe equals: 0.
-	game playTurn.
-	self assertCurrentPositionOf: pepe equals: 4.
-	self assertCurrentPositionOf: juancito equals: 2.
-	game playTurn.
-	self assertCurrentPositionOf: juancito equals: 11.
-	self assertCurrentPositionOf: pepe equals: 4.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
 	
-]
-
-{ #category : #tests }
-GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
-	| game3 player1 player2 |
-	game3 := GameTest setUpGameValuesExample3.
-	player1 := game currentPlayer.
-	self assertCurrentNumberOfRoundsMadeOf: player1 equals: 0.
-	game playTurn.
-	player2 := game currentPlayer.
-	self assertCurrentNumberOfRoundsMadeOf: player2 equals: 0.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	game playTurn.
-	self assertCurrentNumberOfRoundsMadeOf: player1 equals: 0.
-	self assertCurrentNumberOfRoundsMadeOf: player2 equals: 1.
-]
-
-{ #category : #tests }
-GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
-	game := GameTest setUpGameValuesExample4.
-	"game play."
-	game play.
-"	self assert: game currentPlayerIsWinner.
-	self assert: game currentPlayerNumberOfRoundsMade equals: 3.
-	self assert: ((game leaderBoard) winnersBoard  at: (game currentPlayer)) equals: 1.
-	game chooseNextPlayer.
-	self assert: game currentPlayerIsWinner equals: false.
-	self assert: (game currentPlayerNumberOfRoundsMade ~= 3).
-	self assert: ((game leaderBoard) winnersBoard  at: (game currentPlayer)) ~= 1."
-]
-
-{ #category : #tests }
-GameTest >> testGameSelectPlayersToMove [
-
-	| juancito pepe |
-	juancito := game currentPlayer.
-	game playTurn.
-	pepe := game currentPlayer.
-	game playTurn.
-	self assertCurrentPositionOf: juancito equals: 2.
-	self assertCurrentPositionOf: pepe equals: 4.
-]
-
-{ #category : #tests }
-GameTest >> testOnePlayerWinsAndTheOtherLoses [
-	game play.
-	self assertRankingOf: pancho equals: 1.
-	self assertRankingOf: juan equals: 2.
-]
-
-{ #category : #tests }
-GameTest >> testStartGame [
-	| game aBoard players aux xRounds |
-	aux := GameTest setUpGameValuesExample2.
-	aBoard := aux removeFirst.
-	xRounds := 3.
-	players := CircularIterator cyclingOver: aux.
-	game := Game playedBy: players on: aBoard until: xRounds.
-	self assert: game players equals: players.
 	self
 		should: [ game winner ]
 		raise: TheresNoWinnerYet
 		withMessageText: 'No winner yet.'
+]
+
+{ #category : #tests }
+GameTest >> testOnePlayerWinsAndTheOtherLoses [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	
+	game play.
+	self assertRankingOf: pancho in: game equals: 1.
+	self assertRankingOf: juan in: game equals: 2
 ]
