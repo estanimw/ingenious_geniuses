@@ -56,7 +56,7 @@ Player >> initializeWith: aPosition and: aDice and: roundsMade [
 	dice := aDice.
 	numberOfRoundsMade := roundsMade.
 	isWinner := false.
-	id := (((Random new) next) * 100) asInteger.
+	id := (Time now) nanoSecond.
 ]
 
 { #category : #accessing }
