@@ -5,9 +5,7 @@ Class {
 	#name : #LeaderBoard,
 	#superclass : #Object,
 	#instVars : [
-		'winnersBoard',
-		'positionsBoard',
-		'roundsMadeBoard'
+		'blocksOfPlayers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -17,113 +15,51 @@ LeaderBoard class >> creationWith: allThePlayers forThis: board [.
 	^(self new) initializeWith: allThePlayers forThis: board.
 ]
 
-{ #category : #update }
-LeaderBoard >> assignRankingPositionAccordingTo: numberOfSlotsPassedByAllThePlayers [
-	| playerAtAGivenPosition meter |
-	meter := 1.
-	numberOfSlotsPassedByAllThePlayers
-		reverseDo: [ :posc | 
-			playerAtAGivenPosition := self findThePlayerWithPosition: posc.
-			self update: winnersBoard at: playerAtAGivenPosition with: meter.
-			meter := meter + 1 
-			]
+{ #category : #'as yet unclassified' }
+LeaderBoard >> createBlockForA: player [
+	| leaderBoardBlock |
+	leaderBoardBlock := LeaderBoardBlock creationWithA: player.
+	blocksOfPlayers add: leaderBoardBlock.
 ]
 
-{ #category : #update }
-LeaderBoard >> fill: theBoardOfWhoIsWinning using: iterator and: totalNumberOfSlotsPassedByAllThePlayers and: numberOfPlayers [
-	| aPlayer |
-	aPlayer := theBoardOfWhoIsWinning keyAtValue: (totalNumberOfSlotsPassedByAllThePlayers at: numberOfPlayers - iterator + 1).
-	self update: theBoardOfWhoIsWinning at: aPlayer with: iterator.
-]
-
-{ #category : #update }
-LeaderBoard >> fillBoardsWith: allThePlayers forThis: board [
-	self fillPositionsBoardWith: allThePlayers.
-	self fillRoundsMadeBoardWith: allThePlayers.
-	self fillWinnersBoardWith: allThePlayers forThis: board
-]
-
-{ #category : #update }
-LeaderBoard >> fillPositionsBoardWith: allThePlayers [
-	allThePlayers do: [ :player | self update: positionsBoard at: player with: player currentPosition ]
-]
-
-{ #category : #update }
-LeaderBoard >> fillRoundsMadeBoardWith: allThePlayers [
-	allThePlayers do: [ :player | self update: roundsMadeBoard at: player with: player numberOfRoundsMade ]
-]
-
-{ #category : #update }
-LeaderBoard >> fillWinnersBoardWith: allThePlayers forThis: board [
-	| slotsPassedByAllThePlayersOrdered |
-	self numberOfSlotsPassedBy: allThePlayers onThis: board.
-	slotsPassedByAllThePlayersOrdered := self numberOfSlotsPassedByThePlayersInOrder.
-	self assignRankingPositionAccordingTo: slotsPassedByAllThePlayersOrdered.
-]
-
-{ #category : #update }
-LeaderBoard >> findThePlayerWithPosition: aPosition [
-	 ^winnersBoard keyAtValue: aPosition.
+{ #category : #'as yet unclassified' }
+LeaderBoard >> fillBlockOfEachPlayerFor: allThePlayers [
+	allThePlayers do: [ :player | self createBlockForA: player ]
 ]
 
 { #category : #initialization }
 LeaderBoard >> initializeWith: allThePlayers forThis: board [.
-	winnersBoard := Dictionary new.
-	positionsBoard := Dictionary new.
-	roundsMadeBoard := Dictionary new.
-	self fillBoardsWith: allThePlayers forThis: board
-]
-
-{ #category : #update }
-LeaderBoard >> numberOfSlotsPassedBy: allThePlayers onThis: board [
-	allThePlayers
-		do: [ :each | self update: winnersBoard at: each with: (roundsMadeBoard at: each) * board].
-	allThePlayers
-		do: [ :each | self update: winnersBoard at: each with: (winnersBoard at: each) + (positionsBoard at: each)]
-]
-
-{ #category : #update }
-LeaderBoard >> numberOfSlotsPassedByThePlayersInOrder [
-	^(winnersBoard values) sort.
+	blocksOfPlayers := OrderedCollection new.
+	self fillBlockOfEachPlayerFor: allThePlayers.
+	
 ]
 
 { #category : #quering }
 LeaderBoard >> positionOf: aPlayer [ 
-	^ positionsBoard at: aPlayer.
-]
-
-{ #category : #accessing }
-LeaderBoard >> positionsBoard [
-	^ positionsBoard
+	blocksOfPlayers do: [ :block | (block playerId == aPlayer id) ifTrue: [ ^block playerPosition ] ]
 ]
 
 { #category : #query }
 LeaderBoard >> rankingOf: aPlayer [ 
-	^winnersBoard at: aPlayer.
-]
-
-{ #category : #accessing }
-LeaderBoard >> roundsMadeBoard [
-	^ roundsMadeBoard
+	| positionInTheRanking |
+	positionInTheRanking := 1.
+	blocksOfPlayers do: [ :block | (block playerId == aPlayer id) ifTrue: [ ^positionInTheRanking ]. positionInTheRanking := positionInTheRanking + 1 ]
 ]
 
 { #category : #query }
 LeaderBoard >> roundsMadeBy: aPlayer [ 
-	^roundsMadeBoard at: aPlayer.
+	blocksOfPlayers do: [ :block | (block playerId == aPlayer id) ifTrue: [ ^block playerRoundsMade ] ]
 ]
 
-{ #category : #sorting }
-LeaderBoard >> sortArray: anArray [
-	anArray sort.
-	
+{ #category : #'as yet unclassified' }
+LeaderBoard >> updateBlockOfThis: player forThis: board [
+	blocksOfPlayers do: [ :block | (block playerId == player id) ifTrue: [ 
+			block changePositionAndRoundsMadeOf: player forThis: board.
+		]
+	].
 ]
 
-{ #category : #update }
-LeaderBoard >> update: aBoard at: anIndex with: aValue [
-    aBoard at: anIndex put: aValue.
-]
-
-{ #category : #accessing }
-LeaderBoard >> winnersBoard [
-	^ winnersBoard
+{ #category : #'as yet unclassified' }
+LeaderBoard >> updateOrderOfBlocks [
+	blocksOfPlayers := (blocksOfPlayers sort) reversed.
 ]

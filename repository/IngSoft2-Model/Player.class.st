@@ -8,7 +8,8 @@ Class {
 		'dice',
 		'currentPosition',
 		'isWinner',
-		'numberOfRoundsMade'
+		'numberOfRoundsMade',
+		'id'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -44,12 +45,18 @@ Player >> hasWonWith: aNumberOfRounds [
 	].
 ]
 
+{ #category : #accessing }
+Player >> id [
+	^ id
+]
+
 { #category : #initialization }
 Player >> initializeWith: aPosition and: aDice and: roundsMade [
 	currentPosition := aPosition.
 	dice := aDice.
 	numberOfRoundsMade := roundsMade.
 	isWinner := false.
+	id := (((Random new) next) * 100) asInteger.
 ]
 
 { #category : #accessing }

@@ -101,9 +101,14 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	self currentPlayer throwDiceOn: board until: roundsForTheGameToBeOver.
-	leaderBoard fillBoardsWith: players forThis: board.
-	self chooseNextPlayer.
+	| player |
+	player := self currentPlayer.
+	player throwDiceOn: board until: roundsForTheGameToBeOver.
+	leaderBoard updateBlockOfThis: player forThis: board.
+	leaderBoard updateOrderOfBlocks.
+	(self hasWinner) ifFalse:[
+		self chooseNextPlayer.
+	]
 ]
 
 { #category : #accessing }
