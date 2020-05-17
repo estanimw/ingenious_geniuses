@@ -5,6 +5,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SpeedUp >> aplicarEfectoCasilleroEn: alguien para: tablero por: rondas [
-	alguien do: [ :player | player move: 4  on: tablero until: rondas ].
+SpeedUp >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
+	aPlayer move: 4 on: board until: aNumberOfRounds.
 ]

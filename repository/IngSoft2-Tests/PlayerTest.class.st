@@ -13,7 +13,7 @@ PlayerTest >> setUp [
 	| aDieOf4 aDieOf5 |
 	super setUp.
 	
-	aBoard := 15.
+	aBoard := Board forTestingOfA: 15 withEffect: NoEffect.
 	aDieOf4 := Die of: 4 rolling: #(1 4 2).
 	aDieOf5 := Die of: 5 rolling: #(1 5 3).
 	aDice := aDieOf4 + aDieOf5.

@@ -8,6 +8,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-BoardSlot >> aplicarEfectoCasilleroEn: alguien para: tablero por: rondas [
+BoardSlot >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
 	^self subclassResponsibility
 ]

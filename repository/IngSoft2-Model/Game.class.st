@@ -38,7 +38,7 @@ Game class >> validateDiceOfOne: player forThis: board [
 Game class >> validateOne: die OfAPlayerForThis: board [
 	| sidesOfTheDie condition |
 	sidesOfTheDie := die sides.
-	condition := sidesOfTheDie between: 4 and: (board * (1/3)).
+	condition := sidesOfTheDie between: 4 and: ((board numberOfSlots) * (1/3)).
 	(condition)
 		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ] 
 ]
@@ -46,9 +46,8 @@ Game class >> validateOne: die OfAPlayerForThis: board [
 { #category : #'as yet unclassified' }
 Game >> aplicarEfectoCasilleroEnPoscDe: aPlayer [ 
 	| casillero |
-	"casillero := (board slotsList) at: (aPlayer currentPosition)."
-	board aplicarEfectoCasilleroEn: aPlayer.
-	"casillero movePlayer: aPlayer"
+	casillero := (board slotsList) at: (aPlayer currentPosition).
+	casillero applyEffectOfSlotOn: aPlayer from: players forThe: board for: roundsForTheGameToBeOver.
 ]
 
 { #category : #'turn managing' }
@@ -73,8 +72,8 @@ Game >> hasWinner [
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: numberOfSlots until: aNumberOfRounds [
-	board := Board ofA: numberOfSlots.
+Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
+	board := aBoard.
 	players := allThePlayers.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	winner := 0.
@@ -98,8 +97,7 @@ Game >> playTurn [
 	player := self currentPlayer.
 	player throwDiceOn: board until: roundsForTheGameToBeOver.
 	self aplicarEfectoCasilleroEnPoscDe: player.
-	
-	self updateBoardsChangesFor: player.
+	self updateBoardsOfAllPlayers.
 	
 	self hasWinner
 		ifFalse: [ self chooseNextPlayer ]
@@ -119,6 +117,11 @@ Game >> rankingOf: aPlayer [
 Game >> updateBoardsChangesFor: player [
 	leaderBoard updateBlockOfThis: player forThis: board numberOfSlots.
 	leaderBoard updateOrderOfBlocks
+]
+
+{ #category : #'turn managing' }
+Game >> updateBoardsOfAllPlayers [
+	players do: [ :aPlayer | self updateBoardsChangesFor: aPlayer ]
 ]
 
 { #category : #accessing }

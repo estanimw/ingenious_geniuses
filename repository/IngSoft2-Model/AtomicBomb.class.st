@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-AtomicBomb >> aplicarEfectoCasilleroEn: alguien para: tablero por: rondas [
+AtomicBomb >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
 	| posicionActual |
-	alguien do: [ :player | posicionActual := player currentPosition. player move: (posicionActual*(-1)) on: tablero until: rondas ].
+	allThePlayers do: [ :player | posicionActual := player currentPosition. player move: (posicionActual*(-1)) on: board until: aNumberOfRounds ].
 ]

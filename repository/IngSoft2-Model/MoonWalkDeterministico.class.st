@@ -1,13 +1,13 @@
 Class {
-	#name : #MoonWalk,
+	#name : #MoonWalkDeterministico,
 	#superclass : #BoardSlot,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'as yet unclassified' }
-MoonWalk >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
+MoonWalkDeterministico >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
 	| n allButThePlayer |
-	n := (((Random new) next)*10) asInteger.
+	n := 1.
 	
 	allButThePlayer := allThePlayers copy.
 	allButThePlayer remove: aPlayer.
