@@ -154,3 +154,14 @@ GameTest >> testOnePlayerWinsAndTheOtherLoses [
 	self assertRankingOf: pancho in: game equals: 1.
 	self assertRankingOf: juan in: game equals: 2
 ]
+
+{ #category : #tests }
+GameTest >> testXXXXXXXXXXXXX [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	
+	game play.
+	self assertRankingOf: pancho in: game equals: 1.
+	self assertRankingOf: juan in: game equals: 2
+]

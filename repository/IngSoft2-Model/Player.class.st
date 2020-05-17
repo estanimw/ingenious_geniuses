@@ -22,10 +22,12 @@ Player class >> playsWith: aDice [
 { #category : #updating }
 Player >> changeNumberOfRoundsMadeAndPositionIn: slotsQuantity on: aBoard [
 	currentPosition := currentPosition + slotsQuantity.
-	(currentPosition > aBoard) ifTrue: [ 
-		currentPosition := (currentPosition - aBoard).
-		numberOfRoundsMade := numberOfRoundsMade + 1.
-	]
+	currentPosition > aBoard numberOfSlots
+		ifTrue: [ currentPosition := currentPosition - aBoard numberOfSlots.
+			numberOfRoundsMade := numberOfRoundsMade + 1 ].
+	currentPosition < 0
+		ifTrue: [ currentPosition := currentPosition + aBoard numberOfSlots + 1.
+			numberOfRoundsMade := numberOfRoundsMade - 1 ]
 ]
 
 { #category : #accessing }

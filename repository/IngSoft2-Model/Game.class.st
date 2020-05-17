@@ -5,12 +5,12 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board',
 		'players',
 		'winner',
 		'roundsForTheGameToBeOver',
 		'leaderBoard',
-		'turnsIterator'
+		'turnsIterator',
+		'board'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -43,6 +43,14 @@ Game class >> validateOne: die OfAPlayerForThis: board [
 		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ] 
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> aplicarEfectoCasilleroEnPoscDe: aPlayer [ 
+	| casillero |
+	"casillero := (board slotsList) at: (aPlayer currentPosition)."
+	board aplicarEfectoCasilleroEn: aPlayer.
+	"casillero movePlayer: aPlayer"
+]
+
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
 	turnsIterator next.
@@ -65,13 +73,13 @@ Game >> hasWinner [
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
-	board := aBoard.
+Game >> initializeWith: allThePlayers and: numberOfSlots until: aNumberOfRounds [
+	board := Board ofA: numberOfSlots.
 	players := allThePlayers.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	winner := 0.
 	roundsForTheGameToBeOver := aNumberOfRounds.
-	leaderBoard := LeaderBoard with: players forThis: board.
+	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots.
 ]
 
 { #category : #'player information' }
@@ -89,6 +97,8 @@ Game >> playTurn [
 	| player |
 	player := self currentPlayer.
 	player throwDiceOn: board until: roundsForTheGameToBeOver.
+	self aplicarEfectoCasilleroEnPoscDe: player.
+	
 	self updateBoardsChangesFor: player.
 	
 	self hasWinner
@@ -107,7 +117,7 @@ Game >> rankingOf: aPlayer [
 
 { #category : #updating }
 Game >> updateBoardsChangesFor: player [
-	leaderBoard updateBlockOfThis: player forThis: board.
+	leaderBoard updateBlockOfThis: player forThis: board numberOfSlots.
 	leaderBoard updateOrderOfBlocks
 ]
 
