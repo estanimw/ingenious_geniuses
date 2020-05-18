@@ -11,8 +11,8 @@ Class {
 }
 
 { #category : #'instance creation' }
-LeaderBoard class >> with: allThePlayers forThis: board [.
-	^(self new) initializeWith: allThePlayers forThis: board.
+LeaderBoard class >> with: allThePlayers forThis: board [
+	^ self new initializeWith: allThePlayers forThis: board
 ]
 
 { #category : #query }

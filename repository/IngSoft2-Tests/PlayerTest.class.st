@@ -13,7 +13,7 @@ PlayerTest >> setUp [
 	| aDieOf4 aDieOf5 |
 	super setUp.
 	
-	aBoard := Board forTestingOfA: 15 withEffect: NoEffect.
+	aBoard := Board of: 15.
 	aDieOf4 := Die of: 4 rolling: #(1 4 2).
 	aDieOf5 := Die of: 5 rolling: #(1 5 3).
 	aDice := aDieOf4 + aDieOf5.
@@ -27,7 +27,8 @@ PlayerTest >> testPlayerChangesPositionUsingADiceAndWins [
 	numberOfRoundsToBePlayed := 1.
 	pedro := Player playsWith: aDice.
 	players := OrderedCollection with: pedro.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	aBoard := Board of: 15 with: NoEffect.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	game playTurn.
 	self assert: pedro currentPosition equals: 2.
@@ -50,7 +51,7 @@ PlayerTest >> testPlayerHasInvalidDie [
 	players := OrderedCollection with: francisco.
 	
 	self
-		should: [ game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed ]
+		should: [ game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed ]
 		raise: ThePlayerHasAnInvalidDie
 		withMessageText: 'The die are invalid'
 ]

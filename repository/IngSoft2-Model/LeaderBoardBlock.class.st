@@ -15,7 +15,7 @@ Class {
 
 { #category : #'instance creation' }
 LeaderBoardBlock class >> forA: aPlayer [
-	^(self new) initializeWithA: aPlayer.
+	^ self new initializeWithA: aPlayer
 ]
 
 { #category : #comparing }

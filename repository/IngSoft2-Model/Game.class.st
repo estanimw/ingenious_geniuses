@@ -16,7 +16,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-Game class >> playedBy: players on: aBoard until: aNumberOfRounds [
+Game class >> playedBy: players on: aBoard for: aNumberOfRounds [
 	self validateDiceOfAll: players forThis: aBoard.
 	^(self new) initializeWith: players and: aBoard until: aNumberOfRounds
 ]
@@ -31,44 +31,49 @@ Game class >> validateDiceOfAll: players forThis: board [
 Game class >> validateDiceOfOne: player forThis: board [
 	| aDice |
 	aDice := player dice.
-	(aDice dice) do: [ :die | self validateOne: die OfAPlayerForThis: board. ]
+	aDice dice
+		do: [ :die | self validateOne: die OfAPlayerForThis: board ]
 ]
 
 { #category : #validation }
 Game class >> validateOne: die OfAPlayerForThis: board [
 	| sidesOfTheDie condition |
 	sidesOfTheDie := die sides.
-	condition := sidesOfTheDie between: 4 and: ((board numberOfSlots) * (1/3)).
-	(condition)
-		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ] 
+	condition := sidesOfTheDie
+		between: 4
+		and: board numberOfSlots * (1 / 3).
+	condition
+		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ]
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> aplicarEfectoCasilleroEnPoscDe: aPlayer [ 
-	| casillero |
-	casillero := (board slotsList) at: (aPlayer currentPosition).
-	casillero applyEffectOfSlotOn: aPlayer from: players forThe: board for: roundsForTheGameToBeOver.
+{ #category : #playing }
+Game >> applyEffectOfTheSlotAtThePositionOf: aPlayer [
+	board
+		applyEffectOn: aPlayer
+		from: players
+		for: roundsForTheGameToBeOver
 ]
 
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
-	turnsIterator next.
+	turnsIterator next
 ]
 
 { #category : #'player information' }
 Game >> currentPlayer [
-	^turnsIterator current
+	^ turnsIterator current
 ]
 
 { #category : #'player information' }
 Game >> currentPlayerIsWinner [
-	^(self currentPlayer) isWinner
+	^ self currentPlayer isWinner
 ]
 
 { #category : #'game status' }
 Game >> hasWinner [
-	(self currentPlayerIsWinner) ifTrue: [winner := (self currentPlayer)].
-	^(self currentPlayerIsWinner).
+	self currentPlayerIsWinner
+		ifTrue: [ winner := self currentPlayer ].
+	^ self currentPlayerIsWinner
 ]
 
 { #category : #initialization }
@@ -78,12 +83,12 @@ Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	winner := 0.
 	roundsForTheGameToBeOver := aNumberOfRounds.
-	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots.
+	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots
 ]
 
 { #category : #'player information' }
 Game >> numberOfRoundsMadeBy: aPlayer [
-	^leaderBoard roundsMadeBy: aPlayer.
+	^ leaderBoard roundsMadeBy: aPlayer
 ]
 
 { #category : #playing }
@@ -96,7 +101,7 @@ Game >> playTurn [
 	| player |
 	player := self currentPlayer.
 	player throwDiceOn: board until: roundsForTheGameToBeOver.
-	self aplicarEfectoCasilleroEnPoscDe: player.
+	self applyEffectOfTheSlotAtThePositionOf: player.
 	self updateBoardsOfAllPlayers.
 	
 	self hasWinner
@@ -105,12 +110,12 @@ Game >> playTurn [
 
 { #category : #'player information' }
 Game >> positionOf: aPlayer [
-	^leaderBoard positionOf: aPlayer.
+	^ leaderBoard positionOf: aPlayer
 ]
 
 { #category : #'player information' }
 Game >> rankingOf: aPlayer [
-	^leaderBoard rankingOf: aPlayer.
+	^ leaderBoard rankingOf: aPlayer
 ]
 
 { #category : #updating }
@@ -126,5 +131,7 @@ Game >> updateBoardsOfAllPlayers [
 
 { #category : #accessing }
 Game >> winner [
-	(self hasWinner) ifTrue: [ ^winner ] ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ].
+	self hasWinner
+		ifTrue: [ ^ winner ]
+		ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ]
 ]

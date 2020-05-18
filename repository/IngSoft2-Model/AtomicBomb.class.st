@@ -4,8 +4,14 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 AtomicBomb >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
-	| posicionActual |
-	allThePlayers do: [ :player | posicionActual := player currentPosition. player move: (posicionActual*(-1)) on: board until: aNumberOfRounds ].
+	| playerCurrentPosition |
+	allThePlayers
+		do: [ :player | 
+			playerCurrentPosition := player currentPosition.
+			player
+				move: playerCurrentPosition * -1
+				on: board
+				until: aNumberOfRounds ]
 ]

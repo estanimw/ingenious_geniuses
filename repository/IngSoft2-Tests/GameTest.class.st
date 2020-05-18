@@ -46,7 +46,7 @@ GameTest >> play: aNumber turnsIn: game [
 GameTest >> setUp [
 	super setUp.
 	
-	aBoard := Board forTestingOfA: 30 withEffect: NoEffect.
+	aBoard := Board of: 30 with: NoEffect.
 	numberOfRoundsToBePlayed := 3.
 	
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
@@ -68,8 +68,8 @@ GameTest >> setUp [
 GameTest >> testAtomicBombEffect [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board forTestingOfA: 30 withEffect: AtomicBomb.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	aBoard := Board of: 30 with: AtomicBomb.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 0.
@@ -92,7 +92,7 @@ GameTest >> testAtomicBombEffect [
 GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 0.
@@ -115,7 +115,7 @@ GameTest >> testBoardOfPositionsChangesAfterEveryMovement [
 GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
@@ -140,7 +140,7 @@ GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
 	renzo := Player playsWith: diceOfRenzo.
 	
 	thePlayers := OrderedCollection with: juan with: pancho with: pedrito with: renzo.
-	aGame := Game playedBy: thePlayers on: aBoard until: numberOfRoundsToBePlayed.
+	aGame := Game playedBy: thePlayers on: aBoard for: numberOfRoundsToBePlayed.
 	
 	aGame playTurn.
 	self assertRankingOf: juan in: aGame equals: 1.
@@ -160,7 +160,7 @@ GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
 GameTest >> testGameHasNoWinnerYet [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self
 		should: [ game winner ]
@@ -172,8 +172,8 @@ GameTest >> testGameHasNoWinnerYet [
 GameTest >> testMoonWalkEffect [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board forTestingOfA: 30 withEffect: MoonWalkDeterministico.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	aBoard := Board of: 30 with: MoonWalkDeterministic.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 0.
@@ -196,7 +196,7 @@ GameTest >> testMoonWalkEffect [
 GameTest >> testOnePlayerWinsAndTheOtherLoses [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	game play.
 	self assertRankingOf: pancho in: game equals: 1.
@@ -207,8 +207,8 @@ GameTest >> testOnePlayerWinsAndTheOtherLoses [
 GameTest >> testSpeedUpEffect [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board forTestingOfA: 30 withEffect: SpeedUp.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	aBoard := Board of: 30 with: SpeedUp.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 0.
@@ -231,8 +231,8 @@ GameTest >> testSpeedUpEffect [
 GameTest >> testWormHoleEffect [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board forTestingOfA: 30 withEffect: WormHole.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed.
+	aBoard := Board of: 30 with: WormHole.
+	game := Game playedBy: players on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 0.
