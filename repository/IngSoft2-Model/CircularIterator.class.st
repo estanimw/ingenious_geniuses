@@ -25,11 +25,6 @@ CircularIterator class >> cyclingOver: aSequentiableCollection [
 ]
 
 { #category : #accessing }
-CircularIterator >> collection [
-	^ options
-]
-
-{ #category : #accessing }
 CircularIterator >> current [
 
 	^options at: currentIndex + 1

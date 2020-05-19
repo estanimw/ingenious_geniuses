@@ -1,5 +1,5 @@
 "
-This class models a game.
+This object has the responsability of managing each turn and also delegates to other objects the updates of the LeaderBoard and apply the effects of the slots.
 "
 Class {
 	#name : #Game,

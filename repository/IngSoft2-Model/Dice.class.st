@@ -1,5 +1,5 @@
 "
-this object models a dice
+This object models a dice
 "
 Class {
 	#name : #Dice,

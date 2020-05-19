@@ -1,5 +1,5 @@
 "
-this object models a die
+This object models a die
 "
 Class {
 	#name : #Die,

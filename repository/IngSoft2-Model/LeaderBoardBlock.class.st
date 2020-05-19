@@ -1,5 +1,5 @@
 "
-A block for a Player.
+This object has as instance variables the information related to a player; for example the position or number of rounds made and has the responsability to update this information after each turn
 "
 Class {
 	#name : #LeaderBoardBlock,

@@ -1,5 +1,5 @@
 "
-Model of a Board.
+This object has an orderedCollection of BoardSlots and has the responsability to apply a certain distribution of the quantity of each kind of BoardSlot and delegate the apply effect on the player to the BoardSlot accordingly
 "
 Class {
 	#name : #Board,

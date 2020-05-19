@@ -1,5 +1,5 @@
 "
-The Object that stores the information associated to winnersBoard, positionsBoard, roundsMadeBoard and has the duty to fill and update them.
+This object has an orderedCollection filled with one LeaderBoardBlock for each player and has the responsability to create this blocks at the moment of the initialization of the Game and also update the order of the blocks after each turn
 "
 Class {
 	#name : #LeaderBoard,

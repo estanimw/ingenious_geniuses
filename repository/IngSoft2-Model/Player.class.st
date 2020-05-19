@@ -1,5 +1,5 @@
 "
-This class models a player.
+This object has the responsability to throw a Dice and move a number of slots equal to the number thrown by the Dice
 "
 Class {
 	#name : #Player,

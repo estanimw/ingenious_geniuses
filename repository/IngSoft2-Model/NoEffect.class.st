@@ -1,3 +1,6 @@
+"
+This object is a subclass of BoardSlot and has the responsability to apply it´s effect to the player or players of the Game.
+"
 Class {
 	#name : #NoEffect,
 	#superclass : #BoardSlot,
