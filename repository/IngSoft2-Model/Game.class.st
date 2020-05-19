@@ -1,137 +1,137 @@
 "
-This class models a game.
+This object has the responsability of managing each turn and also delegates to other objects the updates of the LeaderBoard and apply the effects of the slots.
 "
 Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board',
 		'players',
-		'winner'
+		'winner',
+		'roundsForTheGameToBeOver',
+		'leaderBoard',
+		'turnsIterator',
+		'board'
 	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
-Game class >> playedBy: players on: aBoard [
-	^ (self new) initializeWith: players and: aBoard.
+{ #category : #'instance creation' }
+Game class >> playedBy: players on: aBoard for: aNumberOfRounds [
+	self validateDiceOfAll: players forThis: aBoard.
+	^(self new) initializeWith: players and: aBoard until: aNumberOfRounds
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> allTheDieHaveBeenCheckedUsing: index and: numberOfDie [
-	^index <= numberOfDie
+{ #category : #validation }
+Game class >> validateDiceOfAll: players forThis: board [
+	players
+		do: [ :player | self validateDiceOfOne: player forThis: board ]
 ]
 
-{ #category : #accessing }
-Game >> board [
-	^ board
+{ #category : #validation }
+Game class >> validateDiceOfOne: player forThis: board [
+	| aDice |
+	aDice := player dice.
+	aDice dice
+		do: [ :die | self validateOne: die OfAPlayerForThis: board ]
+]
+
+{ #category : #validation }
+Game class >> validateOne: die OfAPlayerForThis: board [
+	| sidesOfTheDie condition |
+	sidesOfTheDie := die sides.
+	condition := sidesOfTheDie
+		between: 4
+		and: board numberOfSlots * (1 / 3).
+	condition
+		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ]
+]
+
+{ #category : #playing }
+Game >> applyEffectOfTheSlotAtThePositionOf: aPlayer [
+	board
+		applyEffectOn: aPlayer
+		from: players
+		for: roundsForTheGameToBeOver
 ]
 
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
-	players next.
-]
-
-{ #category : #'as yet unclassified' }
-Game >> completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return [
-(return)	
-		ifTrue: [ 
-				board := aBoard.
-				players := allThePlayers.
-				winner := 0 
-			]
+	turnsIterator next
 ]
 
 { #category : #'player information' }
 Game >> currentPlayer [
-	^players current.
+	^ turnsIterator current
 ]
 
 { #category : #'player information' }
 Game >> currentPlayerIsWinner [
-	^(self currentPlayer) isWinner.
-]
-
-{ #category : #'player information' }
-Game >> currentPlayerPosition [
-	^(self currentPlayer) currentPosition.
+	^ self currentPlayer isWinner
 ]
 
 { #category : #'game status' }
 Game >> hasWinner [
-	(self currentPlayerIsWinner) ifTrue: [ winner := (self currentPlayer)].
-	^(self currentPlayerIsWinner).
+	self currentPlayerIsWinner
+		ifTrue: [ winner := self currentPlayer ].
+	^ self currentPlayerIsWinner
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers and: aBoard [
-	| return |
-	return := self validateDiceOfAllPlayers: allThePlayers using: aBoard.
-	self completeInitializationIfAllPlayersAreValidatedUsing: aBoard and: allThePlayers and: return.
+Game >> initializeWith: allThePlayers and: aBoard until: aNumberOfRounds [
+	board := aBoard.
+	players := allThePlayers.
+	turnsIterator := CircularIterator cyclingOver: allThePlayers.
+	winner := 0.
+	roundsForTheGameToBeOver := aNumberOfRounds.
+	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots
+]
+
+{ #category : #'player information' }
+Game >> numberOfRoundsMadeBy: aPlayer [
+	^ leaderBoard roundsMadeBy: aPlayer
 ]
 
 { #category : #playing }
 Game >> play [
-	[self hasWinner]
-		whileFalse: [ 
-			self playTurn.
-			(self hasWinner) ifFalse: [ self chooseNextPlayer. ]
-		]
+	[ self hasWinner ] whileFalse: [ self playTurn ]
 ]
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	self currentPlayer throwDiceOn: (self board).
+	| player |
+	player := self currentPlayer.
+	player throwDiceOn: board until: roundsForTheGameToBeOver.
+	self applyEffectOfTheSlotAtThePositionOf: player.
+	self updateBoardsOfAllPlayers.
+	
+	self hasWinner
+		ifFalse: [ self chooseNextPlayer ]
 ]
 
-{ #category : #accessing }
-Game >> players [
-	^ players
+{ #category : #'player information' }
+Game >> positionOf: aPlayer [
+	^ leaderBoard positionOf: aPlayer
 ]
 
-{ #category : #accessing }
-Game >> validateDiceOf: aPlayer using: aBoard [
-	| index allDieAreOk aDice aDie sidesOfTheDie numberOfDie condition |
-	aDice := aPlayer dice.
-	allDieAreOk := true.
-	index := 1.
-	numberOfDie := aDice dice size.
-	[ (self allTheDieHaveBeenCheckedUsing: index and: numberOfDie) & allDieAreOk ]
-		whileTrue: [ 
-			aDie := aDice dice at: index.
-			sidesOfTheDie := aDie sides.
-			condition := sidesOfTheDie between: 4 and: (aBoard * (1/3)).
-			(condition)
-				ifTrue: [ index := index + 1 ]
-				ifFalse: [ allDieAreOk := false ] 
-		].
-	^ allDieAreOk
+{ #category : #'player information' }
+Game >> rankingOf: aPlayer [
+	^ leaderBoard rankingOf: aPlayer
 ]
 
-{ #category : #initialization }
-Game >> validateDiceOfAllPlayers: allThePlayers using: aBoard [
-	| aPlayer allDiceAreOk |
-	allDiceAreOk := true.
-	aPlayer := allThePlayers current.
-	(self validateDiceOf: aPlayer using: aBoard)
-		ifTrue: allThePlayers next
-		ifFalse: [ 
-			allDiceAreOk := false.
-			ThePlayerHasAnInvalidDie signal: 'The die are invalid' 
-		].
-	[ (allThePlayers currentIndex ~= 0) & allDiceAreOk ]
-		whileTrue: [ 
-			aPlayer := allThePlayers current.
-			(self validateDiceOf: aPlayer using: aBoard)
-				ifTrue: allThePlayers next
-				ifFalse: [ 
-					allDiceAreOk := false.
-					ThePlayerHasAnInvalidDie signal: 'The die are invalid' ] 
-				].
-	^ allDiceAreOk
+{ #category : #updating }
+Game >> updateBoardsChangesFor: player [
+	leaderBoard updateBlockOfThis: player forThis: board numberOfSlots.
+	leaderBoard updateOrderOfBlocks
+]
+
+{ #category : #'turn managing' }
+Game >> updateBoardsOfAllPlayers [
+	players do: [ :aPlayer | self updateBoardsChangesFor: aPlayer ]
 ]
 
 { #category : #accessing }
 Game >> winner [
-	(self hasWinner) ifTrue: [ ^winner ] ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ].
+	self hasWinner
+		ifTrue: [ ^ winner ]
+		ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ]
 ]
