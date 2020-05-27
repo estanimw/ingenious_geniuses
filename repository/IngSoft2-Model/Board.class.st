@@ -23,15 +23,13 @@ Board class >> of: aNumberOfSlots with: anEffect [
 		and: anEffect
 ]
 
-{ #category : #playing }
-Board >> applyEffectOn: aPlayer from: allThePlayers for: aNumberOfRounds [
-	| slot |
-	slot := self slotAtThePositionOf: aPlayer.
-	slot
-		applyEffectOfSlotOn: aPlayer
-		from: allThePlayers
-		forThe: self
-		for: aNumberOfRounds
+{ #category : #'as yet unclassified' }
+Board >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+	| slot aPlayerCurrentPosition player |
+	player := game currentPlayer.
+	aPlayerCurrentPosition := game positionOf: player.
+	slot := slotsList at: aPlayerCurrentPosition.
+	slot applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game
 ]
 
 { #category : #update }
@@ -56,7 +54,7 @@ Board >> fillSlotsList [
 Board >> fillSlotsListWith: anEffect [
 	slotsList := OrderedCollection new.
 	1 to: numberOfSlots do: [ :number | 
-		number % 4 == 0
+		number % 7 == 0
 			ifTrue: [ slotsList add: anEffect new ]
 			ifFalse: [ slotsList add: NoEffect new ] ]
 ]
@@ -76,9 +74,4 @@ Board >> initializeWith: aNumberOfSlots and: anEffect [
 { #category : #accessing }
 Board >> numberOfSlots [
 	^ numberOfSlots
-]
-
-{ #category : #utilities }
-Board >> slotAtThePositionOf: aPlayer [
-	^ slotsList at: aPlayer currentPosition
 ]

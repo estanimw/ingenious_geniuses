@@ -8,6 +8,10 @@ Class {
 }
 
 { #category : #playing }
-SpeedUp >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
-	aPlayer move: 4 on: board until: aNumberOfRounds
+SpeedUp >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+	| player |
+	player := game currentPlayer.
+	game move: player ANumberOfSlotsEqualTo: 4
+	"
+	aPlayer move: 4 on: board until: aNumberOfRounds"
 ]

@@ -8,6 +8,10 @@ Class {
 }
 
 { #category : #playing }
-WormHole >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
-	aPlayer move: -4 on: board until: aNumberOfRounds
+WormHole >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+	| player |
+	player := game currentPlayer.
+	game move: player ANumberOfSlotsEqualTo: -4
+	"
+	aPlayer move: -4 on: board until: aNumberOfRounds"
 ]

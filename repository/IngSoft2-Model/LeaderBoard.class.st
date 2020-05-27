@@ -5,7 +5,7 @@ Class {
 	#name : #LeaderBoard,
 	#superclass : #Object,
 	#instVars : [
-		'blocksOfPlayers'
+		'rowsOfPlayers'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -16,65 +16,87 @@ LeaderBoard class >> with: allThePlayers forThis: board [
 ]
 
 { #category : #query }
-LeaderBoard >> checkIfPlayerIn: aBlock is: aPlayer [
-	^ aBlock playerId == aPlayer id.
+LeaderBoard >> checkIfPlayerIn: aRow is: aPlayer [
+	^ aRow player == aPlayer.
 ]
 
 { #category : #initialization }
-LeaderBoard >> createBlockForA: player [
-	| leaderBoardBlock |
-	leaderBoardBlock := LeaderBoardBlock forA: player.
-	blocksOfPlayers add: leaderBoardBlock.
+LeaderBoard >> createRowForA: player [
+	| leaderBoardRow |
+	leaderBoardRow := LeaderBoardRow forA: player.
+	rowsOfPlayers add: leaderBoardRow.
+]
+
+{ #category : #'as yet unclassified' }
+LeaderBoard >> current: player isWinnerForDoing: roundsForTheGameToBeOver [
+	rowsOfPlayers
+	do: [ :row | 
+		(self checkIfPlayerIn: row is: player)
+			ifTrue: [ ^ row currentPlayerIsWinnerForThis: roundsForTheGameToBeOver ] ]
 ]
 
 { #category : #initialization }
-LeaderBoard >> fillBlockOfEachPlayerFor: allThePlayers [
-	allThePlayers do: [ :player | self createBlockForA: player ]
+LeaderBoard >> fillRowOfEachPlayerFor: allThePlayers [
+	allThePlayers do: [ :player | self createRowForA: player ]
 ]
 
 { #category : #initialization }
 LeaderBoard >> initializeWith: allThePlayers forThis: board [.
-	blocksOfPlayers := OrderedCollection new.
-	self fillBlockOfEachPlayerFor: allThePlayers.
+	rowsOfPlayers := OrderedCollection new.
+	self fillRowOfEachPlayerFor: allThePlayers.
 	
 ]
 
 { #category : #query }
 LeaderBoard >> positionOf: aPlayer [
-	blocksOfPlayers
-		do: [ :block | 
-			(self checkIfPlayerIn: block is: aPlayer)
-				ifTrue: [ ^ block playerPosition ] ]
+	self withRowOf: aPlayer do: [ :aRow | ^aRow playerPosition ].
+	
+"	rowsOfPlayers
+		do: [ :row | 
+			(self checkIfPlayerIn: row is: aPlayer)
+				ifTrue: [ ^ row playerPosition ] ]"
 ]
 
 { #category : #query }
 LeaderBoard >> rankingOf: aPlayer [
 	| positionInTheRanking |
 	positionInTheRanking := 1.
-	blocksOfPlayers
-		do: [ :block | 
-			(self checkIfPlayerIn: block is: aPlayer)
+	rowsOfPlayers
+		do: [ :row | 
+			(self checkIfPlayerIn: row is: aPlayer)
 				ifTrue: [ ^ positionInTheRanking ].
 			positionInTheRanking := positionInTheRanking + 1 ]
 ]
 
 { #category : #query }
 LeaderBoard >> roundsMadeBy: aPlayer [
-	blocksOfPlayers
-		do: [ :block | 
-			(self checkIfPlayerIn: block is: aPlayer)
-				ifTrue: [ ^ block playerRoundsMade ] ]
+	self withRowOf: aPlayer do: [ :aRow | ^aRow playerRoundsMade ].
+
+	"rowsOfPlayers
+		do: [ :row | 
+			(self checkIfPlayerIn: row is: aPlayer)
+				ifTrue: [ ^ row playerRoundsMade ] ]"
 ]
 
 { #category : #update }
-LeaderBoard >> updateBlockOfThis: player forThis: board [
-	blocksOfPlayers
-		do: [ :block | 
-			(self checkIfPlayerIn: block is: player)
-				ifTrue: [ block changePositionAndRoundsMadeBy: player forThis: board ] ]
+LeaderBoard >> updateOrderOfRows [
+	rowsOfPlayers := (rowsOfPlayers sort) reversed.
 ]
 
 { #category : #update }
-LeaderBoard >> updateOrderOfBlocks [
-	blocksOfPlayers := (blocksOfPlayers sort) reversed.
+LeaderBoard >> updateRowOfThis: player inA: slotsQuantity forThis: board [
+	rowsOfPlayers
+		do: [ :row | 
+			(self checkIfPlayerIn: row is: player)
+				ifTrue: [ row changePositionAndRoundsMadeBy: player inA: slotsQuantity forThis: board ] ]
+]
+
+{ #category : #accessing }
+LeaderBoard >> winner [
+	^ (rowsOfPlayers at: 1) player.
+]
+
+{ #category : #'as yet unclassified' }
+LeaderBoard >> withRowOf: aPlayer do: aBlockClosure [ 
+    ^ rowsOfPlayers detect: [ :row | row player == aPlayer ] ifFound: aBlockClosure .
 ]

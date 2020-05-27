@@ -8,13 +8,15 @@ Class {
 }
 
 { #category : #playing }
-MoonWalk >> applyEffectOfSlotOn: aPlayer from: allThePlayers forThe: board for: aNumberOfRounds [
-	| n allThePlayersButAPlayer |
+MoonWalk >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+	| n allThePlayersButAPlayer player |
 	n := (Random new next * 10) asInteger.
-	allThePlayersButAPlayer := self remove: aPlayer from: allThePlayers.
-	
+	player := game currentPlayer.
+	allThePlayersButAPlayer := self remove: player from: game players.
+	allThePlayersButAPlayer do: [ :aPlayer | game move: aPlayer ANumberOfSlotsEqualTo: n * -1 ]
+	"
 	allThePlayersButAPlayer asOrderedCollection
-		do: [ :player | player move: n *  -1 on: board until: aNumberOfRounds ]
+		do: [ :player | player move: n * -1 on: board until: aNumberOfRounds ]"
 ]
 
 { #category : #utilities }
