@@ -35,8 +35,8 @@ LeaderBoardRow >> changePositionAndRoundsMadeBy: aPlayer inA: slotsQuantity forT
 	slotsPassedByThePlayer := playerRoundsMade * board numberOfSlots + playerPosition
 ]
 
-{ #category : #'as yet unclassified' }
-LeaderBoardRow >> currentPlayerIsWinnerForThis: roundsForTheGameToBeOver [
+{ #category : #comparing }
+LeaderBoardRow >> currentPlayerHasMadeNumberOf: roundsForTheGameToBeOver [
 	^ playerRoundsMade == roundsForTheGameToBeOver
 ]
 

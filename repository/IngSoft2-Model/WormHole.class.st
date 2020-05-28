@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #playing }
-WormHole >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+WormHole >> applyEffectFrom: game [
 	| player |
 	player := game currentPlayer.
 	game move: player ANumberOfSlotsEqualTo: -4

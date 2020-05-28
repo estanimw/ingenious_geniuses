@@ -8,10 +8,6 @@ Class {
 		'numberOfRoundsToBePlayed',
 		'dieOf4',
 		'dieOf6',
-		'dieOf8',
-		'diceOf10',
-		'diceOfJuan',
-		'diceOfPancho',
 		'aDice'
 	],
 	#category : #'IngSoft2-Tests'
@@ -50,23 +46,11 @@ GameTest >> setUp [
 	aBoard := Board of: 30 with: NoEffect.
 	numberOfRoundsToBePlayed := 3.
 	
-"	dieOf4 := Die of: 4 rolling: #(1 4 2).
-	dieOf6 := Die of: 6 rolling: #(1 5 3).
-	dieOf8 := Die of: 8 rolling: #(3 7 2).
-	diceOf10 := Die of: 10 rolling: #(1 2 3).
-	
-	diceOfJuan := dieOf4 + dieOf6.
-   diceOfPancho := dieOf8 + diceOf10.
-	
-	juan := Player playsWith: diceOfJuan.
-	pancho := Player playsWith: diceOfPancho."
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
 	dieOf6 := Die of: 6 rolling: #(1 5 3).
 	aDice := dieOf4 + dieOf6.
 	juan := 'Juan'.
 	pancho := 'Pancho'.
-	"players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players on: aBoard until: numberOfRoundsToBePlayed."
 ]
 
 { #category : #tests }
@@ -133,7 +117,7 @@ GameTest >> testBoardOfRoundsMadeChangesAfterEveryMovement [
 
 { #category : #tests }
 GameTest >> testBoardOfWhoIsWinningChangesAfterEveryMovement [
-	| thePlayers game dieOf5 dieOf7 diceOfPedrito pedrito dieOf9 diceOfRenzo renzo |
+	| thePlayers game pedrito renzo |
 	
 "	dieOf5 := Die of: 5 rolling: #(5 4 4).
 	dieOf7 := Die of: 7 rolling: #(5 5 3).
@@ -171,10 +155,7 @@ GameTest >> testGameHasNoWinnerYet [
 	players := OrderedCollection with: juan with: pancho.
 	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
 	
-	self
-		should: [ game winner ]
-		raise: TheresNoWinnerYet
-		withMessageText: 'No winner yet.'
+	self assert: game hasWinner equals: false.
 ]
 
 { #category : #tests }

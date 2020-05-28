@@ -8,5 +8,5 @@ Class {
 }
 
 { #category : #playing }
-NoEffect >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+NoEffect >> applyEffectFrom: game [
 ]

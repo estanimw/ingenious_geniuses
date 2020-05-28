@@ -8,18 +8,9 @@ Class {
 }
 
 { #category : #playing }
-AtomicBomb >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+AtomicBomb >> applyEffectFrom: game [
 	| playerCurrentPosition |
 	(game players) do: [ :player | 
 		playerCurrentPosition := game positionOf: player.
-		game move: player ANumberOfSlotsEqualTo: playerCurrentPosition * -1 ]
-	
-	"| playerCurrentPosition |
-	allThePlayers
-		do: [ :player | 
-			playerCurrentPosition := player currentPosition.
-			player
-				move: playerCurrentPosition * -1
-				on: board
-				until: aNumberOfRounds ]"
+		game move: player ANumberOfSlotsEqualTo: playerCurrentPosition * -1 ].
 ]

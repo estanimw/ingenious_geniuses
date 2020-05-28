@@ -43,12 +43,12 @@ Game class >> validateOne: die OfAPlayerForThis: board [
 		between: 4
 		and: board numberOfSlots * (1 / 3).
 	condition
-		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ]
+		ifFalse: [ Error signal: 'The die are invalid' ]
 ]
 
 { #category : #playing }
 Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
-	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: self.
+	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: self.
 ]
 
 { #category : #'turn managing' }
@@ -63,9 +63,9 @@ Game >> currentPlayer [
 
 { #category : #'game status' }
 Game >> hasWinner [
-	| isThereAWinner |
-	isThereAWinner := (leaderBoard current: (self currentPlayer) isWinnerForDoing: roundsForTheGameToBeOver).
-	^ isThereAWinner
+	^ leaderBoard
+		thePlayer: self currentPlayer
+		isWinnerForMaking: roundsForTheGameToBeOver
 ]
 
 { #category : #initialization }
@@ -78,7 +78,7 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 Game >> move: player ANumberOfSlotsEqualTo: slotsQuantity [
 	leaderBoard updateRowOfThis: player inA: slotsQuantity forThis: board.
 ]
@@ -95,12 +95,8 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	| player |
-	player := self currentPlayer.
-	"player throwDiceOn: board until: roundsForTheGameToBeOver."
-	self throwDiceOf: player.
+	self throwDiceOf: self currentPlayer.
 	self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
-	"self updateBoardsOfAllPlayers."
 	leaderBoard updateOrderOfRows.
 	
 	self hasWinner
@@ -122,17 +118,14 @@ Game >> rankingOf: aPlayer [
 	^ leaderBoard rankingOf: aPlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 Game >> throwDiceOf: player [
-	| slotsQuantity |
-	slotsQuantity := dice roll.
-	self move: player ANumberOfSlotsEqualTo: slotsQuantity.
+	| slotsQuantityToMove |
+	slotsQuantityToMove := dice roll.
+	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove.
 ]
 
 { #category : #accessing }
 Game >> winner [
 	^ leaderBoard winner.
-	"self hasWinner
-		ifTrue: [ ^ winner ]
-		ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ]"
 ]

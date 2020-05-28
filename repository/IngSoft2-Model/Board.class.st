@@ -23,13 +23,13 @@ Board class >> of: aNumberOfSlots with: anEffect [
 		and: anEffect
 ]
 
-{ #category : #'as yet unclassified' }
-Board >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
-	| slot aPlayerCurrentPosition player |
-	player := game currentPlayer.
-	aPlayerCurrentPosition := game positionOf: player.
-	slot := slotsList at: aPlayerCurrentPosition.
-	slot applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game
+{ #category : #playing }
+Board >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: game [
+	| slotWhereThePlayerIsAt playerCurrentPosition currentPlayer |
+	currentPlayer := game currentPlayer.
+	playerCurrentPosition := game positionOf: currentPlayer.
+	slotWhereThePlayerIsAt := slotsList at: playerCurrentPosition.
+	slotWhereThePlayerIsAt applyEffectFrom: game
 ]
 
 { #category : #update }

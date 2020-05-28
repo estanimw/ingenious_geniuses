@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #playing }
-MoonWalkDeterministic >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+MoonWalkDeterministic >> applyEffectFrom: game [
 	| n allThePlayersButAPlayer player |
 	n := 1.
 	player := game currentPlayer.

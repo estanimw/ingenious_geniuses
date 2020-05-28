@@ -8,6 +8,6 @@ Class {
 }
 
 { #category : #playing }
-BoardSlot >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+BoardSlot >> applyEffectFrom: game [
 	^ self subclassResponsibility
 ]
