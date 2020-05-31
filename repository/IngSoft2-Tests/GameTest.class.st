@@ -41,9 +41,14 @@ GameTest >> play: aNumber turnsIn: game [
 
 { #category : #running }
 GameTest >> setUp [
+	| builder |
 	super setUp.
 	
-	aBoard := Board of: 30 with: NoEffect.
+	"aBoard := Board of: 30 with: NoEffect."
+	"builder := BoardBuilder forABoardOfSize: 30.
+	builder addEffect: NoEffect.
+	aBoard := builder build."
+	
 	numberOfRoundsToBePlayed := 3.
 	
 	dieOf4 := Die of: 4 rolling: #(1 4 2).
@@ -55,9 +60,17 @@ GameTest >> setUp [
 
 { #category : #tests }
 GameTest >> testAtomicBombEffect [
-	| game players |
+	| game players builder |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: 30 with: AtomicBomb.
+	
+	builder := BoardBuilder forABoardOfSize: 20.
+	builder addEffect: AtomicBomb withOccurrencyOf: 2.
+	builder addEffect: NoEffect withOccurrencyOf: 48.
+	builder addEffect: SpeedUp withOccurrencyOf: 20. 
+	builder addEffect: MoonWalk withOccurrencyOf: 10.
+	builder addEffect: WormHole withOccurrencyOf: 20.
+	aBoard := builder build.
+	
 	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
@@ -160,9 +173,13 @@ GameTest >> testGameHasNoWinnerYet [
 
 { #category : #tests }
 GameTest >> testMoonWalkEffect [
-	| game players |
+	| game players builder |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: 30 with: MoonWalkDeterministic.
+	
+	builder := BoardBuilder forABoardOfSize: 30.
+	builder addEffect: MoonWalkDeterministic.
+	aBoard := builder build.
+	
 	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
@@ -196,9 +213,13 @@ GameTest >> testOnePlayerWinsAndTheOtherLoses [
 
 { #category : #tests }
 GameTest >> testSpeedUpEffect [
-	| game players |
+	| game players builder |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: 30 with: SpeedUp.
+	
+	builder := BoardBuilder forABoardOfSize: 30.
+	builder addEffect: SpeedUp.
+	aBoard := builder build.
+	
 	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
@@ -219,9 +240,13 @@ GameTest >> testSpeedUpEffect [
 
 { #category : #tests }
 GameTest >> testWormHoleEffect [
-	| game players |
+	| game players builder |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: 30 with: WormHole.
+	
+	builder := BoardBuilder forABoardOfSize: 30.
+	builder addEffect: WormHole.
+	aBoard := builder build.
+	
 	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
 	
 	self assertCurrentPositionOf: juan in: game equals: 0.
