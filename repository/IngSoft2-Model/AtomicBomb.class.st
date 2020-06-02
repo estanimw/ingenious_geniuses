@@ -12,5 +12,5 @@ AtomicBomb >> applyEffectFrom: game [
 	| playerCurrentPosition |
 	(game players) do: [ :player | 
 		playerCurrentPosition := game positionOf: player.
-		game move: player ANumberOfSlotsEqualTo: playerCurrentPosition * -1 ].
+		game move: player ANumberOfSlotsEqualTo: (playerCurrentPosition-1) * -1 ].
 ]

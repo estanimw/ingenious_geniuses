@@ -29,8 +29,8 @@ LeaderBoardRow >> changePositionAndRoundsMadeBy: aPlayer inA: slotsQuantity forT
 	playerPosition > board numberOfSlots
 		ifTrue: [ playerPosition := playerPosition - board numberOfSlots.
 			playerRoundsMade := playerRoundsMade + 1 ].
-	playerPosition < 0
-		ifTrue: [ playerPosition := playerPosition + board numberOfSlots + 1.
+	playerPosition < 1
+		ifTrue: [ playerPosition := playerPosition + board numberOfSlots.
 			playerRoundsMade := playerRoundsMade - 1 ].
 	slotsPassedByThePlayer := playerRoundsMade * board numberOfSlots + playerPosition
 ]
@@ -43,9 +43,9 @@ LeaderBoardRow >> currentPlayerHasMadeNumberOf: roundsForTheGameToBeOver [
 { #category : #initialization }
 LeaderBoardRow >> initializeWithA: aPlayer [
 	player := aPlayer.
-	playerPosition := 0.
+	playerPosition := 1.
 	playerRoundsMade := 0.
-	slotsPassedByThePlayer := 0.
+	slotsPassedByThePlayer := 1.
 ]
 
 { #category : #'player information' }

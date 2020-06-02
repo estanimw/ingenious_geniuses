@@ -11,8 +11,8 @@ Class {
 }
 
 { #category : #'instance creation' }
-LeaderBoard class >> with: allThePlayers forThis: board [
-	^ self new initializeWith: allThePlayers forThis: board
+LeaderBoard class >> with: allThePlayers [
+	^ self new initializeWith: allThePlayers
 ]
 
 { #category : #initialization }
@@ -33,7 +33,7 @@ LeaderBoard >> fillRowOfEachPlayerFor: allThePlayers [
 ]
 
 { #category : #initialization }
-LeaderBoard >> initializeWith: allThePlayers forThis: board [.
+LeaderBoard >> initializeWith: allThePlayers [.
 	rowsOfPlayers := OrderedCollection new.
 	self fillRowOfEachPlayerFor: allThePlayers.
 	
@@ -42,11 +42,6 @@ LeaderBoard >> initializeWith: allThePlayers forThis: board [.
 { #category : #query }
 LeaderBoard >> positionOf: aPlayer [
 	self withRowOf: aPlayer do: [ :aRow | ^aRow playerPosition ].
-	
-"	rowsOfPlayers
-		do: [ :row | 
-			(self checkIfPlayerIn: row is: aPlayer)
-				ifTrue: [ ^ row playerPosition ] ]"
 ]
 
 { #category : #query }
@@ -63,22 +58,17 @@ LeaderBoard >> rankingOf: aPlayer [
 { #category : #query }
 LeaderBoard >> roundsMadeBy: aPlayer [
 	self withRowOf: aPlayer do: [ :aRow | ^aRow playerRoundsMade ].
+]
 
-	"rowsOfPlayers
-		do: [ :row | 
-			(self checkIfPlayerIn: row is: aPlayer)
-				ifTrue: [ ^ row playerRoundsMade ] ]"
+{ #category : #accessing }
+LeaderBoard >> rowsOfPlayers [
+	^ rowsOfPlayers
 ]
 
 { #category : #query }
 LeaderBoard >> thePlayer: aPlayer isWinnerForMaking: numberOfRoundsForTheGameToBeOver [
-
 	self withRowOf: aPlayer do: [ :aRow | ^ aRow currentPlayerHasMadeNumberOf: numberOfRoundsForTheGameToBeOver ].
 
-"	rowsOfPlayers
-	do: [ :row | 
-		(self compareIf: row belongsTo: player)
-			ifTrue: [ ^ row currentPlayerHasMadeNumberOf: roundsForTheGameToBeOver ] ]"
 ]
 
 { #category : #update }

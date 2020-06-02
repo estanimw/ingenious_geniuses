@@ -75,7 +75,7 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	dice := aDice.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	roundsForTheGameToBeOver := aNumberOfRounds.
-	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots
+	leaderBoard := LeaderBoard with: players
 ]
 
 { #category : #playing }
