@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #playing }
-MoonWalk >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+MoonWalk >> applyEffectFrom: game [
 	| n allThePlayersButAPlayer player |
 	n := (Random new next * 10) asInteger.
 	player := game currentPlayer.

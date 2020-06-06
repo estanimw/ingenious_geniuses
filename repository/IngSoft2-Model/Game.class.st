@@ -10,15 +10,23 @@ Class {
 		'leaderBoard',
 		'turnsIterator',
 		'board',
-		'dice'
+		'dice',
+		'deckHandler',
+		'cardHandler'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'instance creation' }
-Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds [
+Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds withASetOf: cards [
 	"self validateDiceOfAll: players forThis: aBoard."
-	^(self new) initializeWith: players with: aDice and: aBoard until: aNumberOfRounds
+
+	^ self new
+		initializeWith: players
+		with: aDice
+		and: aBoard
+		until: aNumberOfRounds
+		withSetOf: cards
 ]
 
 { #category : #validation }
@@ -43,12 +51,12 @@ Game class >> validateOne: die OfAPlayerForThis: board [
 		between: 4
 		and: board numberOfSlots * (1 / 3).
 	condition
-		ifFalse: [ ThePlayerHasAnInvalidDie signal: 'The die are invalid' ]
+		ifFalse: [ Error signal: 'The die are invalid' ]
 ]
 
 { #category : #playing }
 Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
-	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: self.
+	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: self.
 ]
 
 { #category : #'turn managing' }
@@ -63,22 +71,24 @@ Game >> currentPlayer [
 
 { #category : #'game status' }
 Game >> hasWinner [
-	| isThereAWinner |
-	isThereAWinner := (leaderBoard current: (self currentPlayer) isWinnerForDoing: roundsForTheGameToBeOver).
-	^ isThereAWinner
+	^ leaderBoard
+		thePlayer: self currentPlayer
+		isWinnerForMaking: roundsForTheGameToBeOver
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds [
+Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds withSetOf: cards [
 	board := aBoard.
 	players := allThePlayers.
 	dice := aDice.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	roundsForTheGameToBeOver := aNumberOfRounds.
-	leaderBoard := LeaderBoard with: players forThis: board numberOfSlots
+	leaderBoard := LeaderBoard with: players.
+	cardHandler := CardHandler withTheValidCards: cards.
+	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 Game >> move: player ANumberOfSlotsEqualTo: slotsQuantity [
 	leaderBoard updateRowOfThis: player inA: slotsQuantity forThis: board.
 ]
@@ -95,12 +105,8 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	| player |
-	player := self currentPlayer.
-	"player throwDiceOn: board until: roundsForTheGameToBeOver."
-	self throwDiceOf: player.
+	self throwDiceOf: self currentPlayer.
 	self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
-	"self updateBoardsOfAllPlayers."
 	leaderBoard updateOrderOfRows.
 	
 	self hasWinner
@@ -122,17 +128,14 @@ Game >> rankingOf: aPlayer [
 	^ leaderBoard rankingOf: aPlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playing }
 Game >> throwDiceOf: player [
-	| slotsQuantity |
-	slotsQuantity := dice roll.
-	self move: player ANumberOfSlotsEqualTo: slotsQuantity.
+	| slotsQuantityToMove |
+	slotsQuantityToMove := dice roll.
+	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove.
 ]
 
 { #category : #accessing }
 Game >> winner [
 	^ leaderBoard winner.
-	"self hasWinner
-		ifTrue: [ ^ winner ]
-		ifFalse: [ TheresNoWinnerYet signal: 'No winner yet.' ]"
 ]

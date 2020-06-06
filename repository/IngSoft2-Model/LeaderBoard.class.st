@@ -11,37 +11,29 @@ Class {
 }
 
 { #category : #'instance creation' }
-LeaderBoard class >> with: allThePlayers forThis: board [
-	^ self new initializeWith: allThePlayers forThis: board
+LeaderBoard class >> with: allThePlayers [
+	^ self new initializeWith: allThePlayers
+]
+
+{ #category : #initialization }
+LeaderBoard >> addRowForA: player [
+	| leaderBoardRow |
+	leaderBoardRow := LeaderBoardRow for: player.
+	rowsOfPlayers add: leaderBoardRow.
 ]
 
 { #category : #query }
-LeaderBoard >> checkIfPlayerIn: aRow is: aPlayer [
+LeaderBoard >> compareIf: aRow belongsTo: aPlayer [
 	^ aRow player == aPlayer.
 ]
 
 { #category : #initialization }
-LeaderBoard >> createRowForA: player [
-	| leaderBoardRow |
-	leaderBoardRow := LeaderBoardRow forA: player.
-	rowsOfPlayers add: leaderBoardRow.
-]
-
-{ #category : #'as yet unclassified' }
-LeaderBoard >> current: player isWinnerForDoing: roundsForTheGameToBeOver [
-	rowsOfPlayers
-	do: [ :row | 
-		(self checkIfPlayerIn: row is: player)
-			ifTrue: [ ^ row currentPlayerIsWinnerForThis: roundsForTheGameToBeOver ] ]
-]
-
-{ #category : #initialization }
 LeaderBoard >> fillRowOfEachPlayerFor: allThePlayers [
-	allThePlayers do: [ :player | self createRowForA: player ]
+	allThePlayers do: [ :player | self addRowForA: player ]
 ]
 
 { #category : #initialization }
-LeaderBoard >> initializeWith: allThePlayers forThis: board [.
+LeaderBoard >> initializeWith: allThePlayers [.
 	rowsOfPlayers := OrderedCollection new.
 	self fillRowOfEachPlayerFor: allThePlayers.
 	
@@ -50,11 +42,6 @@ LeaderBoard >> initializeWith: allThePlayers forThis: board [.
 { #category : #query }
 LeaderBoard >> positionOf: aPlayer [
 	self withRowOf: aPlayer do: [ :aRow | ^aRow playerPosition ].
-	
-"	rowsOfPlayers
-		do: [ :row | 
-			(self checkIfPlayerIn: row is: aPlayer)
-				ifTrue: [ ^ row playerPosition ] ]"
 ]
 
 { #category : #query }
@@ -63,7 +50,7 @@ LeaderBoard >> rankingOf: aPlayer [
 	positionInTheRanking := 1.
 	rowsOfPlayers
 		do: [ :row | 
-			(self checkIfPlayerIn: row is: aPlayer)
+			(self compareIf: row belongsTo: aPlayer)
 				ifTrue: [ ^ positionInTheRanking ].
 			positionInTheRanking := positionInTheRanking + 1 ]
 ]
@@ -71,11 +58,17 @@ LeaderBoard >> rankingOf: aPlayer [
 { #category : #query }
 LeaderBoard >> roundsMadeBy: aPlayer [
 	self withRowOf: aPlayer do: [ :aRow | ^aRow playerRoundsMade ].
+]
 
-	"rowsOfPlayers
-		do: [ :row | 
-			(self checkIfPlayerIn: row is: aPlayer)
-				ifTrue: [ ^ row playerRoundsMade ] ]"
+{ #category : #accessing }
+LeaderBoard >> rowsOfPlayers [
+	^ rowsOfPlayers
+]
+
+{ #category : #query }
+LeaderBoard >> thePlayer: aPlayer isWinnerForMaking: numberOfRoundsForTheGameToBeOver [
+	self withRowOf: aPlayer do: [ :aRow | ^ aRow currentPlayerHasMadeNumberOf: numberOfRoundsForTheGameToBeOver ].
+
 ]
 
 { #category : #update }
@@ -85,10 +78,7 @@ LeaderBoard >> updateOrderOfRows [
 
 { #category : #update }
 LeaderBoard >> updateRowOfThis: player inA: slotsQuantity forThis: board [
-	rowsOfPlayers
-		do: [ :row | 
-			(self checkIfPlayerIn: row is: player)
-				ifTrue: [ row changePositionAndRoundsMadeBy: player inA: slotsQuantity forThis: board ] ]
+	self withRowOf: player do: [ :row | row changePositionAndRoundsMadeBy: player inA: slotsQuantity forThis: board ].
 ]
 
 { #category : #accessing }
@@ -96,7 +86,7 @@ LeaderBoard >> winner [
 	^ (rowsOfPlayers at: 1) player.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
 LeaderBoard >> withRowOf: aPlayer do: aBlockClosure [ 
     ^ rowsOfPlayers detect: [ :row | row player == aPlayer ] ifFound: aBlockClosure .
 ]

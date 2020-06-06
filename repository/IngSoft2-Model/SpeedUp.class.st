@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #playing }
-SpeedUp >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+SpeedUp >> applyEffectFrom: game [
 	| player |
 	player := game currentPlayer.
 	game move: player ANumberOfSlotsEqualTo: 4

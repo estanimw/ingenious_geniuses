@@ -8,9 +8,9 @@ Class {
 }
 
 { #category : #playing }
-MoonWalkDeterministic >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFromThe: game [
+MoonWalkDeterministic >> applyEffectFrom: game [
 	| n allThePlayersButAPlayer player |
-	n := 1.
+	n := 2.
 	player := game currentPlayer.
 	allThePlayersButAPlayer := self remove: player from: game players.
 	allThePlayersButAPlayer do: [ :aPlayer | game move: aPlayer ANumberOfSlotsEqualTo: n * -1 ]
