@@ -8,7 +8,8 @@ Class {
 		'numberOfRoundsToBePlayed',
 		'dieOf4',
 		'dieOf6',
-		'aDice'
+		'aDice',
+		'cards'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -52,202 +53,317 @@ GameTest >> setUp [
 	aDice := dieOf4 + dieOf6.
 	juan := 'Juan'.
 	pancho := 'Pancho'.
+	
+	cards := OrderedCollection new.
 ]
 
 { #category : #tests }
 GameTest >> testAtomicBombEffect [
-	| game players  |
+	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . AtomicBomb new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			AtomicBomb new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-
 	self play: 8 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 9.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 6.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2. 
-	
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 2. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 2.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2
 ]
 
 { #category : #tests }
 GameTest >> testGameHasNoWinnerYet [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
-	self assert: game hasWinner equals: false.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	self assert: game hasWinner equals: false
 ]
 
 { #category : #tests }
 GameTest >> testMoonWalkEffectChangesRoundsMadeIfNecessary [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . MoonWalkDeterministic new . NoEffect new . NoEffect new . NoEffect new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			MoonWalkDeterministic new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	self play: 4 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 2.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1. 
-		
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 7.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 10.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0
 ]
 
 { #category : #tests }
 GameTest >> testMoonWalkEffectMakesAllThePlayersMoveBackwardNSlots [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . MoonWalkDeterministic new . NoEffect new . NoEffect new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			MoonWalkDeterministic new.
+			NoEffect new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	self play: 2 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 10.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
-		
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0
 ]
 
 { #category : #tests }
 GameTest >> testOnePlayerWinsAndTheOtherLoses [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	game play.
 	self assertRankingOf: juan in: game equals: 1.
-	self assertRankingOf: pancho in: game equals: 2.
+	self assertRankingOf: pancho in: game equals: 2
 ]
 
 { #category : #tests }
 GameTest >> testPlayerWinsThanksToASpeedUpEffect [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . SpeedUp new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			SpeedUp new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	self play: 7 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 9.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2. 
-	
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 9.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 4.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 3. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 3
 ]
 
 { #category : #tests }
 GameTest >> testSpeedUpEffectChangesRoundsMadeAfterMakingOneLap [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . SpeedUp new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			SpeedUp new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
-		
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 4.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1
 ]
 
 { #category : #tests }
 GameTest >> testSpeedUpEffectMakesPlayerMoveForwardFourSlots [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . SpeedUp new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . SpeedUp new . NoEffect new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			SpeedUp new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			SpeedUp new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 7.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0
 ]
 
 { #category : #tests }
 GameTest >> testWormHoleEffectChangesRoundsMadeIfNecessary [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . WormHole new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			WormHole new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	self play: 3 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 10.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
-	
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 8.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0
 ]
 
 { #category : #tests }
 GameTest >> testWormHoleEffectMakesPlayerMoveBackwardFourSlots [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
-	aBoard := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . WormHole new }.
-	game := Game playedBy: players thatUse: aDice on: aBoard for: numberOfRoundsToBePlayed.
-	
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			WormHole new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
-		
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 6.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0. 
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0
 ]

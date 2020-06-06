@@ -17,11 +17,6 @@ BoardBuilder class >> forABoardOfSize: aNumberOfSlots [
 ]
 
 { #category : #adding }
-BoardBuilder >> addEffect: anEffect [
-	effectsWanted add: anEffect.
-]
-
-{ #category : #adding }
 BoardBuilder >> addEffect: anEffect withOccurrencyOf: aProbability [
 	| effect anOdd |
 	effectsWanted isEmpty
@@ -36,18 +31,6 @@ BoardBuilder >> build [
 	aSlotsDistribution := self fillSlotsListWithGivenOccurrencies.
 	board := Board of: aSlotsDistribution.
 	^ board
-]
-
-{ #category : #update }
-BoardBuilder >> fillSlotsListWith: effects [
-	| effectsAsCircularIterator |
-	slotsList := OrderedCollection new.
-	effectsAsCircularIterator := CircularIterator cyclingOver: (effects asOrderedCollection).
-	
-	1 to: numberOfSlots do: [ :number | 
-		number % 3 == 0
-			ifTrue: [ slotsList add: (effectsAsCircularIterator next) new ]
-			ifFalse: [ slotsList add: NoEffect new ] ]
 ]
 
 { #category : #update }

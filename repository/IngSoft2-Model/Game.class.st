@@ -10,15 +10,23 @@ Class {
 		'leaderBoard',
 		'turnsIterator',
 		'board',
-		'dice'
+		'dice',
+		'deckHandler',
+		'cardHandler'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'instance creation' }
-Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds [
+Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds withASetOf: cards [
 	"self validateDiceOfAll: players forThis: aBoard."
-	^(self new) initializeWith: players with: aDice and: aBoard until: aNumberOfRounds
+
+	^ self new
+		initializeWith: players
+		with: aDice
+		and: aBoard
+		until: aNumberOfRounds
+		withSetOf: cards
 ]
 
 { #category : #validation }
@@ -69,13 +77,15 @@ Game >> hasWinner [
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds [
+Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds withSetOf: cards [
 	board := aBoard.
 	players := allThePlayers.
 	dice := aDice.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	roundsForTheGameToBeOver := aNumberOfRounds.
-	leaderBoard := LeaderBoard with: players
+	leaderBoard := LeaderBoard with: players.
+	cardHandler := CardHandler withTheValidCards: cards.
+	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler
 ]
 
 { #category : #playing }

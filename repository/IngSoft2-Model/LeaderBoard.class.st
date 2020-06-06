@@ -18,7 +18,7 @@ LeaderBoard class >> with: allThePlayers [
 { #category : #initialization }
 LeaderBoard >> addRowForA: player [
 	| leaderBoardRow |
-	leaderBoardRow := LeaderBoardRow forA: player.
+	leaderBoardRow := LeaderBoardRow for: player.
 	rowsOfPlayers add: leaderBoardRow.
 ]
 
