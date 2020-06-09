@@ -2,29 +2,40 @@ Class {
 	#name : #CardHandler,
 	#superclass : #Object,
 	#instVars : [
-		'typesOfCards'
+		'typesOfCards',
+		'generator'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'as yet unclassified' }
-CardHandler class >> withTheValidCards: aSetOfCards [
-	^self new initializeWithCards: aSetOfCards
+CardHandler class >> withTheFollowingTypeOfCards: aSetOfCards [
+	^ self new
+		initializeWithCards: aSetOfCards
+		andDistributionGenerator: SharedRandom globalGenerator.
+]
+
+{ #category : #'as yet unclassified' }
+CardHandler class >> withTheFollowingTypesOfCards: aSetOfCards andGenerator: aGenerator [
+	^ self new
+		initializeWithCards: aSetOfCards
+		andDistributionGenerator: aGenerator.
 ]
 
 { #category : #'as yet unclassified' }
 CardHandler >> giveCard [
 	| card |
-	card := (typesOfCards atRandom) new.
+	card := (typesOfCards atRandom: generator) new.
 	^ card
 ]
 
-{ #category : #'as yet unclassified' }
-CardHandler >> initializeWithCards: aSetOfCards [ 
+{ #category : #initialization }
+CardHandler >> initializeWithCards: aSetOfCards andDistributionGenerator: aGenerator [ 
 	typesOfCards := aSetOfCards.
+	generator := aGenerator.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 CardHandler >> typesOfCards [
 	^typesOfCards 
 ]

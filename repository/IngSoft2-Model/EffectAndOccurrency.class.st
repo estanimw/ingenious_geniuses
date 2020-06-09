@@ -2,7 +2,7 @@
 An Object
 "
 Class {
-	#name : #EffectAndProbability,
+	#name : #EffectAndOccurrency,
 	#superclass : #Object,
 	#instVars : [
 		'effect',
@@ -12,22 +12,22 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-EffectAndProbability class >> withEffect: anEffect andOccurrencyOf: anOdd [
+EffectAndOccurrency class >> withEffect: anEffect andOccurrencyOf: anOdd [
 	^self new initializeWithEffect: anEffect andOccurrencyOf: anOdd.
 ]
 
 { #category : #accessing }
-EffectAndProbability >> effect [
+EffectAndOccurrency >> effect [
 	^ effect
 ]
 
 { #category : #initialization }
-EffectAndProbability >> initializeWithEffect: anEffect andOccurrencyOf: anOdd [
+EffectAndOccurrency >> initializeWithEffect: anEffect andOccurrencyOf: anOdd [
 	effect := anEffect.
 	occurrency := anOdd.
 ]
 
 { #category : #accessing }
-EffectAndProbability >> occurrency [
+EffectAndOccurrency >> occurrency [
 	^ occurrency
 ]

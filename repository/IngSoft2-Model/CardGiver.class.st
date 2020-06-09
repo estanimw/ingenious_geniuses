@@ -9,5 +9,5 @@ Class {
 
 { #category : #playing }
 CardGiver >> applyEffectFrom: game [
-	
+	game giveCardToCurrentPlayer.
 ]

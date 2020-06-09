@@ -17,17 +17,27 @@ Deck class >> for: aPlayer [
 ]
 
 { #category : #'as yet unclassified' }
+Deck >> addCardToDeck: aCard [
+	setOfCards add: aCard. 
+]
+
+{ #category : #utilities }
+Deck >> amountOfCards [
+	^setOfCards size.
+]
+
+{ #category : #initialization }
 Deck >> initializeFor: aPlayer [ 
 	player := aPlayer.
 	setOfCards := OrderedCollection new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Deck >> player [
 	^ player
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Deck >> setOfCards [
 	^setOfCards.
 ]

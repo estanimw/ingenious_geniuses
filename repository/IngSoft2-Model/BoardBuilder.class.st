@@ -5,8 +5,8 @@ Class {
 	#name : #BoardBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'effectsWanted',
-		'sizeOfBoard'
+		'sizeOfBoard',
+		'effectsWithOccurrencyWanted'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -17,12 +17,12 @@ BoardBuilder class >> forABoardOfSize: aNumberOfSlots [
 ]
 
 { #category : #adding }
-BoardBuilder >> addEffect: anEffect withOccurrencyOf: aProbability [
-	| effect anOdd |
-	effectsWanted isEmpty
-		ifTrue: [ effect := EffectAndProbability withEffect: anEffect andOccurrencyOf: aProbability ]
-		ifFalse: [ anOdd := (effectsWanted at: effectsWanted size) occurrency + aProbability. effect := EffectAndProbability withEffect: anEffect andOccurrencyOf: anOdd ].
-	effectsWanted add: effect
+BoardBuilder >> addEffect: anEffect withOccurrencyOf: anOcurrency [
+	| anEffectWithOccurrency |
+	effectsWithOccurrencyWanted isEmpty
+		ifTrue: [ anEffectWithOccurrency := EffectAndOccurrency withEffect: anEffect andOccurrencyOf: anOcurrency ]
+		ifFalse: [ anEffectWithOccurrency := self createEffect: anEffect WithOcurrency: anOcurrency ].
+	effectsWithOccurrencyWanted add: anEffectWithOccurrency
 ]
 
 { #category : #building }
@@ -33,22 +33,32 @@ BoardBuilder >> build [
 	^ board
 ]
 
+{ #category : #adding }
+BoardBuilder >> createEffect: anEffect WithOcurrency: anOcurrency [
+	| anOdd anEffectWithOccurrency |
+	anOdd := (effectsWithOccurrencyWanted at: effectsWithOccurrencyWanted size) occurrency + anOcurrency.
+	anEffectWithOccurrency := EffectAndOccurrency
+		withEffect: anEffect
+		andOccurrencyOf: anOdd.
+	^ anEffectWithOccurrency
+]
+
 { #category : #update }
 BoardBuilder >> fillSlotsListWithGivenOccurrencies [
 	| aNumber slotsList |
 	slotsList := OrderedCollection new.
-
 	1 to: sizeOfBoard do: [ :number | 
 		aNumber := Random new next * 100 asInteger.
-		effectsWanted
-			detect: [ :anEffect | aNumber <= anEffect occurrency ]
-			ifFound: [ :effect | slotsList add: effect effect new ] ].
-	
-	^ slotsList.
+		effectsWithOccurrencyWanted
+			detect:
+				[ :anEffectWithOccurrency | aNumber <= anEffectWithOccurrency occurrency ]
+			ifFound:
+				[ :anEffectWithOccurrency | slotsList add: anEffectWithOccurrency effect createSlot ] ].
+	^ slotsList
 ]
 
 { #category : #initialize }
 BoardBuilder >> initializeWithSize: aNumberOfSlots [
-	effectsWanted := OrderedCollection new.
+	effectsWithOccurrencyWanted := OrderedCollection new.
 	sizeOfBoard := aNumberOfSlots.
 ]

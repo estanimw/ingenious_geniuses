@@ -4,25 +4,28 @@ This object is a subclass of BoardSlot and has the responsability to apply it´s
 Class {
 	#name : #MoonWalk,
 	#superclass : #BoardSlot,
+	#instVars : [
+		'n'
+	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #playing }
-MoonWalk >> applyEffectFrom: game [
-	| n allThePlayersButAPlayer player |
-	n := (Random new next * 10) asInteger.
-	player := game currentPlayer.
-	allThePlayersButAPlayer := self remove: player from: game players.
-	allThePlayersButAPlayer do: [ :aPlayer | game move: aPlayer ANumberOfSlotsEqualTo: n * -1 ]
-	"
-	allThePlayersButAPlayer asOrderedCollection
-		do: [ :player | player move: n * -1 on: board until: aNumberOfRounds ]"
+{ #category : #'instance creation' }
+MoonWalk class >> createSlot [
+	^ self new initializeWithN: ((Random new next * 10) asInteger).
 ]
 
-{ #category : #utilities }
-MoonWalk >> remove: aPlayer from: allThePlayers [
-	| allButThePlayer |
-	allButThePlayer := allThePlayers copy.
-	allButThePlayer remove: aPlayer.
-	^ allButThePlayer
+{ #category : #'instance creation' }
+MoonWalk class >> createSlotWithN: aNumber [
+	^self new initializeWithN: aNumber.
+]
+
+{ #category : #playing }
+MoonWalk >> applyEffectFrom: game [
+	game moveEveryPlayerButTheCurrentPlayerANumberOfSlotsEqualTo: n.
+]
+
+{ #category : #initialization }
+MoonWalk >> initializeWithN: anNumber [
+	n := anNumber.
 ]

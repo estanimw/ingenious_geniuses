@@ -44,7 +44,7 @@ GameTest >> play: aNumber turnsIn: game [
 GameTest >> setUp [
 	super setUp.
 	
-	aBoard := Board of: { SpeedUp new . NoEffect new . MoonWalkDeterministic new . AtomicBomb new . NoEffect new . NoEffect new . NoEffect new . WormHole new . NoEffect new . SpeedUp new }.
+	aBoard := Board of: { SpeedUp new . NoEffect new . MoonWalk createSlotWithN: 2 . AtomicBomb new . NoEffect new . NoEffect new . NoEffect new . WormHole new . NoEffect new . SpeedUp new }.
 	
 	numberOfRoundsToBePlayed := 3.
 	
@@ -54,7 +54,7 @@ GameTest >> setUp [
 	juan := 'Juan'.
 	pancho := 'Pancho'.
 	
-	cards := OrderedCollection new.
+	cards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }.
 ]
 
 { #category : #tests }
@@ -94,6 +94,34 @@ GameTest >> testAtomicBombEffect [
 ]
 
 { #category : #tests }
+GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		of:
+			{NoEffect new.
+			NoEffect new.
+			CardGiver new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new.
+			NoEffect new}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	self assert: (game amountOfCardsOf: juan) equals: 2. 
+	game playTurn.
+	self assert: (game amountOfCardsOf: juan)  equals: 3. 
+
+]
+
+{ #category : #tests }
 GameTest >> testGameHasNoWinnerYet [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -104,6 +132,25 @@ GameTest >> testGameHasNoWinnerYet [
 		for: numberOfRoundsToBePlayed
 		withASetOf: cards.
 	self assert: game hasWinner equals: false
+]
+
+{ #category : #tests }
+GameTest >> testHOLA [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: (Overload creacionDeCarta) toPlayer: juan.
+	game giveCard: (Acceleration creacionDeCarta) toPlayer: pancho.
+	game player: juan playsTheCard: Overload onPlayer: pancho.
+	game player: pancho playsTheCard: Acceleration.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 4.
 ]
 
 { #category : #tests }
@@ -118,7 +165,7 @@ GameTest >> testMoonWalkEffectChangesRoundsMadeIfNecessary [
 			NoEffect new.
 			NoEffect new.
 			NoEffect new.
-			MoonWalkDeterministic new.
+			MoonWalk createSlotWithN: 2.
 			NoEffect new.
 			NoEffect new.
 			NoEffect new}.
@@ -155,7 +202,7 @@ GameTest >> testMoonWalkEffectMakesAllThePlayersMoveBackwardNSlots [
 			NoEffect new.
 			NoEffect new.
 			NoEffect new.
-			MoonWalkDeterministic new.
+			MoonWalk createSlotWithN: 2.
 			NoEffect new.
 			NoEffect new}.
 	game := Game

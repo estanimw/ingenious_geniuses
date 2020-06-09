@@ -12,6 +12,4 @@ WormHole >> applyEffectFrom: game [
 	| player |
 	player := game currentPlayer.
 	game move: player ANumberOfSlotsEqualTo: -4
-	"
-	aPlayer move: -4 on: board until: aNumberOfRounds"
 ]

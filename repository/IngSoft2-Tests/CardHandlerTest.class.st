@@ -1,43 +1,68 @@
 Class {
 	#name : #CardHandlerTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'setOfCards',
+		'cards'
+	],
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
-CardHandlerTest >> testDistribucionAtRandomEsUniformeYDarCarta [
-	| handler setOfCards cartasCargadas amountOfAcceleration amountOfOverload collOver collAcce collRedo amountOfRedo collSpeed collCanc collRepeat amountOfSpeed amountOfCancellation amountOfRepeat |
-	setOfCards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }.
-	handler := CardHandler withTheValidCards: setOfCards.
-	cartasCargadas := OrderedCollection new.
-	collAcce := OrderedCollection new. collOver := OrderedCollection new. collRedo := OrderedCollection new. collSpeed := OrderedCollection new. collCanc := OrderedCollection new. collRepeat := OrderedCollection new.
-	
-	1000 timesRepeat: [
-		amountOfAcceleration := 0. amountOfOverload := 0. amountOfRedo := 0. amountOfSpeed := 0. amountOfCancellation := 0. amountOfRepeat := 0.
-		cartasCargadas := OrderedCollection new.
-		60 timesRepeat: [ 
-		cartasCargadas add: (setOfCards atRandom) new. ].
-		cartasCargadas do: [ :card | (card isMemberOf: Acceleration) ifTrue: [ amountOfAcceleration := amountOfAcceleration + 1 ]. (card isMemberOf: Overload) ifTrue: [ amountOfOverload := amountOfOverload + 1  ]. (card isMemberOf: Redo) ifTrue: [ amountOfRedo  := amountOfRedo + 1  ]. (card isMemberOf: Speed) ifTrue: [ amountOfSpeed := amountOfSpeed + 1  ]. (card isMemberOf: Cancellation) ifTrue: [ amountOfCancellation := amountOfCancellation + 1  ]. (card isMemberOf: Repeat) ifTrue: [ amountOfRepeat := amountOfRepeat + 1  ]  ].
-		collAcce add: amountOfAcceleration.
-		collOver add: amountOfOverload.
-		collRedo add: amountOfRedo.
-		collSpeed add: amountOfSpeed.
-		collRepeat add: amountOfRepeat.
-		collCanc add: amountOfCancellation.
-		].
-	
-	self assert: (collAcce average) rounded equals: 10.
-	self assert: (collOver average) rounded equals: 10.
-	self assert: (collRedo average) rounded equals: 10.
-	self assert: (collRepeat average) rounded equals: 10.
-	self assert: (collSpeed average) rounded equals: 10.
-	self assert: (collCanc average) rounded equals: 10.
+{ #category : #calculating }
+CardHandlerTest >> calculateAmountOf: anEffect [ 
+	| amount |
+	amount := 0.
+	cards
+		do: [ :effect | 
+			(effect isMemberOf: anEffect)
+				ifTrue: [ amount := amount + 1 ] ].
+	^ amount
 ]
 
 { #category : #tests }
-CardHandlerTest >> testInicializaElHandler [
-	| handler setOfCards |
+CardHandlerTest >> completeASetOfCardsWithThe: cardHandler [
+	cards := OrderedCollection new.
+	60 timesRepeat: [ cards add: cardHandler giveCard ]
+]
+
+{ #category : #running }
+CardHandlerTest >> setUp [
 	setOfCards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }.
-	handler := CardHandler withTheValidCards: setOfCards.
-	self assert: handler typesOfCards isNotEmpty.
+]
+
+{ #category : #tests }
+CardHandlerTest >> testCardHandlerGivesCardsWithAUniformDistribution [
+	| cardHandler amountOfAcceleration amountOfOverload amountOfRedo amountOfSpeed amountOfCancellation amountOfRepeat |
+	cardHandler := CardHandler withTheFollowingTypeOfCards: setOfCards.
+	amountOfAcceleration := OrderedCollection new.
+	amountOfOverload := OrderedCollection new.
+	amountOfRedo := OrderedCollection new.
+	amountOfSpeed := OrderedCollection new.
+	amountOfCancellation := OrderedCollection new.
+	amountOfRepeat := OrderedCollection new.
+	
+	1000
+		timesRepeat: [ 
+			self completeASetOfCardsWithThe: cardHandler.
+			amountOfAcceleration add: (self calculateAmountOf: Acceleration).
+			amountOfOverload add: (self calculateAmountOf: Overload).
+			amountOfRedo add: (self calculateAmountOf: Redo).
+			amountOfSpeed add: (self calculateAmountOf: Speed).
+			amountOfCancellation add: (self calculateAmountOf: Cancellation).
+			amountOfRepeat add: (self calculateAmountOf: Repeat) 
+		].
+		
+	self assert: amountOfAcceleration average rounded equals: 10.
+	self assert: amountOfOverload average rounded equals: 10.
+	self assert: amountOfRedo average rounded equals: 10.
+	self assert: amountOfSpeed average rounded equals: 10.
+	self assert: amountOfCancellation average rounded equals: 10.
+	self assert: amountOfRepeat average rounded equals: 10
+]
+
+{ #category : #tests }
+CardHandlerTest >> testCardHandlerHasAllTypesOfCardsAtInitialization [
+	| cardHandler |
+	cardHandler := CardHandler withTheFollowingTypeOfCards: setOfCards.
+	self assert: cardHandler typesOfCards isNotEmpty.
 ]

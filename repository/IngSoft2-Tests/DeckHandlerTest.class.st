@@ -2,11 +2,10 @@ Class {
 	#name : #DeckHandlerTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'board',
 		'juan',
 		'pancho',
 		'players',
-		'leaderBoard'
+		'setOfCards'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -14,26 +13,28 @@ Class {
 { #category : #running }
 DeckHandlerTest >> setUp [
 	super setUp.
-	board := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new}.
 	juan := 'Juan'.
 	pancho := 'Pancho'.
 	players := OrderedCollection with: juan with: pancho.
-	leaderBoard := LeaderBoard with: players.
+	setOfCards := { Acceleration. Cancellation. Overload. Redo. }.
 ]
 
 { #category : #tests }
-DeckHandlerTest >> testCargaUnaCarta [
-	| handler card |
-	handler := DeckHandler ofPlayers: players from: cardHandler.
-	card := Card new.
-	handler give: card to: juan.
-	self assert: (handler deckOf: juan) setOfCards isNotEmpty.
-	self assert: (handler deckOf: pancho) setOfCards isEmpty
+DeckHandlerTest >> testAllPlayersStartsWithTwoRandomCards [
+	| deckHandler cardHandler |
+	cardHandler := CardHandler withTheFollowingTypeOfCards: setOfCards.
+	deckHandler := DeckHandler ofPlayers: players from: cardHandler.
+	self assert: deckHandler allDecksHaveTwoCards
 ]
 
 { #category : #tests }
-DeckHandlerTest >> testInicializanVacios [
-	| handler |
-	handler := DeckHandler ofPlayers: players from: cardHandler.
-	self assert: handler allDecksAreEmpty
+DeckHandlerTest >> testDeckHandlerGivesACardToAPlayer [
+	| deckHandler card cardHandler |
+	cardHandler := CardHandler withTheFollowingTypeOfCards: setOfCards.
+	"cardHandler := CardHandler withTheValidCards: setOfCards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6))."
+	deckHandler := DeckHandler ofPlayers: players from: cardHandler.
+	card := cardHandler giveCard.
+	deckHandler give: card to: juan.
+	self assert: (deckHandler amountOfCardsOf: juan) equals: 3.
+	self assert: (deckHandler amountOfCardsOf: pancho) equals: 2.
 ]

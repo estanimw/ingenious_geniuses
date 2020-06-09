@@ -8,7 +8,8 @@ Class {
 		'amountOfWormHole',
 		'amountOfMoonWalk',
 		'amountOfAtomicBomb',
-		'builder'
+		'builder',
+		'amountOfCardGiver'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -30,16 +31,18 @@ BoardTest >> setUp [
 
 	builder := BoardBuilder forABoardOfSize: 100.
 	builder addEffect: AtomicBomb withOccurrencyOf: 2.
-	builder addEffect: NoEffect withOccurrencyOf: 48.
+	builder addEffect: NoEffect withOccurrencyOf: 38.
 	builder addEffect: SpeedUp withOccurrencyOf: 20. 
 	builder addEffect: MoonWalk withOccurrencyOf: 10.
 	builder addEffect: WormHole withOccurrencyOf: 20.
+	builder addEffect: CardGiver withOccurrencyOf: 10.
 
 	amountOfNoEffects := OrderedCollection new.
 	amountOfSpeedUp := OrderedCollection new.
 	amountOfWormHole := OrderedCollection new.
 	amountOfMoonWalk := OrderedCollection new.
 	amountOfAtomicBomb := OrderedCollection new.
+	amountOfCardGiver := OrderedCollection new.
 ]
 
 { #category : #tests }
@@ -52,10 +55,12 @@ BoardTest >> testDistributionOfTheBoard [
 		amountOfWormHole add: (self calculateAmountOf: WormHole).
 		amountOfMoonWalk add: (self calculateAmountOf: MoonWalk).
 		amountOfAtomicBomb add: (self calculateAmountOf: AtomicBomb).
+		amountOfCardGiver add: (self calculateAmountOf: CardGiver).
 		].
-	self assert: (amountOfNoEffects average) rounded equals: 48.
+	self assert: (amountOfNoEffects average) rounded equals: 38.
 	self assert: (amountOfSpeedUp average) rounded equals: 20.
 	self assert: (amountOfWormHole average) rounded equals: 20.
 	self assert: (amountOfMoonWalk average) rounded equals: 10.
+	self assert: (amountOfCardGiver average) rounded equals: 10.
 	self assert: (amountOfAtomicBomb average) rounded equals: 2.
 ]

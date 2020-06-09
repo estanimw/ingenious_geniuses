@@ -16,9 +16,14 @@ DeckHandler class >> ofPlayers: allThePlayers from: cardHandler [
 ]
 
 { #category : #'as yet unclassified' }
-DeckHandler >> allDecksAreEmpty [
-	decks detect: [ :deck | deck setOfCards isNotEmpty ] ifFound: [ ^false ].
+DeckHandler >> allDecksHaveTwoCards [
+	decks detect: [ :deck | (deck setOfCards size) ~= 2 ] ifFound: [ ^false ].
 	^true.
+]
+
+{ #category : #'as yet unclassified' }
+DeckHandler >> amountOfCardsOf: aPlayer [ 
+	^(self deckOf: aPlayer) amountOfCards.
 ]
 
 { #category : #'as yet unclassified' }
@@ -26,7 +31,7 @@ DeckHandler >> deckOf: aPlayer [
 	decks detect: [ :deck | deck player == aPlayer ] ifFound: [ :deck | ^deck ] 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DeckHandler >> decks [
 	^ decks
 ]
@@ -40,8 +45,23 @@ DeckHandler >> give: aCard to: aPlayer [
 
 { #category : #initialization }
 DeckHandler >> initializeWith: allThePlayers from: theCardHandler [
-	| deckOfAPlayer |
-	
+	| deckOfAPlayer firstCard secondCard |
 	decks := OrderedCollection new.
-	allThePlayers do: [ :aPlayer | deckOfAPlayer := Deck for: aPlayer. decks add: deckOfAPlayer.]
+	allThePlayers do: [ :aPlayer | 
+		deckOfAPlayer := Deck for: aPlayer.
+		firstCard := theCardHandler giveCard.
+		secondCard := theCardHandler giveCard.
+		deckOfAPlayer addCardToDeck: firstCard.
+		deckOfAPlayer addCardToDeck: secondCard.
+		decks add: deckOfAPlayer.]
+]
+
+{ #category : #'as yet unclassified' }
+DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
+	decks
+		detect: [ :deck | deck player == aPlayer ]
+		ifFound: [ :deck | 
+			deck setOfCards
+				detect: [ :aCard | aCard isMemberOf: aCardClass ]
+				ifFound: [ :aCard | ^ deck setOfCards remove: aCard ] ]
 ]

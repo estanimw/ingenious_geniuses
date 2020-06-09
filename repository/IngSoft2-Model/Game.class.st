@@ -12,7 +12,8 @@ Class {
 		'board',
 		'dice',
 		'deckHandler',
-		'cardHandler'
+		'cardHandler',
+		'managerOfEffects'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -54,6 +55,11 @@ Game class >> validateOne: die OfAPlayerForThis: board [
 		ifFalse: [ Error signal: 'The die are invalid' ]
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> amountOfCardsOf: aPlayer [ 
+	^deckHandler amountOfCardsOf: aPlayer.
+]
+
 { #category : #playing }
 Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
 	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: self.
@@ -67,6 +73,18 @@ Game >> chooseNextPlayer [
 { #category : #'player information' }
 Game >> currentPlayer [
 	^ turnsIterator current
+]
+
+{ #category : #'as yet unclassified' }
+Game >> giveCard: aCard toPlayer: aPlayer [
+	deckHandler give: aCard to: aPlayer.
+]
+
+{ #category : #'as yet unclassified' }
+Game >> giveCardToCurrentPlayer [
+	| card |
+	card := cardHandler giveCard.
+	deckHandler give: card to: self currentPlayer.
 ]
 
 { #category : #'game status' }
@@ -84,13 +102,30 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard with: players.
-	cardHandler := CardHandler withTheValidCards: cards.
-	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler
+	cardHandler := CardHandler withTheFollowingTypeOfCards: cards.
+	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler.
+	managerOfEffects := ManagerOfEffectsOfTheCardsInGame crearCon: players.
 ]
 
 { #category : #playing }
 Game >> move: player ANumberOfSlotsEqualTo: slotsQuantity [
 	leaderBoard updateRowOfThis: player inA: slotsQuantity forThis: board.
+]
+
+{ #category : #effect }
+Game >> moveEveryPlayerButTheCurrentPlayerANumberOfSlotsEqualTo: aNumberOfSlots [
+	| allThePlayersButAPlayer player |
+	player := self currentPlayer.
+	allThePlayersButAPlayer := self remove: player from: players.
+	allThePlayersButAPlayer do: [ :aPlayer | self move: aPlayer ANumberOfSlotsEqualTo: aNumberOfSlots * -1 ]
+]
+
+{ #category : #effect }
+Game >> moveEveryPlayerToSlotOne [
+	| playerCurrentPosition |
+	 players do: [ :player | 
+		playerCurrentPosition := self positionOf: player.
+		self move: player ANumberOfSlotsEqualTo: (playerCurrentPosition-1) * -1 ].
 ]
 
 { #category : #'player information' }
@@ -113,6 +148,20 @@ Game >> playTurn [
 		ifFalse: [ self chooseNextPlayer ]
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> player: aPlayer playsTheCard: aCardClass [ 
+	| card |
+	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
+	managerOfEffects addCardToAllPlayers: card.
+]
+
+{ #category : #'as yet unclassified' }
+Game >> player: aPlayer playsTheCard: aCardClass onPlayer: anotherPlayer [
+	| card |
+	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
+	managerOfEffects addCard: card toPlayer: anotherPlayer.
+]
+
 { #category : #accessing }
 Game >> players [
 	^ players
@@ -128,10 +177,20 @@ Game >> rankingOf: aPlayer [
 	^ leaderBoard rankingOf: aPlayer
 ]
 
+{ #category : #utilities }
+Game >> remove: aPlayer from: allThePlayers [
+	| allButThePlayer |
+	allButThePlayer := allThePlayers copy.
+	allButThePlayer remove: aPlayer.
+	^ allButThePlayer
+]
+
 { #category : #playing }
 Game >> throwDiceOf: player [
-	| slotsQuantityToMove |
-	slotsQuantityToMove := dice roll.
+	| slotsQuantityToMove diceRoll slotsConsecuenceOfTheCardsInGame |
+	diceRoll := dice roll.
+	slotsConsecuenceOfTheCardsInGame := managerOfEffects totalEffectOver: player.
+	slotsQuantityToMove := diceRoll + slotsConsecuenceOfTheCardsInGame.
 	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove.
 ]
 
