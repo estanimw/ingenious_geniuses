@@ -122,20 +122,7 @@ GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
 ]
 
 { #category : #tests }
-GameTest >> testGameHasNoWinnerYet [
-	| game players |
-	players := OrderedCollection with: juan with: pancho.
-	game := Game
-		playedBy: players
-		thatUse: aDice
-		on: aBoard
-		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
-	self assert: game hasWinner equals: false
-]
-
-{ #category : #tests }
-GameTest >> testHOLA [
+GameTest >> testCartasSonJugadas [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
 	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
@@ -147,10 +134,74 @@ GameTest >> testHOLA [
 		withASetOf: cards.
 	game giveCard: (Overload creacionDeCarta) toPlayer: juan.
 	game giveCard: (Acceleration creacionDeCarta) toPlayer: pancho.
-	game player: juan playsTheCard: Overload onPlayer: pancho.
-	game player: pancho playsTheCard: Acceleration.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: pancho playsTheCard: Acceleration onTarget: players.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 4.
+]
+
+{ #category : #tests }
+GameTest >> testCartasSonJugadasCancellation [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: (Overload creacionDeCarta) toPlayer: juan.
+	game giveCard: (Speed creacionDeCarta) toPlayer: juan.
+	game giveCard: (Overload creacionDeCarta) toPlayer: pancho.
+	game giveCard: (Cancellation creacionDeCarta) toPlayer: pancho.
+	
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game player: juan playsTheCard: Speed onTarget: pancho.
+	
+	game playTurn.
+	game player: pancho playsTheCard: Cancellation onTarget: {Overload . pancho}.
+	
+	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+]
+
+{ #category : #tests }
+GameTest >> testCartasSonJugadasReDo [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: (Redo creacionDeCarta) toPlayer: juan.
+	game giveCard: (Speed creacionDeCarta) toPlayer: pancho.
+	
+	game player: pancho playsTheCard: Speed onTarget: pancho.
+	
+	game player: juan playsTheCard: Redo onTarget: juan.
+	
+	game playTurn.
+	
+	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+]
+
+{ #category : #tests }
+GameTest >> testGameHasNoWinnerYet [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	self assert: game hasWinner equals: false
 ]
 
 { #category : #tests }

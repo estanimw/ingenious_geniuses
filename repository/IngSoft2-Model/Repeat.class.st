@@ -1,3 +1,6 @@
+"
+A Repeat Card.
+"
 Class {
 	#name : #Repeat,
 	#superclass : #Card,

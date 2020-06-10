@@ -65,6 +65,11 @@ Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
 	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: self.
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> cardsAffectingPlayer: aPlayer [ 
+	^ managerOfEffects cardsAffectingPlayer: aPlayer
+]
+
 { #category : #'turn managing' }
 Game >> chooseNextPlayer [
 	turnsIterator next
@@ -105,6 +110,11 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	cardHandler := CardHandler withTheFollowingTypeOfCards: cards.
 	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler.
 	managerOfEffects := ManagerOfEffectsOfTheCardsInGame crearCon: players.
+]
+
+{ #category : #'as yet unclassified' }
+Game >> managerOfEffects [
+	^ managerOfEffects
 ]
 
 { #category : #playing }
@@ -149,17 +159,11 @@ Game >> playTurn [
 ]
 
 { #category : #'as yet unclassified' }
-Game >> player: aPlayer playsTheCard: aCardClass [ 
+Game >> player: aPlayer playsTheCard: aCardClass onTarget: aTarget [
 	| card |
+	
 	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
-	managerOfEffects addCardToAllPlayers: card.
-]
-
-{ #category : #'as yet unclassified' }
-Game >> player: aPlayer playsTheCard: aCardClass onPlayer: anotherPlayer [
-	| card |
-	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
-	managerOfEffects addCard: card toPlayer: anotherPlayer.
+	card applyEffectOverATarget: aTarget on: managerOfEffects.
 ]
 
 { #category : #accessing }

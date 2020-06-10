@@ -4,18 +4,15 @@ A Card
 Class {
 	#name : #Card,
 	#superclass : #Object,
-	#instVars : [
-		'effect'
-	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'as yet unclassified' }
 Card class >> creacionDeCarta [
-	^ self subclassResponsibility
+	^(self new)
 ]
 
-{ #category : #accessing }
-Card >> effect [
-	^ effect
+{ #category : #playing }
+Card >> applyEffectOverATarget: aTarget on: aManagerOfCards [
+	^ self subclassResponsibility
 ]

@@ -1,3 +1,6 @@
+"
+Equivale a DeckHandler.
+"
 Class {
 	#name : #ManagerOfCardsOverAPlayer,
 	#superclass : #Object,
@@ -40,4 +43,9 @@ ManagerOfCardsOverAPlayer >> initializeForPlayer: aPlayer [
 { #category : #'as yet unclassified' }
 ManagerOfCardsOverAPlayer >> player [
 	^ player
+]
+
+{ #category : #'as yet unclassified' }
+ManagerOfCardsOverAPlayer >> removeCard: aCard [
+	cardsAffectingThePlayer remove: aCard
 ]

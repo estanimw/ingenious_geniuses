@@ -1,3 +1,6 @@
+"
+Un mazo infinito de cartas.
+"
 Class {
 	#name : #CardHandler,
 	#superclass : #Object,
