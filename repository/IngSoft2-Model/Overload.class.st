@@ -10,14 +10,11 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
-Overload class >> creacionDeCarta [
-	^ (self new) initialize.
-]
-
 { #category : #playing }
-Overload >> applyEffectOverATarget: aPlayer on: aManagerOfCards [
-	aManagerOfCards addCard: self toPlayer: aPlayer.
+Overload >> applyEffectOverATarget: aPlayer on: theGame [
+	| theManagerOfCards |
+	theManagerOfCards := theGame managerOfEffects.
+	theManagerOfCards addCard: self toPlayer: aPlayer.
 ]
 
 { #category : #accessing }
@@ -26,7 +23,7 @@ Overload >> effect [
 ]
 
 { #category : #initialization }
-Overload >> initialize [ 
+Overload >> initializeCard [
 	effect := -2.
-	
+	typeOfCard := 'permanent'
 ]

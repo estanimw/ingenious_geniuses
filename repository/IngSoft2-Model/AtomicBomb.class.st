@@ -8,6 +8,6 @@ Class {
 }
 
 { #category : #playing }
-AtomicBomb >> applyEffectFrom: game [
+AtomicBomb >> applyEffectTo: aPlayer from: game [
 	game moveEveryPlayerToSlotOne.
 ]

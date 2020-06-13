@@ -9,14 +9,14 @@ Class {
 
 { #category : #'instance creation' }
 BoardSlot class >> createSlot [
-	^ self new initialize
+	^ self new initializeSlot
 ]
 
 { #category : #playing }
-BoardSlot >> applyEffectFrom: game [
+BoardSlot >> applyEffectTo: aPlayer from: game [
 	^ self subclassResponsibility
 ]
 
 { #category : #initialization }
-BoardSlot >> initialize [
+BoardSlot >> initializeSlot [
 ]

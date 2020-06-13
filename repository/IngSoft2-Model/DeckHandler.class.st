@@ -40,7 +40,7 @@ DeckHandler >> decks [
 DeckHandler >> give: aCard to: aPlayer [
 	decks
 		detect: [ :deck | deck player == aPlayer ]
-		ifFound: [ :deck | deck setOfCards add: aCard ]
+		ifFound: [ :deck | deck addCardToDeck: aCard ]
 ]
 
 { #category : #initialization }
@@ -63,5 +63,6 @@ DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
 		ifFound: [ :deck | 
 			deck setOfCards
 				detect: [ :aCard | aCard isMemberOf: aCardClass ]
-				ifFound: [ :aCard | ^ deck setOfCards remove: aCard ] ]
+				ifFound: [ :aCard | ^ deck removeCardFromDeck: aCard ]
+				ifNone: [ Error signal: 'El jugador no tiene esa carta en su mano' ] ]
 ]

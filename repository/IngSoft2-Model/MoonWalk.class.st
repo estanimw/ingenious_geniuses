@@ -21,8 +21,8 @@ MoonWalk class >> createSlotWithN: aNumber [
 ]
 
 { #category : #playing }
-MoonWalk >> applyEffectFrom: game [
-	game moveEveryPlayerButTheCurrentPlayerANumberOfSlotsEqualTo: n.
+MoonWalk >> applyEffectTo: aPlayer from: game [
+	game moveEveryPlayerButThePlayer: aPlayer aNumberOfSlotsEqualTo: n.
 ]
 
 { #category : #initialization }

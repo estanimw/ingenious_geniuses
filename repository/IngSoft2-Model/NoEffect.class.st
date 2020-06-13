@@ -8,5 +8,6 @@ Class {
 }
 
 { #category : #playing }
-NoEffect >> applyEffectFrom: game [
+NoEffect >> applyEffectTo: aPlayer from: game [
+	
 ]

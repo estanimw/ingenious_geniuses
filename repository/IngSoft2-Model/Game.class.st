@@ -30,39 +30,21 @@ Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds w
 		withSetOf: cards
 ]
 
-{ #category : #validation }
-Game class >> validateDiceOfAll: players forThis: board [
-	players
-		do: [ :player | self validateDiceOfOne: player forThis: board ]
-]
-
-{ #category : #validation }
-Game class >> validateDiceOfOne: player forThis: board [
-	| aDice |
-	aDice := player dice.
-	aDice dice
-		do: [ :die | self validateOne: die OfAPlayerForThis: board ]
-]
-
-{ #category : #validation }
-Game class >> validateOne: die OfAPlayerForThis: board [
-	| sidesOfTheDie condition |
-	sidesOfTheDie := die sides.
-	condition := sidesOfTheDie
-		between: 4
-		and: board numberOfSlots * (1 / 3).
-	condition
-		ifFalse: [ Error signal: 'The die are invalid' ]
-]
-
 { #category : #'as yet unclassified' }
 Game >> amountOfCardsOf: aPlayer [ 
 	^deckHandler amountOfCardsOf: aPlayer.
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> applyEffectOfLastBoardSlotOn: aPlayer [
+	| ultimoSlot |
+	ultimoSlot := board ultimoSlot.
+	ultimoSlot applyEffectTo: aPlayer from: self.
+]
+
 { #category : #playing }
 Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
-	board applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: self.
+	board applyEffectOfTheSlotAtThePositionOfPlayer: self currentPlayer from: self
 ]
 
 { #category : #'as yet unclassified' }
@@ -86,10 +68,10 @@ Game >> giveCard: aCard toPlayer: aPlayer [
 ]
 
 { #category : #'as yet unclassified' }
-Game >> giveCardToCurrentPlayer [
+Game >> giveCardToPlayer: aPlayer [
 	| card |
 	card := cardHandler giveCard.
-	deckHandler give: card to: self currentPlayer.
+	deckHandler give: card to: aPlayer.
 ]
 
 { #category : #'game status' }
@@ -122,12 +104,11 @@ Game >> move: player ANumberOfSlotsEqualTo: slotsQuantity [
 	leaderBoard updateRowOfThis: player inA: slotsQuantity forThis: board.
 ]
 
-{ #category : #effect }
-Game >> moveEveryPlayerButTheCurrentPlayerANumberOfSlotsEqualTo: aNumberOfSlots [
-	| allThePlayersButAPlayer player |
-	player := self currentPlayer.
-	allThePlayersButAPlayer := self remove: player from: players.
-	allThePlayersButAPlayer do: [ :aPlayer | self move: aPlayer ANumberOfSlotsEqualTo: aNumberOfSlots * -1 ]
+{ #category : #'as yet unclassified' }
+Game >> moveEveryPlayerButThePlayer: aPlayer aNumberOfSlotsEqualTo: aNumberOfSlots [
+	| allThePlayersButAPlayer |
+	allThePlayersButAPlayer := self remove: aPlayer from: players.
+	allThePlayersButAPlayer do: [ :player | self move: player ANumberOfSlotsEqualTo: aNumberOfSlots * -1 ]
 ]
 
 { #category : #effect }
@@ -161,9 +142,9 @@ Game >> playTurn [
 { #category : #'as yet unclassified' }
 Game >> player: aPlayer playsTheCard: aCardClass onTarget: aTarget [
 	| card |
-	
 	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
-	card applyEffectOverATarget: aTarget on: managerOfEffects.
+	(card typeOfCard == 'permanent') ifTrue: [ (aPlayer == self currentPlayer) ifFalse: [ Error signal: 'No puede jugar la carta porque no es el turno' ] ].
+	card applyEffectOverATarget: aTarget on: self.
 ]
 
 { #category : #accessing }

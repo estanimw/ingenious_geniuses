@@ -6,7 +6,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'numberOfSlots',
-		'slotsList'
+		'slotsList',
+		'ultimoSlot'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -17,12 +18,12 @@ Board class >> of: aSlotsArray [
 ]
 
 { #category : #playing }
-Board >> applyEffectOfTheSlotAtThePositionOfCurrentPlayerFrom: game [
-	| slotWhereThePlayerIsAt playerCurrentPosition currentPlayer |
-	currentPlayer := game currentPlayer.
-	playerCurrentPosition := game positionOf: currentPlayer.
-	slotWhereThePlayerIsAt := slotsList at: playerCurrentPosition.
-	slotWhereThePlayerIsAt applyEffectFrom: game
+Board >> applyEffectOfTheSlotAtThePositionOfPlayer: aPlayer from: game [
+	| slotWhereThePlayerIsAt aPlayerPosition |
+	aPlayerPosition := game positionOf: aPlayer.
+	slotWhereThePlayerIsAt := slotsList at: aPlayerPosition.
+	ultimoSlot := slotWhereThePlayerIsAt.
+	slotWhereThePlayerIsAt applyEffectTo: aPlayer from: game
 ]
 
 { #category : #initialization }
@@ -39,4 +40,9 @@ Board >> numberOfSlots [
 { #category : #accessing }
 Board >> slotsList [
 	^ slotsList
+]
+
+{ #category : #accesing }
+Board >> ultimoSlot [
+	^ ultimoSlot
 ]

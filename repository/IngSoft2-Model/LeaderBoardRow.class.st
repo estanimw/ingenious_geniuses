@@ -18,11 +18,6 @@ LeaderBoardRow class >> for: aPlayer [
 	^ self new initializeWithA: aPlayer
 ]
 
-{ #category : #'instance creation' }
-LeaderBoardRow class >> forA: aPlayer [
-	^ self new initializeWithA: aPlayer
-]
-
 { #category : #comparing }
 LeaderBoardRow >> <= aLeaderBoardRow [
 	^ slotsPassedByThePlayer <= aLeaderBoardRow slotsPassedByThePlayer

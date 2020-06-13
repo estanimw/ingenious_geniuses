@@ -10,14 +10,11 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
-Acceleration class >> creacionDeCarta [
-	^ (self new) initialize.
-]
-
 { #category : #playing }
-Acceleration >> applyEffectOverATarget: allThePlayers on: aManagerOfCards [
-	aManagerOfCards addCardToAllPlayers: self.
+Acceleration >> applyEffectOverATarget: allThePlayers on: theGame [
+	| theManagerOfCards |
+	theManagerOfCards := theGame managerOfEffects.
+	theManagerOfCards addCardToAllPlayers: self.
 ]
 
 { #category : #accessing }
@@ -26,6 +23,7 @@ Acceleration >> effect [
 ]
 
 { #category : #initialization }
-Acceleration >> initialize [ 
+Acceleration >> initializeCard [
 	effect := 1.
+	typeOfCard := 'permanent'
 ]

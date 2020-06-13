@@ -94,6 +94,23 @@ GameTest >> testAtomicBombEffect [
 ]
 
 { #category : #tests }
+GameTest >> testCancellationNoPuedeJugarseLaCarta [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	
+	game giveCard: (Cancellation creacionDeCarta) toPlayer: juan.
+	
+	self should: [ game player: juan playsTheCard: Cancellation onTarget: {Overload . pancho} ] raise: Error withMessageText: 'No hay cartas permanentes activas'.
+]
+
+{ #category : #tests }
 GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -134,10 +151,15 @@ GameTest >> testCartasSonJugadas [
 		withASetOf: cards.
 	game giveCard: (Overload creacionDeCarta) toPlayer: juan.
 	game giveCard: (Acceleration creacionDeCarta) toPlayer: pancho.
+	
 	game player: juan playsTheCard: Overload onTarget: pancho.
+	game playTurn.
 	game player: pancho playsTheCard: Acceleration onTarget: players.
 	game playTurn.
-	self assertCurrentPositionOf: juan in: game equals: 4.
+	game playTurn.
+	
+	self assertCurrentPositionOf: juan in: game equals: 9.
+	self assertCurrentPositionOf: pancho in: game equals: 9.
 ]
 
 { #category : #tests }
@@ -168,7 +190,7 @@ GameTest >> testCartasSonJugadasCancellation [
 ]
 
 { #category : #tests }
-GameTest >> testCartasSonJugadasReDo [
+GameTest >> testCartasSonJugadasRedo [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
 	aBoard := Board of: { NoEffect new . NoEffect new . CardGiver createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
@@ -189,6 +211,28 @@ GameTest >> testCartasSonJugadasReDo [
 	
 	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
 	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+]
+
+{ #category : #tests }
+GameTest >> testCartasSonJugadasRepeat [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board of: { NoEffect new . NoEffect new . SpeedUp createSlot . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new }.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	"game giveCard: (Repeat creacionDeCarta) toPlayer: juan."
+	game giveCard: (Repeat creacionDeCarta) toPlayer: pancho.
+	game playTurn. "mueve juan"
+	game player: pancho playsTheCard: Repeat onTarget: pancho.
+	
+	
+	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
+	self assertCurrentPositionOf: pancho in: game equals: 5.
+	self assertCurrentPositionOf: juan in: game equals: 7.
 ]
 
 { #category : #tests }

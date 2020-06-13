@@ -8,8 +8,6 @@ Class {
 }
 
 { #category : #playing }
-WormHole >> applyEffectFrom: game [
-	| player |
-	player := game currentPlayer.
-	game move: player ANumberOfSlotsEqualTo: -4
+WormHole >> applyEffectTo: aPlayer from: game [
+	game move: aPlayer ANumberOfSlotsEqualTo: -4
 ]

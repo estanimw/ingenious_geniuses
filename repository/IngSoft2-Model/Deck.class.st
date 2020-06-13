@@ -37,6 +37,11 @@ Deck >> player [
 	^ player
 ]
 
+{ #category : #'as yet unclassified' }
+Deck >> removeCardFromDeck: aCard [
+	^setOfCards remove: aCard. 
+]
+
 { #category : #accessing }
 Deck >> setOfCards [
 	^setOfCards.

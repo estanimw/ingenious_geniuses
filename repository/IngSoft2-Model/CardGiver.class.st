@@ -8,6 +8,6 @@ Class {
 }
 
 { #category : #playing }
-CardGiver >> applyEffectFrom: game [
-	game giveCardToCurrentPlayer.
+CardGiver >> applyEffectTo: aPlayer from: game [
+	game giveCardToPlayer: aPlayer.
 ]

@@ -28,7 +28,7 @@ CardHandler class >> withTheFollowingTypesOfCards: aSetOfCards andGenerator: aGe
 { #category : #'as yet unclassified' }
 CardHandler >> giveCard [
 	| card |
-	card := (typesOfCards atRandom: generator) new.
+	card := (typesOfCards atRandom: generator) creacionDeCarta.
 	^ card
 ]
 

@@ -33,6 +33,12 @@ ManagerOfEffectsOfTheCardsInGame >> cardsAffectingPlayer: aPlayer [
 ]
 
 { #category : #'as yet unclassified' }
+ManagerOfEffectsOfTheCardsInGame >> hayAlMenosUnaCartaPermanenteActiva [
+	setManejadorCartasAfectandoAUnJugador detect: [ :cartasDeUnJugador | cartasDeUnJugador cardsAffectingThePlayer isNotEmpty] ifFound: [^true].
+	^false.
+]
+
+{ #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> initializeForPlayers: aSetOfPlayers [
 	| aux |
 	setManejadorCartasAfectandoAUnJugador := OrderedCollection new.
