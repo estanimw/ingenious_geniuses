@@ -11,8 +11,8 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
-ManagerOfCardsOverAPlayer class >> creadoPara: aPlayer [
+{ #category : #'instance creation' }
+ManagerOfCardsOverAPlayer class >> forPlayer: aPlayer [
 	^(self new) initializeForPlayer: aPlayer.
 ]
 
@@ -34,18 +34,18 @@ ManagerOfCardsOverAPlayer >> cardsAffectingThePlayer [
 	^ cardsAffectingThePlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 ManagerOfCardsOverAPlayer >> initializeForPlayer: aPlayer [
 	cardsAffectingThePlayer := OrderedCollection new.
 	player := aPlayer.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ManagerOfCardsOverAPlayer >> player [
 	^ player
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfCardsOverAPlayer >> removeCard: aCard [
-	cardsAffectingThePlayer remove: aCard
+	(cardsAffectingThePlayer includes: aCard) ifTrue: [cardsAffectingThePlayer remove: aCard] ifFalse: [ Error signal: 'There isn`t that card affecting this player' ].
 ]

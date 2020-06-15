@@ -60,11 +60,6 @@ LeaderBoard >> roundsMadeBy: aPlayer [
 	self withRowOf: aPlayer do: [ :aRow | ^aRow playerRoundsMade ].
 ]
 
-{ #category : #accessing }
-LeaderBoard >> rowsOfPlayers [
-	^ rowsOfPlayers
-]
-
 { #category : #query }
 LeaderBoard >> thePlayer: aPlayer isWinnerForMaking: numberOfRoundsForTheGameToBeOver [
 	self withRowOf: aPlayer do: [ :aRow | ^ aRow currentPlayerHasMadeNumberOf: numberOfRoundsForTheGameToBeOver ].

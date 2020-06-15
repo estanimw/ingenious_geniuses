@@ -9,11 +9,10 @@ Class {
 
 { #category : #playing }
 Redo >> applyEffectOverATarget: aTarget on: theGame [
-	| ultimaCarta cartaFinal theManagerOfCards |
+	| lastCard theManagerOfCards |
 	theManagerOfCards := theGame managerOfEffects.
-	ultimaCarta := theManagerOfCards lastCardPlayed. "Speed"
-	cartaFinal := ultimaCarta creacionDeCarta.
-	cartaFinal applyEffectOverATarget: aTarget on: theGame.
+	lastCard := theManagerOfCards lastCardPlayed.
+	lastCard applyEffectOverATarget: aTarget on: theGame.
 ]
 
 { #category : #initialization }

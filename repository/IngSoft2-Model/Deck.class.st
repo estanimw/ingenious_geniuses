@@ -11,7 +11,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 Deck class >> for: aPlayer [ 
 	^ self new initializeFor: aPlayer
 ]
@@ -38,8 +38,8 @@ Deck >> player [
 ]
 
 { #category : #'as yet unclassified' }
-Deck >> removeCardFromDeck: aCard [
-	^setOfCards remove: aCard. 
+Deck >> popCardFromDeck: aCard [
+	(setOfCards includes: aCard) ifTrue: [ ^setOfCards remove: aCard ] ifFalse: [ Error signal: 'The player doesn`t have that card in his deck'  ].
 ]
 
 { #category : #accessing }

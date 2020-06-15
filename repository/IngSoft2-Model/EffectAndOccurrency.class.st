@@ -11,7 +11,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 EffectAndOccurrency class >> withEffect: anEffect andOccurrencyOf: anOdd [
 	^self new initializeWithEffect: anEffect andOccurrencyOf: anOdd.
 ]

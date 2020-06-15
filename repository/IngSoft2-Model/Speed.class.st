@@ -14,6 +14,7 @@ Class {
 Speed >> applyEffectOverATarget: aPlayer on: theGame [
 	| theManagerOfCards |
 	theManagerOfCards := theGame managerOfEffects.
+	(aPlayer class == ByteString) ifFalse: [ Error signal: 'NO SE PUEDE' ].
 	theManagerOfCards addCard: self toPlayer: aPlayer.
 ]
 

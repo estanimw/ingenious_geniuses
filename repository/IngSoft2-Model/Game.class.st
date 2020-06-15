@@ -12,7 +12,6 @@ Class {
 		'board',
 		'dice',
 		'deckHandler',
-		'cardHandler',
 		'managerOfEffects'
 	],
 	#category : #'IngSoft2-Model'
@@ -70,7 +69,7 @@ Game >> giveCard: aCard toPlayer: aPlayer [
 { #category : #'as yet unclassified' }
 Game >> giveCardToPlayer: aPlayer [
 	| card |
-	card := cardHandler giveCard.
+	card := deckHandler giveCard.
 	deckHandler give: card to: aPlayer.
 ]
 
@@ -89,12 +88,11 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard with: players.
-	cardHandler := CardHandler withTheFollowingTypeOfCards: cards.
-	deckHandler := DeckHandler ofPlayers: allThePlayers from: cardHandler.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame crearCon: players.
+	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: cards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
+	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: players.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Game >> managerOfEffects [
 	^ managerOfEffects
 ]
@@ -140,16 +138,11 @@ Game >> playTurn [
 ]
 
 { #category : #'as yet unclassified' }
-Game >> player: aPlayer playsTheCard: aCardClass onTarget: aTarget [
+Game >> player: aPlayer playsTheCard: aCard onTarget: aTarget [
 	| card |
-	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
-	(card typeOfCard == 'permanent') ifTrue: [ (aPlayer == self currentPlayer) ifFalse: [ Error signal: 'No puede jugar la carta porque no es el turno' ] ].
+	card := deckHandler pop: aCard fromDeckOf: aPlayer.
+	(card typeOfCard = 'permanent') ifTrue: [ (aPlayer == self currentPlayer) ifFalse: [ Error signal: 'You can`t play that card because it`s not your turn' ] ].
 	card applyEffectOverATarget: aTarget on: self.
-]
-
-{ #category : #accessing }
-Game >> players [
-	^ players
 ]
 
 { #category : #'player information' }
@@ -177,6 +170,12 @@ Game >> throwDiceOf: player [
 	slotsConsecuenceOfTheCardsInGame := managerOfEffects totalEffectOver: player.
 	slotsQuantityToMove := diceRoll + slotsConsecuenceOfTheCardsInGame.
 	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove.
+]
+
+{ #category : #'as yet unclassified' }
+Game >> updateLastCardPlayed: aCardClass AndApplyEffectOfLastBoardSlotOn: aTarget [
+	self applyEffectOfLastBoardSlotOn: aTarget.
+	managerOfEffects updateLastCardPlayed: aCardClass.
 ]
 
 { #category : #accessing }

@@ -11,8 +11,13 @@ Class {
 }
 
 { #category : #'instance creation' }
-Card class >> creacionDeCarta [
+Card class >> create [
 	^ (self new) initializeCard
+]
+
+{ #category : #accessing }
+Card >> = aCard [
+	^(self className = aCard className)
 ]
 
 { #category : #playing }

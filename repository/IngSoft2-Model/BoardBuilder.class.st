@@ -20,8 +20,12 @@ BoardBuilder class >> forABoardOfSize: aNumberOfSlots [
 BoardBuilder >> addEffect: anEffect withOccurrencyOf: anOcurrency [
 	| anEffectWithOccurrency |
 	effectsWithOccurrencyWanted isEmpty
-		ifTrue: [ anEffectWithOccurrency := EffectAndOccurrency withEffect: anEffect andOccurrencyOf: anOcurrency ]
-		ifFalse: [ anEffectWithOccurrency := self createEffect: anEffect WithOcurrency: anOcurrency ].
+		ifTrue: [ anEffectWithOccurrency := EffectAndOccurrency
+				withEffect: anEffect
+				andOccurrencyOf: anOcurrency ]
+		ifFalse: [ anEffectWithOccurrency := self
+				createEffect: anEffect
+				WithOcurrency: anOcurrency ].
 	effectsWithOccurrencyWanted add: anEffectWithOccurrency
 ]
 
@@ -36,7 +40,8 @@ BoardBuilder >> build [
 { #category : #adding }
 BoardBuilder >> createEffect: anEffect WithOcurrency: anOcurrency [
 	| anOdd anEffectWithOccurrency |
-	anOdd := (effectsWithOccurrencyWanted at: effectsWithOccurrencyWanted size) occurrency + anOcurrency.
+	anOdd := (effectsWithOccurrencyWanted
+		at: effectsWithOccurrencyWanted size) occurrency + anOcurrency.
 	anEffectWithOccurrency := EffectAndOccurrency
 		withEffect: anEffect
 		andOccurrencyOf: anOdd.

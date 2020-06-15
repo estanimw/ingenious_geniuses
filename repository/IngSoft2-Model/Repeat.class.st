@@ -9,7 +9,7 @@ Class {
 
 { #category : #playing }
 Repeat >> applyEffectOverATarget: aTarget on: theGame [
-	theGame applyEffectOfLastBoardSlotOn: aTarget
+	theGame updateLastCardPlayed: self AndApplyEffectOfLastBoardSlotOn: aTarget.
 ]
 
 { #category : #initialization }

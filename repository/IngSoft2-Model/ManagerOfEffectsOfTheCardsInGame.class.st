@@ -5,46 +5,64 @@ Class {
 	#name : #ManagerOfEffectsOfTheCardsInGame,
 	#superclass : #Object,
 	#instVars : [
-		'setManejadorCartasAfectandoAUnJugador',
-		'lastCardPlayed'
+		'lastCardPlayed',
+		'managersOfCardsOverAPlayer'
 	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
-ManagerOfEffectsOfTheCardsInGame class >> crearCon: aSetOfPlayers [ 
+{ #category : #'instance creation' }
+ManagerOfEffectsOfTheCardsInGame class >> createFor: aSetOfPlayers [ 
 	^(self new) initializeForPlayers: aSetOfPlayers.
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> addCard: aCard toPlayer: aPlayer [
-	setManejadorCartasAfectandoAUnJugador detect: [ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ] ifFound: [ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ].
-	lastCardPlayed := aCard class.
+	managersOfCardsOverAPlayer
+		detect:
+			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ]
+		ifFound:
+			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ].
+	self updateLastCardPlayed: aCard
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> addCardToAllPlayers: aCard [
-	setManejadorCartasAfectandoAUnJugador do: [ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ]
+	managersOfCardsOverAPlayer
+		do:
+			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ].
+	self updateLastCardPlayed: aCard
+]
+
+{ #category : #'as yet unclassified' }
+ManagerOfEffectsOfTheCardsInGame >> cancelCardOnTarget: aTarget [
+	| theCard targetPlayer |
+	self thereIsAtLeastOneCardActiveInGame
+		ifTrue: [ theCard := aTarget at: 1.
+			targetPlayer := aTarget at: 2.
+			self managersOfCardsOverAPlayer
+				detect: [ :manager | manager player == targetPlayer ]
+				ifFound: [ :manager | 
+					manager cardsAffectingThePlayer
+						detect: [ :card | card isMemberOf: theCard ]
+						ifFound: [ :card | 
+							manager removeCard: card.
+							self updateLastCardPlayed: (Cancellation create) ] ] ]
+		ifFalse: [ Error signal: 'There aren`t permanent cards in game' ]
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> cardsAffectingPlayer: aPlayer [ 
-	setManejadorCartasAfectandoAUnJugador detect: [ :manager | manager player == aPlayer ] ifFound: [ :manager | ^ manager cardsAffectingThePlayer size ].
-]
-
-{ #category : #'as yet unclassified' }
-ManagerOfEffectsOfTheCardsInGame >> hayAlMenosUnaCartaPermanenteActiva [
-	setManejadorCartasAfectandoAUnJugador detect: [ :cartasDeUnJugador | cartasDeUnJugador cardsAffectingThePlayer isNotEmpty] ifFound: [^true].
-	^false.
+	managersOfCardsOverAPlayer detect: [ :manager | manager player == aPlayer ] ifFound: [ :manager | ^ manager cardsAffectingThePlayer size ].
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> initializeForPlayers: aSetOfPlayers [
 	| aux |
-	setManejadorCartasAfectandoAUnJugador := OrderedCollection new.
+	managersOfCardsOverAPlayer := OrderedCollection new.
 	aSetOfPlayers do: [ :aPlayer | 
-		aux := ManagerOfCardsOverAPlayer creadoPara: aPlayer.
-		setManejadorCartasAfectandoAUnJugador add: aux.
+		aux := ManagerOfCardsOverAPlayer forPlayer: aPlayer.
+		managersOfCardsOverAPlayer add: aux.
 	]
 ]
 
@@ -54,15 +72,39 @@ ManagerOfEffectsOfTheCardsInGame >> lastCardPlayed [
 ]
 
 { #category : #accessing }
-ManagerOfEffectsOfTheCardsInGame >> setManejadorCartasAfectandoAUnJugador [
-	^ setManejadorCartasAfectandoAUnJugador
+ManagerOfEffectsOfTheCardsInGame >> managersOfCardsOverAPlayer [
+	^ managersOfCardsOverAPlayer
+]
+
+{ #category : #'as yet unclassified' }
+ManagerOfEffectsOfTheCardsInGame >> removeCard: aCard fromPlayer: aPlayer [
+	managersOfCardsOverAPlayer
+		detect:
+			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ]
+		ifFound:
+			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador removeCard: aCard ].
+	self updateLastCardPlayed: aCard
+]
+
+{ #category : #'as yet unclassified' }
+ManagerOfEffectsOfTheCardsInGame >> thereIsAtLeastOneCardActiveInGame [
+	managersOfCardsOverAPlayer
+		detect:
+			[ :cartasDeUnJugador | cartasDeUnJugador cardsAffectingThePlayer isNotEmpty ]
+		ifFound: [ ^ true ].
+	^ false
 ]
 
 { #category : #'as yet unclassified' }
 ManagerOfEffectsOfTheCardsInGame >> totalEffectOver: aPlayer [
-	setManejadorCartasAfectandoAUnJugador
+	managersOfCardsOverAPlayer
 		detect:
 			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ]
 		ifFound:
 			[ :unManejadorCartasAfectandoAUnJugador | ^ unManejadorCartasAfectandoAUnJugador calculateTotalEffectOverThePlayer ]
+]
+
+{ #category : #'as yet unclassified' }
+ManagerOfEffectsOfTheCardsInGame >> updateLastCardPlayed: aCard [
+	lastCardPlayed := aCard.
 ]
