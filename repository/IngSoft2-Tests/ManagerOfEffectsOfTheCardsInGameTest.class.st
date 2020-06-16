@@ -19,7 +19,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> setUp [
 ManagerOfEffectsOfTheCardsInGameTest >> testAllManagersOfCardsOverAPlayerInitializeEmpty [
 	| setOfPlayers managerOfEffects |
 	setOfPlayers := { juan . pancho }.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 0.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 0.
 ]
@@ -28,13 +28,13 @@ ManagerOfEffectsOfTheCardsInGameTest >> testAllManagersOfCardsOverAPlayerInitial
 ManagerOfEffectsOfTheCardsInGameTest >> testCantRemoveACardThatIsNotActiveOverAPlayer [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := {juan . pancho}.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 0.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 2.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	self should: [managerOfEffects removeCard: aCard fromPlayer: juan] raise: Error withMessageText: 'There isn`t that card affecting this player'.
 ]
 
@@ -42,14 +42,14 @@ ManagerOfEffectsOfTheCardsInGameTest >> testCantRemoveACardThatIsNotActiveOverAP
 ManagerOfEffectsOfTheCardsInGameTest >> testDifferentCardsAffectAPlayer [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := { juan . pancho }.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
-	aCard := Overload create.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 4.
 	self
@@ -61,13 +61,14 @@ ManagerOfEffectsOfTheCardsInGameTest >> testDifferentCardsAffectAPlayer [
 ManagerOfEffectsOfTheCardsInGameTest >> testManagerOfEffectsOfTheCardsInGameRemovesAnActiveCardFromAPlayer [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := {juan . pancho}.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 0.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 2.
-	managerOfEffects removeCard: aCard fromPlayer: juan.
+	managerOfEffects removeCard: Overload fromPlayer: juan.
+	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 1.
 ]
 
 { #category : #tests }
@@ -75,15 +76,15 @@ ManagerOfEffectsOfTheCardsInGameTest >> testSomeCardsAffectEachPlayer [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := {juan.
 	pancho}.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame
+	managerOfEffects := ManagerOfTheCardsActiveInGame
 		createFor: setOfPlayers.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: pancho.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 3.
 	self
@@ -95,12 +96,12 @@ ManagerOfEffectsOfTheCardsInGameTest >> testSomeCardsAffectEachPlayer [
 ManagerOfEffectsOfTheCardsInGameTest >> testThereIsALeastOneCardActiveInGame [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := { juan . pancho }.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: managerOfEffects thereIsAtLeastOneCardActiveInGame equals: false.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: managerOfEffects thereIsAtLeastOneCardActiveInGame equals: true.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
 	self assert: managerOfEffects thereIsAtLeastOneCardActiveInGame equals: true.
 ]
@@ -109,17 +110,17 @@ ManagerOfEffectsOfTheCardsInGameTest >> testThereIsALeastOneCardActiveInGame [
 ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerCanBeNegativePositivoOrCero [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := {juan.pancho}.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 0.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 0.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 1.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 0.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: pancho.
 	managerOfEffects addCard: aCard toPlayer: pancho.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 3.
@@ -133,17 +134,17 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerCanBeNegativeP
 ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerIsTheSumOfEveryEffect [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := { juan . pancho }.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 0.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 1.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 3.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 1.
 	
@@ -153,16 +154,16 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerIsTheSumOfEver
 ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverDifferentPlayers [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := { juan . pancho }.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 0.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 0.
-	aCard := Speed create.
+	aCard := Speed createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 1.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 0.
-	aCard := Overload create.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
-	aCard := Acceleration create.
+	aCard := Acceleration createCard.
 	managerOfEffects addCardToAllPlayers: aCard.
 	self assert: (managerOfEffects totalEffectOver: juan) equals: 0.
 	self assert: (managerOfEffects totalEffectOver: pancho) equals: 1.
@@ -173,8 +174,8 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverDifferentPlayers [
 ManagerOfEffectsOfTheCardsInGameTest >> testTwoSameCardsAffectAPlayer [
 	| setOfPlayers managerOfEffects aCard |
 	setOfPlayers := {juan . pancho}.
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: setOfPlayers.
-	aCard := Overload create.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
+	aCard := Overload createCard.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	managerOfEffects addCard: aCard toPlayer: juan.
 	self assert: (managerOfEffects cardsAffectingPlayer: juan) equals: 2.

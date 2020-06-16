@@ -9,6 +9,7 @@ Class {
 
 { #category : #playing }
 Repeat >> applyEffectOverATarget: aTarget on: theGame [
+	(aTarget isString) ifFalse: [ Error signal: 'The card Repeat must receive a player as a target' ].
 	theGame updateLastCardPlayed: self AndApplyEffectOfLastBoardSlotOn: aTarget.
 ]
 

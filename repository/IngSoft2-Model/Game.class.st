@@ -30,20 +30,28 @@ Game class >> playedBy: players thatUse: aDice on: aBoard for: aNumberOfRounds w
 ]
 
 { #category : #'as yet unclassified' }
-Game >> amountOfCardsOf: aPlayer [ 
-	^deckHandler amountOfCardsOf: aPlayer.
+Game >> amountOfCardsOf: aPlayer [
+	^ deckHandler amountOfCardsOf: aPlayer
 ]
 
 { #category : #'as yet unclassified' }
 Game >> applyEffectOfLastBoardSlotOn: aPlayer [
-	| ultimoSlot |
-	ultimoSlot := board ultimoSlot.
-	ultimoSlot applyEffectTo: aPlayer from: self.
+	| lastSlot |
+	lastSlot := board lastSlot.
+	lastSlot applyEffectTo: aPlayer from: self
 ]
 
 { #category : #playing }
 Game >> applyEffectOfTheSlotAtThePositionOfCurrentPlayer [
 	board applyEffectOfTheSlotAtThePositionOfPlayer: self currentPlayer from: self
+]
+
+{ #category : #'as yet unclassified' }
+Game >> calculateTotalRollOfPlayer: player [
+	| diceRoll slotsConsecuenceOfTheCardsInGame |
+	diceRoll := dice roll.
+	slotsConsecuenceOfTheCardsInGame := managerOfEffects totalEffectOver: player.
+	^ diceRoll + slotsConsecuenceOfTheCardsInGame
 ]
 
 { #category : #'as yet unclassified' }
@@ -63,21 +71,19 @@ Game >> currentPlayer [
 
 { #category : #'as yet unclassified' }
 Game >> giveCard: aCard toPlayer: aPlayer [
-	deckHandler give: aCard to: aPlayer.
+	deckHandler give: aCard to: aPlayer
 ]
 
 { #category : #'as yet unclassified' }
-Game >> giveCardToPlayer: aPlayer [
+Game >> giveRandomCardToPlayer: aPlayer [
 	| card |
 	card := deckHandler giveCard.
-	deckHandler give: card to: aPlayer.
+	deckHandler give: card to: aPlayer
 ]
 
 { #category : #'game status' }
 Game >> hasWinner [
-	^ leaderBoard
-		thePlayer: self currentPlayer
-		isWinnerForMaking: roundsForTheGameToBeOver
+	^ leaderBoard thePlayer: self currentPlayer isWinnerForMaking: roundsForTheGameToBeOver
 ]
 
 { #category : #initialization }
@@ -89,7 +95,7 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard with: players.
 	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: cards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
-	managerOfEffects := ManagerOfEffectsOfTheCardsInGame createFor: players.
+	managerOfEffects := ManagerOfTheCardsActiveInGame createFor: players.
 ]
 
 { #category : #accessing }
@@ -106,15 +112,18 @@ Game >> move: player ANumberOfSlotsEqualTo: slotsQuantity [
 Game >> moveEveryPlayerButThePlayer: aPlayer aNumberOfSlotsEqualTo: aNumberOfSlots [
 	| allThePlayersButAPlayer |
 	allThePlayersButAPlayer := self remove: aPlayer from: players.
-	allThePlayersButAPlayer do: [ :player | self move: player ANumberOfSlotsEqualTo: aNumberOfSlots * -1 ]
+	allThePlayersButAPlayer
+		do:
+			[ :player | self move: player ANumberOfSlotsEqualTo: aNumberOfSlots * -1 ]
 ]
 
 { #category : #effect }
 Game >> moveEveryPlayerToSlotOne [
 	| playerCurrentPosition |
-	 players do: [ :player | 
-		playerCurrentPosition := self positionOf: player.
-		self move: player ANumberOfSlotsEqualTo: (playerCurrentPosition-1) * -1 ].
+	players
+		do: [ :player | 
+			playerCurrentPosition := self positionOf: player.
+			self move: player ANumberOfSlotsEqualTo: (playerCurrentPosition - 1) * -1 ]
 ]
 
 { #category : #'player information' }
@@ -132,17 +141,19 @@ Game >> playTurn [
 	self throwDiceOf: self currentPlayer.
 	self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
 	leaderBoard updateOrderOfRows.
-	
 	self hasWinner
 		ifFalse: [ self chooseNextPlayer ]
 ]
 
 { #category : #'as yet unclassified' }
-Game >> player: aPlayer playsTheCard: aCard onTarget: aTarget [
+Game >> player: aPlayer playsTheCard: aCardClass onTarget: aTarget [
 	| card |
-	card := deckHandler pop: aCard fromDeckOf: aPlayer.
-	(card typeOfCard = 'permanent') ifTrue: [ (aPlayer == self currentPlayer) ifFalse: [ Error signal: 'You can`t play that card because it`s not your turn' ] ].
-	card applyEffectOverATarget: aTarget on: self.
+	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
+	(card checkTypeOfCardEquals: 'permanent')
+		ifTrue: [ aPlayer == self currentPlayer
+				ifFalse:
+					[ Error signal: 'You can`t play that card because it`s not your turn' ] ].
+	card applyEffectOverATarget: aTarget on: self
 ]
 
 { #category : #'player information' }
@@ -165,20 +176,18 @@ Game >> remove: aPlayer from: allThePlayers [
 
 { #category : #playing }
 Game >> throwDiceOf: player [
-	| slotsQuantityToMove diceRoll slotsConsecuenceOfTheCardsInGame |
-	diceRoll := dice roll.
-	slotsConsecuenceOfTheCardsInGame := managerOfEffects totalEffectOver: player.
-	slotsQuantityToMove := diceRoll + slotsConsecuenceOfTheCardsInGame.
-	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove.
+	| slotsQuantityToMove |
+	slotsQuantityToMove := self calculateTotalRollOfPlayer: player.
+	self move: player ANumberOfSlotsEqualTo: slotsQuantityToMove
 ]
 
 { #category : #'as yet unclassified' }
-Game >> updateLastCardPlayed: aCardClass AndApplyEffectOfLastBoardSlotOn: aTarget [
+Game >> updateLastCardPlayed: aCard AndApplyEffectOfLastBoardSlotOn: aTarget [
 	self applyEffectOfLastBoardSlotOn: aTarget.
-	managerOfEffects updateLastCardPlayed: aCardClass.
+	managerOfEffects updateLastCardPlayed: aCard
 ]
 
 { #category : #accessing }
 Game >> winner [
-	^ leaderBoard winner.
+	^ leaderBoard winner
 ]

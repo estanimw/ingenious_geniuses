@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-Deck class >> for: aPlayer [ 
+Deck class >> forPlayer: aPlayer [ 
 	^ self new initializeFor: aPlayer
 ]
 
@@ -38,8 +38,11 @@ Deck >> player [
 ]
 
 { #category : #'as yet unclassified' }
-Deck >> popCardFromDeck: aCard [
-	(setOfCards includes: aCard) ifTrue: [ ^setOfCards remove: aCard ] ifFalse: [ Error signal: 'The player doesn`t have that card in his deck'  ].
+Deck >> popCardFromDeck: aCardClass [
+	setOfCards
+		detect: [ :card | card isMemberOf: aCardClass ]
+		ifFound: [ :card | ^ setOfCards remove: card ]
+		ifNone: [ Error signal: 'The player doesn`t have that card in his deck' ]
 ]
 
 { #category : #accessing }

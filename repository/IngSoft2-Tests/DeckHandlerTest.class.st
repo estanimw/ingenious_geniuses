@@ -45,19 +45,15 @@ DeckHandlerTest >> testAllPlayersStartsWithTwoRandomCards [
 
 { #category : #tests }
 DeckHandlerTest >> testDeckHandlerCantRemoveACardThatIsntAtThePlayersDeck [
-	| deckHandler aCard |
+	| deckHandler |
 	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 2.
-	aCard := Acceleration create.
-	deckHandler pop: aCard fromDeckOf: juan.
+	deckHandler pop: Acceleration fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 1.
-	aCard := Speed create.
-	self should: [ deckHandler pop: aCard fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
-	aCard := Cancellation create.
-	deckHandler pop: aCard fromDeckOf: juan.
+	self should: [ deckHandler pop: Speed fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
+	deckHandler pop: Cancellation fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 0.
-	aCard := Cancellation create.
-	self should: [ deckHandler pop: aCard fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
+	self should: [ deckHandler pop: Cancellation fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
 ]
 
 { #category : #tests }
@@ -103,7 +99,7 @@ DeckHandlerTest >> testDeckHandlerGivesCardsWithAUniformDistribution [
 ]
 
 { #category : #tests }
-DeckHandlerTest >> testDeckHandlerGivesCardsWithAnOrder [
+DeckHandlerTest >> testDeckHandlerGivesCardsWithAnSpecificOrder [
 	| deckHandler |
 	deckHandler := DeckHandler
 		ofPlayers: players
@@ -111,7 +107,7 @@ DeckHandlerTest >> testDeckHandlerGivesCardsWithAnOrder [
 		andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
 	self
 		assert: ((deckHandler deckOf: juan) setOfCards at: 1)
-		equals: Acceleration create
+		equals: Acceleration createCard
 ]
 
 { #category : #tests }
@@ -123,13 +119,11 @@ DeckHandlerTest >> testDeckHandlerHasAllTypesOfCardsAtInitialization [
 
 { #category : #tests }
 DeckHandlerTest >> testDeckHandlerRemovesACardFromAPlayersDeck [
-	| deckHandler aCard |
+	| deckHandler |
 	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 2.
-	aCard := Acceleration create.
-	deckHandler pop: aCard fromDeckOf: juan.
+	deckHandler pop: Acceleration fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 1.
-	aCard := Cancellation create.
-	deckHandler pop: aCard fromDeckOf: juan.
+	deckHandler pop: Cancellation fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 0.
 ]

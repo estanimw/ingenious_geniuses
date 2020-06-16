@@ -11,18 +11,23 @@ Class {
 }
 
 { #category : #'instance creation' }
-Card class >> create [
+Card class >> createCard [
 	^ (self new) initializeCard
 ]
 
-{ #category : #accessing }
+{ #category : #comparing }
 Card >> = aCard [
-	^(self className = aCard className)
+	^ self className = aCard className
 ]
 
 { #category : #playing }
 Card >> applyEffectOverATarget: aTarget on: theGame [
 	^ self subclassResponsibility.
+]
+
+{ #category : #'as yet unclassified' }
+Card >> checkTypeOfCardEquals: aTypeOfCard [
+	^ typeOfCard = aTypeOfCard
 ]
 
 { #category : #initialization }

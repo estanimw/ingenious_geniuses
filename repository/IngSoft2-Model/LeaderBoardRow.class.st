@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-LeaderBoardRow class >> for: aPlayer [
+LeaderBoardRow class >> forPlayer: aPlayer [
 	^ self new initializeWithA: aPlayer
 ]
 
@@ -23,16 +23,26 @@ LeaderBoardRow >> <= aLeaderBoardRow [
 	^ slotsPassedByThePlayer <= aLeaderBoardRow slotsPassedByThePlayer
 ]
 
+{ #category : #'as yet unclassified' }
+LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneLessRoundMadeForThisBoard: aBoard [
+	playerPosition := playerPosition + aBoard numberOfSlots.
+	playerRoundsMade := playerRoundsMade - 1 
+]
+
+{ #category : #'as yet unclassified' }
+LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneMoreRoundMadeForThisBoard: aBoard [
+		playerPosition := playerPosition - aBoard numberOfSlots.
+		playerRoundsMade := playerRoundsMade + 1
+]
+
 { #category : #update }
-LeaderBoardRow >> changePositionAndRoundsMadeBy: aPlayer inA: slotsQuantity forThis: board [
-	playerPosition := playerPosition + slotsQuantity.
-	playerPosition > board numberOfSlots
-		ifTrue: [ playerPosition := playerPosition - board numberOfSlots.
-			playerRoundsMade := playerRoundsMade + 1 ].
+LeaderBoardRow >> changePositionAndRoundsMadeByaPlayer: aPlayer inASlotsQuantity: aSlotsQuantity forThisBoard: aBoard [
+	playerPosition := playerPosition + aSlotsQuantity.
+	playerPosition > aBoard numberOfSlots
+		ifTrue: [ self changePositionAndRoundsMadeByAPlayer: aPlayer withOneMoreRoundMadeForThisBoard: aBoard ].
 	playerPosition < 1
-		ifTrue: [ playerPosition := playerPosition + board numberOfSlots.
-			playerRoundsMade := playerRoundsMade - 1 ].
-	slotsPassedByThePlayer := playerRoundsMade * board numberOfSlots + playerPosition
+		ifTrue: [ self changePositionAndRoundsMadeByAPlayer: aPlayer withOneLessRoundMadeForThisBoard: aBoard ].
+	self updateSlotsPassedByThePlayer: aPlayer forThisBoard: aBoard
 ]
 
 { #category : #comparing }
@@ -45,7 +55,7 @@ LeaderBoardRow >> initializeWithA: aPlayer [
 	player := aPlayer.
 	playerPosition := 1.
 	playerRoundsMade := 0.
-	slotsPassedByThePlayer := 1.
+	slotsPassedByThePlayer := 1
 ]
 
 { #category : #'player information' }
@@ -66,4 +76,9 @@ LeaderBoardRow >> playerRoundsMade [
 { #category : #accessing }
 LeaderBoardRow >> slotsPassedByThePlayer [
 	^ slotsPassedByThePlayer
+]
+
+{ #category : #'as yet unclassified' }
+LeaderBoardRow >> updateSlotsPassedByThePlayer: aPlayer forThisBoard: aBoard [
+	slotsPassedByThePlayer := playerRoundsMade * aBoard numberOfSlots + playerPosition
 ]

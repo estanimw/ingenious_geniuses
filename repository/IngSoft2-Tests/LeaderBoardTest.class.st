@@ -59,7 +59,7 @@ LeaderBoardTest >> player: aPlayer movesANumberOfSlotsEqualTo: aSlotQuantity [
 { #category : #running }
 LeaderBoardTest >> setUp [
 	super setUp.
-	board := Board of: { NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new . NoEffect new}.
+	board := Board ofASlotDistribution: { NoEffect createSlot . NoEffect createSlot . NoEffect createSlot . NoEffect createSlot . NoEffect createSlot . NoEffect createSlot}.
 	juan := 'Juan'.
 	pancho := 'Pancho'.
 	players := OrderedCollection with: juan with: pancho.

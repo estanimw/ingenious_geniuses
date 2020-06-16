@@ -13,8 +13,8 @@ Class {
 { #category : #playing }
 Speed >> applyEffectOverATarget: aPlayer on: theGame [
 	| theManagerOfCards |
+	(aPlayer isString) ifFalse: [ Error signal: 'The card Speed must receive a player as a target' ].
 	theManagerOfCards := theGame managerOfEffects.
-	(aPlayer class == ByteString) ifFalse: [ Error signal: 'NO SE PUEDE' ].
 	theManagerOfCards addCard: self toPlayer: aPlayer.
 ]
 

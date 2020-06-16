@@ -18,7 +18,7 @@ LeaderBoard class >> with: allThePlayers [
 { #category : #initialization }
 LeaderBoard >> addRowForA: player [
 	| leaderBoardRow |
-	leaderBoardRow := LeaderBoardRow for: player.
+	leaderBoardRow := LeaderBoardRow forPlayer: player.
 	rowsOfPlayers add: leaderBoardRow.
 ]
 
@@ -41,7 +41,7 @@ LeaderBoard >> initializeWith: allThePlayers [.
 
 { #category : #query }
 LeaderBoard >> positionOf: aPlayer [
-	self withRowOf: aPlayer do: [ :aRow | ^aRow playerPosition ].
+	self withRowOf: aPlayer do: [ :aRow | ^ aRow playerPosition ]
 ]
 
 { #category : #query }
@@ -57,23 +57,31 @@ LeaderBoard >> rankingOf: aPlayer [
 
 { #category : #query }
 LeaderBoard >> roundsMadeBy: aPlayer [
-	self withRowOf: aPlayer do: [ :aRow | ^aRow playerRoundsMade ].
+	self withRowOf: aPlayer do: [ :aRow | ^ aRow playerRoundsMade ]
 ]
 
 { #category : #query }
 LeaderBoard >> thePlayer: aPlayer isWinnerForMaking: numberOfRoundsForTheGameToBeOver [
-	self withRowOf: aPlayer do: [ :aRow | ^ aRow currentPlayerHasMadeNumberOf: numberOfRoundsForTheGameToBeOver ].
-
+	self
+		withRowOf: aPlayer
+		do:
+			[ :aRow | ^ aRow currentPlayerHasMadeNumberOf: numberOfRoundsForTheGameToBeOver ]
 ]
 
 { #category : #update }
 LeaderBoard >> updateOrderOfRows [
-	rowsOfPlayers := (rowsOfPlayers sort) reversed.
+	rowsOfPlayers := rowsOfPlayers sort reversed
 ]
 
 { #category : #update }
 LeaderBoard >> updateRowOfThis: player inA: slotsQuantity forThis: board [
-	self withRowOf: player do: [ :row | row changePositionAndRoundsMadeBy: player inA: slotsQuantity forThis: board ].
+	self
+		withRowOf: player
+		do: [ :row | 
+			row
+				changePositionAndRoundsMadeByaPlayer: player
+				inASlotsQuantity: slotsQuantity
+				forThisBoard: board ]
 ]
 
 { #category : #accessing }
@@ -82,6 +90,8 @@ LeaderBoard >> winner [
 ]
 
 { #category : #utilities }
-LeaderBoard >> withRowOf: aPlayer do: aBlockClosure [ 
-    ^ rowsOfPlayers detect: [ :row | row player == aPlayer ] ifFound: aBlockClosure .
+LeaderBoard >> withRowOf: aPlayer do: aBlockClosure [
+	^ rowsOfPlayers
+		detect: [ :row | row player == aPlayer ]
+		ifFound: aBlockClosure
 ]

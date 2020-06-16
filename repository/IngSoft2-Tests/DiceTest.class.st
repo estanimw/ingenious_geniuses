@@ -36,7 +36,7 @@ DiceTest >> testRoll [
 	die := Die of: 6 source: Random new.
 	1 to: 100 do: [ :iteration | self assert: (die roll between: 1 and: 6) ].
 
-	die := Die of: 4.
+	die := Die ofASlotDistribution: 4.
 	1 to: 100 do: [ :iteration | self assert: (die roll between: 1 and: 4) ]
 ]
 
@@ -79,7 +79,7 @@ DiceTest >> testSidesMustBeGreaterThanTwo [
 
 	-1 to: 1 do: [ :invalidSides | 
 		self
-			should: [ Die of: invalidSides ]
+			should: [ Die ofASlotDistribution: invalidSides ]
 			raise: InstanceCreationFailed
 			withMessageText: 'A die must have at least 2 sides' ]
 ]

@@ -30,18 +30,40 @@ DeckHandler class >> ofPlayers: allThePlayers withTheFollowingTypeOfCards: aSetO
 
 { #category : #'as yet unclassified' }
 DeckHandler >> allDecksHaveTwoCards [
-	decks detect: [ :deck | (deck setOfCards size) ~= 2 ] ifFound: [ ^false ].
-	^true.
+	decks
+		detect: [ :deck | deck setOfCards size ~= 2 ]
+		ifFound: [ ^ false ].
+	^ true
 ]
 
 { #category : #'as yet unclassified' }
-DeckHandler >> amountOfCardsOf: aPlayer [ 
-	^(self deckOf: aPlayer) amountOfCards.
+DeckHandler >> amountOfCardsOf: aPlayer [
+	^ (self deckOf: aPlayer) amountOfCards
 ]
 
 { #category : #'as yet unclassified' }
 DeckHandler >> deckOf: aPlayer [
-	decks detect: [ :deck | deck player == aPlayer ] ifFound: [ :deck | ^deck ] 
+	decks
+		detect: [ :deck | deck player == aPlayer ]
+		ifFound: [ :deck | ^ deck ]
+]
+
+{ #category : #'as yet unclassified' }
+DeckHandler >> generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer [
+	| card |
+	card := self giveCard.
+	deckOfAPlayer addCardToDeck: card.
+]
+
+{ #category : #initialization }
+DeckHandler >> generateDeckForEveryPlayerFrom: allThePlayers [
+	| deckOfAPlayer |
+	allThePlayers
+		do: [ :aPlayer | 
+			deckOfAPlayer := Deck forPlayer: aPlayer.
+			self generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer.
+			self generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer.
+			decks add: deckOfAPlayer ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -54,38 +76,26 @@ DeckHandler >> give: aCard to: aPlayer [
 { #category : #'as yet unclassified' }
 DeckHandler >> giveCard [
 	| card |
-	card := (typesOfCards atRandom: generator) create.
+	card := (typesOfCards atRandom: generator) createCard.
 	^ card
 ]
 
 { #category : #initialization }
 DeckHandler >> initializeWith: allThePlayers withCards: aSetOfCards andDistributionGenerator: aGenerator [
-	| deckOfAPlayer firstCard secondCard |
 	typesOfCards := aSetOfCards.
 	generator := aGenerator.
 	decks := OrderedCollection new.
-	allThePlayers
-		do: [ :aPlayer | 
-			deckOfAPlayer := Deck for: aPlayer.
-			firstCard := self giveCard.
-			secondCard := self giveCard.
-			deckOfAPlayer addCardToDeck: firstCard.
-			deckOfAPlayer addCardToDeck: secondCard.
-			decks add: deckOfAPlayer ]
+	self generateDeckForEveryPlayerFrom: allThePlayers
 ]
 
 { #category : #'as yet unclassified' }
-DeckHandler >> pop: aCard fromDeckOf: aPlayer [
+DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
 	decks
 		detect: [ :deck | deck player == aPlayer ]
-		ifFound: [ :deck | ^deck popCardFromDeck: aCard ].
-"			deck setOfCards
-				detect: [ :aCard | aCard isMemberOf: aCardClass ]
-				ifFound: [ :aCard | ^ deck removeCardFromDeck: aCard ]
-				ifNone: [ Error signal: 'El jugador no tiene esa carta en su mano' ] ]"
+		ifFound: [ :deck | ^ deck popCardFromDeck: aCardClass ]
 ]
 
 { #category : #accessing }
 DeckHandler >> typesOfCards [
-	^typesOfCards 
+	^ typesOfCards
 ]

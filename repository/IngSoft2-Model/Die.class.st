@@ -21,43 +21,37 @@ Die class >> assertSidesGreaterThanTwo: aNumberOfSides [
 { #category : #'instance creation - d20 notation' }
 Die class >> d10 [
 	
-	^ self of: 10
+	^ self ofASlotDistribution: 10
 ]
 
 { #category : #'instance creation - d20 notation' }
 Die class >> d100 [
 
-	^ self of: 100
+	^ self ofASlotDistribution: 100
 ]
 
 { #category : #'instance creation - d20 notation' }
 Die class >> d20 [
 
-	^ self of: 20
+	^ self ofASlotDistribution: 20
 ]
 
 { #category : #'instance creation - d20 notation' }
 Die class >> d4 [
 	
-	^ self of: 4
+	^ self ofASlotDistribution: 4
 ]
 
 { #category : #'instance creation - d20 notation' }
 Die class >> d6 [
 	
-	^ self of: 6
+	^ self ofASlotDistribution: 6
 ]
 
 { #category : #'instance creation - d20 notation' }
 Die class >> d8 [
 
-	^ self of: 8
-]
-
-{ #category : #'instance creation' }
-Die class >> of: aNumberOfSides [
-
-	^ self of: aNumberOfSides source: Random new
+	^ self ofASlotDistribution: 8
 ]
 
 { #category : #'instance creation' }
@@ -76,6 +70,12 @@ Die class >> of: aNumberOfSides source: aNumberProvider [
 	^ self new
 		initializeOf: aNumberOfSides
 		source: aNumberProvider
+]
+
+{ #category : #'instance creation' }
+Die class >> ofASlotDistribution: aNumberOfSides [
+
+	^ self of: aNumberOfSides source: Random new
 ]
 
 { #category : #composing }

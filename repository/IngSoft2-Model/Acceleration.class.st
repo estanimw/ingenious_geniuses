@@ -13,6 +13,7 @@ Class {
 { #category : #playing }
 Acceleration >> applyEffectOverATarget: allThePlayers on: theGame [
 	| theManagerOfCards |
+	(allThePlayers isCollection) ifFalse: [ Error signal: 'The card Acccelation must receive a collection with all the players as a target' ].
 	theManagerOfCards := theGame managerOfEffects.
 	theManagerOfCards addCardToAllPlayers: self.
 ]

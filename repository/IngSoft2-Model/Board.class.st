@@ -7,13 +7,13 @@ Class {
 	#instVars : [
 		'numberOfSlots',
 		'slotsList',
-		'ultimoSlot'
+		'lastSlot'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'instance creation' }
-Board class >> of: aSlotsArray [
+Board class >> ofASlotDistribution: aSlotsArray [
 	^ self new initializeWith: aSlotsArray
 ]
 
@@ -22,7 +22,7 @@ Board >> applyEffectOfTheSlotAtThePositionOfPlayer: aPlayer from: game [
 	| slotWhereThePlayerIsAt aPlayerPosition |
 	aPlayerPosition := game positionOf: aPlayer.
 	slotWhereThePlayerIsAt := slotsList at: aPlayerPosition.
-	ultimoSlot := slotWhereThePlayerIsAt.
+	lastSlot := slotWhereThePlayerIsAt.
 	slotWhereThePlayerIsAt applyEffectTo: aPlayer from: game
 ]
 
@@ -30,6 +30,11 @@ Board >> applyEffectOfTheSlotAtThePositionOfPlayer: aPlayer from: game [
 Board >> initializeWith: aSlotsArray [
 	numberOfSlots := aSlotsArray size.
 	slotsList := aSlotsArray
+]
+
+{ #category : #accesing }
+Board >> lastSlot [
+	^ lastSlot
 ]
 
 { #category : #accessing }
@@ -40,9 +45,4 @@ Board >> numberOfSlots [
 { #category : #accessing }
 Board >> slotsList [
 	^ slotsList
-]
-
-{ #category : #accesing }
-Board >> ultimoSlot [
-	^ ultimoSlot
 ]
