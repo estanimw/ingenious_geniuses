@@ -16,7 +16,7 @@ ManagerOfTheCardsActiveInGame class >> createFor: aSetOfPlayers [
 	^(self new) initializeForPlayers: aSetOfPlayers.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> addCard: aCard toPlayer: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
@@ -26,7 +26,7 @@ ManagerOfTheCardsActiveInGame >> addCard: aCard toPlayer: aPlayer [
 	self updateLastCardPlayed: aCard
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> addCardToAllPlayers: aCard [
 	managersOfCardsAffectingAPlayer
 		do:
@@ -34,7 +34,7 @@ ManagerOfTheCardsActiveInGame >> addCardToAllPlayers: aCard [
 	self updateLastCardPlayed: aCard
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> cancelCardOnTarget: aTarget [
 	| theCardClass targetPlayer |
 	theCardClass := aTarget at: 1.
@@ -44,14 +44,7 @@ ManagerOfTheCardsActiveInGame >> cancelCardOnTarget: aTarget [
 		ifFalse: [ Error signal: 'There aren`t permanent cards in game' ]
 ]
 
-{ #category : #'as yet unclassified' }
-ManagerOfTheCardsActiveInGame >> cardsAffectingPlayer: aPlayer [
-	managersOfCardsAffectingAPlayer
-		detect: [ :manager | manager player == aPlayer ]
-		ifFound: [ :manager | ^ manager cardsAffectingThePlayer size ]
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 ManagerOfTheCardsActiveInGame >> initializeForPlayers: aSetOfPlayers [
 	| aux |
 	managersOfCardsAffectingAPlayer := OrderedCollection new.
@@ -66,7 +59,14 @@ ManagerOfTheCardsActiveInGame >> lastCardPlayed [
 	^ lastCardPlayed
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
+ManagerOfTheCardsActiveInGame >> numberOfCardsAffectingPlayer: aPlayer [
+	managersOfCardsAffectingAPlayer
+		detect: [ :manager | manager player == aPlayer ]
+		ifFound: [ :manager | ^ manager cardsAffectingThePlayer size ]
+]
+
+{ #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> removeCard: aCardClass fromPlayer: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
@@ -76,7 +76,7 @@ ManagerOfTheCardsActiveInGame >> removeCard: aCardClass fromPlayer: aPlayer [
 	self updateLastCardPlayed: Cancellation createCard
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
 ManagerOfTheCardsActiveInGame >> thereIsAtLeastOneCardActiveInGame [
 	managersOfCardsAffectingAPlayer
 		detect:
@@ -85,7 +85,7 @@ ManagerOfTheCardsActiveInGame >> thereIsAtLeastOneCardActiveInGame [
 	^ false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #calculations }
 ManagerOfTheCardsActiveInGame >> totalEffectOver: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
@@ -94,7 +94,7 @@ ManagerOfTheCardsActiveInGame >> totalEffectOver: aPlayer [
 			[ :unManejadorCartasAfectandoAUnJugador | ^ unManejadorCartasAfectandoAUnJugador calculateTotalEffectOverThePlayer ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> updateLastCardPlayed: aCard [
 	lastCardPlayed := aCard.
 ]

@@ -10,7 +10,7 @@ Class {
 { #category : #playing }
 Cancellation >> applyEffectOverATarget: aTarget on: theGame [
 	| theManagerOfCards |
-	aTarget isCollection
+	(aTarget isCollection)&(aTarget isString ~= true)
 		ifTrue: [ (((aTarget at: 1) createCard) isKindOf: Card) & (aTarget at: 2) isString
 				ifFalse: [ Error
 						signal:
@@ -18,7 +18,7 @@ Cancellation >> applyEffectOverATarget: aTarget on: theGame [
 		ifFalse: [ Error
 				signal:
 					'The card Cancellation must receive a collection with a Card and a player as a target' ].
-	theManagerOfCards := theGame managerOfEffects.
+	theManagerOfCards := theGame managerOfCardsActive.
 	theManagerOfCards cancelCardOnTarget: aTarget
 ]
 

@@ -28,7 +28,7 @@ DeckHandler class >> ofPlayers: allThePlayers withTheFollowingTypeOfCards: aSetO
 		andDistributionGenerator: aGenerator
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #validation }
 DeckHandler >> allDecksHaveTwoCards [
 	decks
 		detect: [ :deck | deck setOfCards size ~= 2 ]
@@ -36,19 +36,19 @@ DeckHandler >> allDecksHaveTwoCards [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> amountOfCardsOf: aPlayer [
 	^ (self deckOf: aPlayer) amountOfCards
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> deckOf: aPlayer [
 	decks
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | ^ deck ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer [
 	| card |
 	card := self giveCard.
@@ -66,14 +66,14 @@ DeckHandler >> generateDeckForEveryPlayerFrom: allThePlayers [
 			decks add: deckOfAPlayer ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> give: aCard to: aPlayer [
 	decks
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | deck addCardToDeck: aCard ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> giveCard [
 	| card |
 	card := (typesOfCards atRandom: generator) createCard.
@@ -88,7 +88,7 @@ DeckHandler >> initializeWith: allThePlayers withCards: aSetOfCards andDistribut
 	self generateDeckForEveryPlayerFrom: allThePlayers
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
 	decks
 		detect: [ :deck | deck player == aPlayer ]

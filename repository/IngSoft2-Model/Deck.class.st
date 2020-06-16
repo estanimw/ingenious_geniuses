@@ -16,7 +16,7 @@ Deck class >> forPlayer: aPlayer [
 	^ self new initializeFor: aPlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 Deck >> addCardToDeck: aCard [
 	setOfCards add: aCard. 
 ]
@@ -37,7 +37,7 @@ Deck >> player [
 	^ player
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 Deck >> popCardFromDeck: aCardClass [
 	setOfCards
 		detect: [ :card | card isMemberOf: aCardClass ]

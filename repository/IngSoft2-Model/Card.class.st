@@ -25,7 +25,7 @@ Card >> applyEffectOverATarget: aTarget on: theGame [
 	^ self subclassResponsibility.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #validation }
 Card >> checkTypeOfCardEquals: aTypeOfCard [
 	^ typeOfCard = aTypeOfCard
 ]
@@ -33,9 +33,4 @@ Card >> checkTypeOfCardEquals: aTypeOfCard [
 { #category : #initialization }
 Card >> initializeCard [
 	^ self subclassResponsibility
-]
-
-{ #category : #accessing }
-Card >> typeOfCard [
-	^ typeOfCard
 ]

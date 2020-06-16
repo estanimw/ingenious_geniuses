@@ -23,16 +23,16 @@ LeaderBoardRow >> <= aLeaderBoardRow [
 	^ slotsPassedByThePlayer <= aLeaderBoardRow slotsPassedByThePlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
 LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneLessRoundMadeForThisBoard: aBoard [
 	playerPosition := playerPosition + aBoard numberOfSlots.
 	playerRoundsMade := playerRoundsMade - 1 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
 LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneMoreRoundMadeForThisBoard: aBoard [
-		playerPosition := playerPosition - aBoard numberOfSlots.
-		playerRoundsMade := playerRoundsMade + 1
+	playerPosition := playerPosition - aBoard numberOfSlots.
+	playerRoundsMade := playerRoundsMade + 1
 ]
 
 { #category : #update }
@@ -78,7 +78,7 @@ LeaderBoardRow >> slotsPassedByThePlayer [
 	^ slotsPassedByThePlayer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utilities }
 LeaderBoardRow >> updateSlotsPassedByThePlayer: aPlayer forThisBoard: aBoard [
 	slotsPassedByThePlayer := playerRoundsMade * aBoard numberOfSlots + playerPosition
 ]

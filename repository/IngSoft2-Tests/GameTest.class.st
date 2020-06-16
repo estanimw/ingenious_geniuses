@@ -229,11 +229,11 @@ GameTest >> testCancellationEliminatesOneActiveCardOverAPlayer [
 	game playTurn.
 	game player: juan playsTheCard: Speed onTarget: pancho.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 2.
-	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
 	game player: pancho playsTheCard: Cancellation onTarget: {Overload . pancho}.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
-	self assert: (game cardsAffectingPlayer: juan) equals: 1
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1
 ]
 
 { #category : #tests }
@@ -565,7 +565,8 @@ GameTest >> testPlayerWinsThanksToASpeedUpEffect [
 	self assertCurrentPositionOf: juan in: game equals: 9.
 	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 4.
-	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 3
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 3.
+	self assert: game winner equals: pancho.
 ]
 
 { #category : #tests }
@@ -646,8 +647,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingACancellation [
 			{Speed.
 			pancho}.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
-	self assert: (game cardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
 	self assertCurrentPositionOf: juan in: game equals: 4.
 	self assertCurrentPositionOf: pancho in: game equals: 10.
 	self play: 2 turnsIn: game.
@@ -681,16 +682,16 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingARepeat [
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
-	self assert: (game cardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
 	self assertCurrentPositionOf: juan in: game equals: 7.
 	self assertCurrentPositionOf: pancho in: game equals: 5.
 	game player: juan playsTheCard: Redo onTarget: juan.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 5.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
-	self assert: (game cardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 4
 ]
@@ -723,8 +724,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingASpeed [
 	game player: pancho playsTheCard: Speed onTarget: pancho.
 	game player: juan playsTheCard: Redo onTarget: juan.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
-	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 2 turnsIn: game.
@@ -763,8 +764,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnAcceleration [
 		onTarget: players.
 	game player: juan playsTheCard: Redo onTarget: players.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 2.
-	self assert: (game cardsAffectingPlayer: juan) equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 2.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentPositionOf: pancho in: game equals: 2.
 	self play: 2 turnsIn: game.
@@ -800,8 +801,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnOverload [
 	game player: pancho playsTheCard: Overload onTarget: juan.
 	game player: juan playsTheCard: Redo onTarget: pancho.
 	game playTurn.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 1.
-	self assert: (game cardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentPositionOf: pancho in: game equals: 8.
 	self play: 2 turnsIn: game.
@@ -834,7 +835,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayer [
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.	"mueve juan"
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 5.
 	self assertCurrentPositionOf: juan in: game equals: 7
 ]
@@ -961,7 +962,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingNoEffect
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self assertCurrentPositionOf: juan in: game equals: 3
 ]
@@ -991,7 +992,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingSpeedUp 
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
 	self assertCurrentPositionOf: pancho in: game equals: 5.
 	self assertCurrentPositionOf: juan in: game equals: 7
 ]
@@ -1023,7 +1024,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingWormHole
 	game playTurn.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
-	self assert: (game cardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
 	self assertCurrentPositionOf: juan in: game equals: 4.
 	self assertCurrentPositionOf: pancho in: game equals: 6
 ]
@@ -1156,7 +1157,7 @@ GameTest >> testSpeedUpEffectMakesPlayerMoveForwardFourSlots [
 ]
 
 { #category : #tests }
-GameTest >> testTargetDeCartasValido [
+GameTest >> testValidationOfTheTargetThatTheCardsReceive [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
 	aBoard := Board

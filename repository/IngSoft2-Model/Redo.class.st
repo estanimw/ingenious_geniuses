@@ -10,7 +10,7 @@ Class {
 { #category : #playing }
 Redo >> applyEffectOverATarget: aTarget on: theGame [
 	| lastCardPlayed theManagerOfCards |
-	theManagerOfCards := theGame managerOfEffects.
+	theManagerOfCards := theGame managerOfCardsActive.
 	lastCardPlayed := theManagerOfCards lastCardPlayed.
 	lastCardPlayed applyEffectOverATarget: aTarget on: theGame.
 ]

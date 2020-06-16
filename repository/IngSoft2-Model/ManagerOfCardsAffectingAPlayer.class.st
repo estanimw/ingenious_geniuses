@@ -16,12 +16,12 @@ ManagerOfCardsAffectingAPlayer class >> forPlayer: aPlayer [
 	^(self new) initializeForPlayer: aPlayer.
 ]
 
-{ #category : #adding }
+{ #category : #'card handling' }
 ManagerOfCardsAffectingAPlayer >> addCardToAffectThePlayer: aCard [
 	cardsAffectingThePlayer add: aCard.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #calculations }
 ManagerOfCardsAffectingAPlayer >> calculateTotalEffectOverThePlayer [
 	| retorno |
 	retorno := 0.
@@ -46,7 +46,7 @@ ManagerOfCardsAffectingAPlayer >> player [
 	^ player
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'card handling' }
 ManagerOfCardsAffectingAPlayer >> removeCard: aCardClass [
 	cardsAffectingThePlayer
 		detect: [ :card | card isMemberOf: aCardClass ]
