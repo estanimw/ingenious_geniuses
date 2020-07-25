@@ -1,5 +1,5 @@
 Class {
-	#name : #ManagerOfEffectsOfTheCardsInGameTest,
+	#name : #ManagerOfCardActiveInGameTest,
 	#superclass : #TestCase,
 	#instVars : [
 		'juan',
@@ -9,14 +9,14 @@ Class {
 }
 
 { #category : #running }
-ManagerOfEffectsOfTheCardsInGameTest >> setUp [
+ManagerOfCardActiveInGameTest >> setUp [
 	juan := 'juan'.
 	pancho := 'pancho'.
 
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testAllManagersOfCardsOverAPlayerInitializeEmpty [
+ManagerOfCardActiveInGameTest >> testAllManagersOfCardsOverAPlayerInitializeEmpty [
 	| setOfPlayers managerOfCardsActiveInGame |
 	setOfPlayers := { juan . pancho }.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -25,7 +25,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testAllManagersOfCardsOverAPlayerInitial
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testCantRemoveACardThatIsNotActiveOverAPlayer [
+ManagerOfCardActiveInGameTest >> testCantRemoveACardThatIsNotActiveOverAPlayer [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := {juan . pancho}.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -39,7 +39,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testCantRemoveACardThatIsNotActiveOverAP
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testDifferentCardsAffectAPlayer [
+ManagerOfCardActiveInGameTest >> testDifferentCardsAffectAPlayer [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := { juan . pancho }.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -58,7 +58,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testDifferentCardsAffectAPlayer [
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testManagerOfEffectsOfTheCardsInGameRemovesAnActiveCardFromAPlayer [
+ManagerOfCardActiveInGameTest >> testManagerOfEffectsOfTheCardsInGameRemovesAnActiveCardFromAPlayer [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := {juan . pancho}.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -72,7 +72,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testManagerOfEffectsOfTheCardsInGameRemo
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testSomeCardsAffectEachPlayer [
+ManagerOfCardActiveInGameTest >> testSomeCardsAffectEachPlayer [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := {juan.
 	pancho}.
@@ -93,7 +93,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testSomeCardsAffectEachPlayer [
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testThereIsALeastOneCardActiveInGame [
+ManagerOfCardActiveInGameTest >> testThereIsALeastOneCardActiveInGame [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := { juan . pancho }.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -107,7 +107,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testThereIsALeastOneCardActiveInGame [
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerCanBeNegativePositivoOrCero [
+ManagerOfCardActiveInGameTest >> testTotalEffectOverAPlayerCanBeNegativePositivoOrCero [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := {juan.pancho}.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -131,7 +131,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerCanBeNegativeP
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerIsTheSumOfEveryEffect [
+ManagerOfCardActiveInGameTest >> testTotalEffectOverAPlayerIsTheSumOfEveryEffect [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := { juan . pancho }.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -151,7 +151,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverAPlayerIsTheSumOfEver
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverDifferentPlayers [
+ManagerOfCardActiveInGameTest >> testTotalEffectOverDifferentPlayers [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := { juan . pancho }.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.
@@ -171,7 +171,7 @@ ManagerOfEffectsOfTheCardsInGameTest >> testTotalEffectOverDifferentPlayers [
 ]
 
 { #category : #tests }
-ManagerOfEffectsOfTheCardsInGameTest >> testTwoSameCardsAffectAPlayer [
+ManagerOfCardActiveInGameTest >> testTwoSameCardsAffectAPlayer [
 	| setOfPlayers managerOfCardsActiveInGame aCard |
 	setOfPlayers := {juan . pancho}.
 	managerOfCardsActiveInGame := ManagerOfTheCardsActiveInGame createFor: setOfPlayers.

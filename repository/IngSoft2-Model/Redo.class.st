@@ -3,7 +3,7 @@ A Redo Card.
 "
 Class {
 	#name : #Redo,
-	#superclass : #Card,
+	#superclass : #Instant,
 	#category : #'IngSoft2-Model'
 }
 

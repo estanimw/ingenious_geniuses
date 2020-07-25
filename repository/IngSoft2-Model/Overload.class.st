@@ -3,7 +3,7 @@ An Overload Card.
 "
 Class {
 	#name : #Overload,
-	#superclass : #Card,
+	#superclass : #Permanent,
 	#instVars : [
 		'effect'
 	],

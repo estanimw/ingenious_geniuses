@@ -198,6 +198,41 @@ GameTest >> testAtomicBombEffect [
 ]
 
 { #category : #tests }
+GameTest >> testCancellationCantCancellACardThatIsntAffectingThePlayer [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Cancellation createCard toPlayer: pancho.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game playTurn.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game playTurn.
+	game playTurn.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
+	self should: [game player: pancho playsTheCard: Cancellation onTarget: {Speed . pancho}] raise: Error withMessageText: 'There isn`t that card affecting this player'.
+]
+
+{ #category : #tests }
 GameTest >> testCancellationEliminatesOneActiveCardOverAPlayer [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -388,7 +423,6 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwards [
 		withASetOf: cards.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -396,6 +430,149 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwards [
 	game player: pancho playsTheCard: Overload onTarget: juan.
 	self play: 2 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 2.
+]
+
+{ #category : #tests }
+GameTest >> testOverloadCanMakeAPlayerMoveBackwardsAndChangeTheNumberOfRoundsMadeByThePlayer [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toPlayer: juan.
+	self play: 4 turnsIn: game.
+	self assertCurrentPositionOf: juan in: game equals: 8.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	self assertCurrentPositionOf: pancho in: game equals: 2.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	self play: 2 turnsIn: game.
+
+	self assertCurrentPositionOf: juan in: game equals: 7.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1. 
+	self assertCurrentPositionOf: pancho in: game equals: 9.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
+]
+
+{ #category : #tests }
+GameTest >> testOverloadCantMakeAPlayerMoveBackwardsAtFirstPositionOfFirstRound [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	self play: 2 turnsIn: game.
+	self assertCurrentPositionOf: juan in: game equals: 1.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+]
+
+{ #category : #tests }
+GameTest >> testOverloadCombinedWithAnSlotEffect [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			SpeedUp createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Overload createCard toPlayer: juan.
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	
+	self play: 3 turnsIn: game.
+	self assertCurrentPositionOf: pancho in: game equals: 2.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+]
+
+{ #category : #tests }
+GameTest >> testOverloadCombinedWithAnotherCardOfAnotherType [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Speed createCard toPlayer: pancho.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game player: pancho playsTheCard: Speed onTarget: juan.
+	self play: 2 turnsIn: game.
+	self assertCurrentPositionOf: juan in: game equals: 7.
 ]
 
 { #category : #tests }
@@ -432,7 +609,7 @@ GameTest >> testOverloadIsAccumulative [
 ]
 
 { #category : #tests }
-GameTest >> testOverloadReduceTheTotalRollOfAPlayerByTwo [
+GameTest >> testOverloadReduceTheTotalRollOfAPlayerByTwoAndDoesntAffectTheOtherPlayers [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
 	aBoard := Board
@@ -455,8 +632,11 @@ GameTest >> testOverloadReduceTheTotalRollOfAPlayerByTwo [
 		withASetOf: cards.
 	game giveCard: Overload createCard toPlayer: juan.
 	game player: juan playsTheCard: Overload onTarget: juan.
-	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 1.
+	self assertCurrentPositionOf: pancho in: game equals: 1.
+	self play: 2 turnsIn: game.
+	self assertCurrentPositionOf: juan in: game equals: 1.
+	self assertCurrentPositionOf: pancho in: game equals: 10.
 ]
 
 { #category : #tests }
@@ -930,11 +1110,11 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingMoonWalk
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
-	self assertCurrentPositionOf: pancho in: game equals: 10.
+	self assertCurrentPositionOf: pancho in: game equals: 1.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 2.
-	self assertCurrentPositionOf: pancho in: game equals: 9
+	self assertCurrentPositionOf: pancho in: game equals: 10.
 ]
 
 { #category : #tests }
@@ -1030,7 +1210,35 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingWormHole
 ]
 
 { #category : #tests }
-GameTest >> testSpeedIncreasesTheTotalRollOfAPlayerByOne [
+GameTest >> testSpeedCombinedWithAnSlotEffect [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			SpeedUp createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Speed createCard toPlayer: juan.
+	game player: juan playsTheCard: Speed onTarget: juan.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 8.
+]
+
+{ #category : #tests }
+GameTest >> testSpeedIncreasesTheTotalRollOfAPlayerByOneAndDoesntAffectTheOtherPlayers [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
 	aBoard := Board
@@ -1053,8 +1261,9 @@ GameTest >> testSpeedIncreasesTheTotalRollOfAPlayerByOne [
 		withASetOf: cards.
 	game giveCard: Speed createCard toPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
-	game playTurn.
+	self play: 2 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 4.
+	self assertCurrentPositionOf: pancho in: game equals: 10.
 ]
 
 { #category : #tests }

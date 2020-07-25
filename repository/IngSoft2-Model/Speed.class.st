@@ -3,7 +3,7 @@ A Speed Card.
 "
 Class {
 	#name : #Speed,
-	#superclass : #Card,
+	#superclass : #Permanent,
 	#instVars : [
 		'effect'
 	],

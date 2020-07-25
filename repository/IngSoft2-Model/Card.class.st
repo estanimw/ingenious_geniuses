@@ -26,8 +26,8 @@ Card >> applyEffectOverATarget: aTarget on: theGame [
 ]
 
 { #category : #validation }
-Card >> checkTypeOfCardEquals: aTypeOfCard [
-	^ typeOfCard = aTypeOfCard
+Card >> checkCardIsPermanent [
+	^ self isKindOf: Permanent
 ]
 
 { #category : #initialization }

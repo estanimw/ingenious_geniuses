@@ -26,7 +26,7 @@ LeaderBoardRow >> <= aLeaderBoardRow [
 { #category : #utilities }
 LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneLessRoundMadeForThisBoard: aBoard [
 	playerPosition := playerPosition + aBoard numberOfSlots.
-	playerRoundsMade := playerRoundsMade - 1 
+	playerRoundsMade := (playerRoundsMade - 1) max: 0.
 ]
 
 { #category : #utilities }
@@ -38,6 +38,7 @@ LeaderBoardRow >> changePositionAndRoundsMadeByAPlayer: aPlayer withOneMoreRound
 { #category : #update }
 LeaderBoardRow >> changePositionAndRoundsMadeByaPlayer: aPlayer inASlotsQuantity: aSlotsQuantity forThisBoard: aBoard [
 	playerPosition := playerPosition + aSlotsQuantity.
+	(playerRoundsMade == 0) ifTrue: [ playerPosition := playerPosition max: 1 ].
 	playerPosition > aBoard numberOfSlots
 		ifTrue: [ self changePositionAndRoundsMadeByAPlayer: aPlayer withOneMoreRoundMadeForThisBoard: aBoard ].
 	playerPosition < 1

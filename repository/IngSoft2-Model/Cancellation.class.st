@@ -3,7 +3,7 @@ A Cancellation Card.
 "
 Class {
 	#name : #Cancellation,
-	#superclass : #Card,
+	#superclass : #Instant,
 	#category : #'IngSoft2-Model'
 }
 

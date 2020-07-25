@@ -3,7 +3,7 @@ A Repeat Card.
 "
 Class {
 	#name : #Repeat,
-	#superclass : #Card,
+	#superclass : #Instant,
 	#category : #'IngSoft2-Model'
 }
 

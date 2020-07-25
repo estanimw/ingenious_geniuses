@@ -149,7 +149,7 @@ Game >> playTurn [
 Game >> player: aPlayer playsTheCard: aCardClass onTarget: aTarget [
 	| card |
 	card := deckHandler pop: aCardClass fromDeckOf: aPlayer.
-	(card checkTypeOfCardEquals: 'permanent')
+	card checkCardIsPermanent
 		ifTrue: [ aPlayer == self currentPlayer
 				ifFalse:
 					[ Error signal: 'You can`t play that card because it`s not your turn' ] ].

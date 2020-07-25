@@ -3,7 +3,7 @@ An Acceleration Card.
 "
 Class {
 	#name : #Acceleration,
-	#superclass : #Card,
+	#superclass : #Permanent,
 	#instVars : [
 		'effect'
 	],
