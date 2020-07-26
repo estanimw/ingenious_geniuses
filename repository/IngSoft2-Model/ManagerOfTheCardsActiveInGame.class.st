@@ -47,6 +47,7 @@ ManagerOfTheCardsActiveInGame >> cancelCardOnTarget: aTarget [
 { #category : #initialization }
 ManagerOfTheCardsActiveInGame >> initializeForPlayers: aSetOfPlayers [
 	| aux |
+	lastCardPlayed := Card new.
 	managersOfCardsAffectingAPlayer := OrderedCollection new.
 	aSetOfPlayers
 		do: [ :aPlayer | 

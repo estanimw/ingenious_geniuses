@@ -313,6 +313,68 @@ GameTest >> testGameHasNoWinnerYet [
 ]
 
 { #category : #tests }
+GameTest >> testHappyPathDeterministic [
+	| game players aDie otherDie builder |
+	players := OrderedCollection with: juan with: pancho.
+	
+	1000 timesRepeat: [ 
+	builder := BoardBuilder forABoardOfSize: 100.
+	builder addEffect: AtomicBomb withOccurrencyOf: 2.
+	builder addEffect: NoEffect withOccurrencyOf: 38.
+	builder addEffect: SpeedUp withOccurrencyOf: 20. 
+	builder addEffect: MoonWalk withOccurrencyOf: 10.
+	builder addEffect: WormHole withOccurrencyOf: 20.
+	builder addEffect: CardGiver withOccurrencyOf: 10.
+	
+	aBoard := builder build.
+	
+	aDie := Die ofASlotDistribution: 6.
+	otherDie := Die ofASlotDistribution: 6.
+	aDice := aDie + otherDie.
+	
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	
+	game play.
+	self assert: game hasWinner equals: true ]
+]
+
+{ #category : #tests }
+GameTest >> testHappyPathNoDeterministic [
+	| game players aDie otherDie builder |
+	players := OrderedCollection with: juan with: pancho.
+	
+	1000 timesRepeat: [ 
+	builder := BoardBuilder forABoardOfSize: 100.
+	builder addEffect: AtomicBomb withOccurrencyOf: 2.
+	builder addEffect: NoEffect withOccurrencyOf: 38.
+	builder addEffect: SpeedUp withOccurrencyOf: 20. 
+	builder addEffect: MoonWalk withOccurrencyOf: 10.
+	builder addEffect: WormHole withOccurrencyOf: 20.
+	builder addEffect: CardGiver withOccurrencyOf: 10.
+	
+	aBoard := builder build.
+	
+	aDie := Die ofASlotDistribution: 6.
+	otherDie := Die ofASlotDistribution: 6.
+	aDice := aDie + otherDie.
+	
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	
+	game play.
+	self assert: game hasWinner equals: true ]
+]
+
+{ #category : #tests }
 GameTest >> testMoonWalkEffectChangesRoundsMadeIfNecessary [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -786,6 +848,33 @@ GameTest >> testPlayersPlaySomeCards [
 ]
 
 { #category : #tests }
+GameTest >> testRedoCantBeUsedBecauseNoOtherCardHaveBeenPlayedYet [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Redo createCard toPlayer: juan.
+	game playTurn.
+	self should: [game player: juan playsTheCard: Redo onTarget: pancho] raise: Error withMessageText: 'Redo can´t be played because no other cards have been played yet.'.
+]
+
+{ #category : #tests }
 GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingACancellation [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -988,6 +1077,32 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnOverload [
 	self play: 2 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 6.
 	self assertCurrentPositionOf: pancho in: game equals: 8
+]
+
+{ #category : #tests }
+GameTest >> testRepeatCantBeUsedIfTheGameHasntStarted [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			SpeedUp createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+	game giveCard: Repeat createCard toPlayer: pancho.
+	self should: [game player: pancho playsTheCard: Repeat onTarget: pancho] raise: Error withMessageText: 'At least one turn must be played before using Repeat card.'.
 ]
 
 { #category : #tests }

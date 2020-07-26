@@ -12,7 +12,8 @@ Class {
 		'board',
 		'dice',
 		'deckHandler',
-		'managerOfCardsActive'
+		'managerOfCardsActive',
+		'numberOfTurnsPlayed'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -76,6 +77,11 @@ Game >> giveRandomCardToPlayer: aPlayer [
 	deckHandler give: card to: aPlayer
 ]
 
+{ #category : #accessing }
+Game >> hasStarted [
+	^ numberOfTurnsPlayed > 0
+]
+
 { #category : #'game status' }
 Game >> hasWinner [
 	^ leaderBoard thePlayer: self currentPlayer isWinnerForMaking: roundsForTheGameToBeOver
@@ -87,6 +93,7 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	players := allThePlayers.
 	dice := aDice.
 	turnsIterator := CircularIterator cyclingOver: allThePlayers.
+	numberOfTurnsPlayed := 0.
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard with: players.
 	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: cards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
@@ -131,6 +138,11 @@ Game >> numberOfRoundsMadeBy: aPlayer [
 	^ leaderBoard roundsMadeBy: aPlayer
 ]
 
+{ #category : #accessing }
+Game >> numberOfTurnsPlayed [
+	^ numberOfTurnsPlayed
+]
+
 { #category : #playing }
 Game >> play [
 	[ self hasWinner ] whileFalse: [ self playTurn ]
@@ -141,6 +153,7 @@ Game >> playTurn [
 	self throwDiceOf: self currentPlayer.
 	self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
 	leaderBoard updateOrderOfRows.
+	numberOfTurnsPlayed := numberOfTurnsPlayed + 1.
 	self hasWinner
 		ifFalse: [ self chooseNextPlayer ]
 ]
