@@ -4,9 +4,6 @@ A Speed Card.
 Class {
 	#name : #Speed,
 	#superclass : #Permanent,
-	#instVars : [
-		'effect'
-	],
 	#category : #'IngSoft2-Model'
 }
 

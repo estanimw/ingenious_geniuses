@@ -4,9 +4,6 @@ An Overload Card.
 Class {
 	#name : #Overload,
 	#superclass : #Permanent,
-	#instVars : [
-		'effect'
-	],
 	#category : #'IngSoft2-Model'
 }
 

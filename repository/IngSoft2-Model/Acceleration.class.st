@@ -4,9 +4,6 @@ An Acceleration Card.
 Class {
 	#name : #Acceleration,
 	#superclass : #Permanent,
-	#instVars : [
-		'effect'
-	],
 	#category : #'IngSoft2-Model'
 }
 
