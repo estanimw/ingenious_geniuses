@@ -133,14 +133,14 @@ Game >> numberOfCardsAffectingPlayer: aPlayer [
 	^ managerOfCardsActive numberOfCardsAffectingPlayer: aPlayer
 ]
 
+{ #category : #calculations }
+Game >> numberOfCardsInTheDeckOfPlayer: aPlayer [ 
+	^ deckHandler amountOfCardsOf: aPlayer
+]
+
 { #category : #'player information' }
 Game >> numberOfRoundsMadeBy: aPlayer [
 	^ leaderBoard roundsMadeBy: aPlayer
-]
-
-{ #category : #accessing }
-Game >> numberOfTurnsPlayed [
-	^ numberOfTurnsPlayed
 ]
 
 { #category : #playing }
@@ -150,10 +150,11 @@ Game >> play [
 
 { #category : #'turn managing' }
 Game >> playTurn [
-	self throwDiceOf: self currentPlayer.
-	self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
-	leaderBoard updateOrderOfRows.
-	numberOfTurnsPlayed := numberOfTurnsPlayed + 1.
+	self hasWinner
+		ifFalse: [ self throwDiceOf: self currentPlayer.
+			self applyEffectOfTheSlotAtThePositionOfCurrentPlayer.
+			leaderBoard updateOrderOfRows.
+			numberOfTurnsPlayed := numberOfTurnsPlayed + 1 ].
 	self hasWinner
 		ifFalse: [ self chooseNextPlayer ]
 ]

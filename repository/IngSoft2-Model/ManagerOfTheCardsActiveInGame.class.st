@@ -20,9 +20,9 @@ ManagerOfTheCardsActiveInGame class >> createFor: aSetOfPlayers [
 ManagerOfTheCardsActiveInGame >> addCard: aCard toPlayer: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
-			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ]
+			[ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer player == aPlayer ]
 		ifFound:
-			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ].
+			[ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer addCardToAffectThePlayer: aCard ].
 	self updateLastCardPlayed: aCard
 ]
 
@@ -30,7 +30,7 @@ ManagerOfTheCardsActiveInGame >> addCard: aCard toPlayer: aPlayer [
 ManagerOfTheCardsActiveInGame >> addCardToAllPlayers: aCard [
 	managersOfCardsAffectingAPlayer
 		do:
-			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador addCardToAffectThePlayer: aCard ].
+			[ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer addCardToAffectThePlayer: aCard ].
 	self updateLastCardPlayed: aCard
 ]
 
@@ -63,17 +63,17 @@ ManagerOfTheCardsActiveInGame >> lastCardPlayed [
 { #category : #utilities }
 ManagerOfTheCardsActiveInGame >> numberOfCardsAffectingPlayer: aPlayer [
 	managersOfCardsAffectingAPlayer
-		detect: [ :manager | manager player == aPlayer ]
-		ifFound: [ :manager | ^ manager cardsAffectingThePlayer size ]
+		detect: [ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer player == aPlayer ]
+		ifFound: [ :aManagerOfCardsAffectingAPlayer | ^ aManagerOfCardsAffectingAPlayer cardsAffectingThePlayer size ]
 ]
 
 { #category : #'card handling' }
 ManagerOfTheCardsActiveInGame >> removeCard: aCardClass fromPlayer: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
-			[ :aManagerOfCardsOverAPlayer | aManagerOfCardsOverAPlayer player == aPlayer ]
+			[ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer player == aPlayer ]
 		ifFound:
-			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador removeCard: aCardClass ].
+			[ :aManagerOfCardsAffectingAPlayer | aManagerOfCardsAffectingAPlayer removeCard: aCardClass ].
 	self updateLastCardPlayed: Cancellation createCard
 ]
 
@@ -81,7 +81,7 @@ ManagerOfTheCardsActiveInGame >> removeCard: aCardClass fromPlayer: aPlayer [
 ManagerOfTheCardsActiveInGame >> thereIsAtLeastOneCardActiveInGame [
 	managersOfCardsAffectingAPlayer
 		detect:
-			[ :cartasDeUnJugador | cartasDeUnJugador cardsAffectingThePlayer isNotEmpty ]
+			[ :cardsOfAPlayer | cardsOfAPlayer cardsAffectingThePlayer isNotEmpty ]
 		ifFound: [ ^ true ].
 	^ false
 ]
@@ -90,9 +90,9 @@ ManagerOfTheCardsActiveInGame >> thereIsAtLeastOneCardActiveInGame [
 ManagerOfTheCardsActiveInGame >> totalEffectOver: aPlayer [
 	managersOfCardsAffectingAPlayer
 		detect:
-			[ :unManejadorCartasAfectandoAUnJugador | unManejadorCartasAfectandoAUnJugador player == aPlayer ]
+			[ :aManagersOfCardsAffectingAPlayer | aManagersOfCardsAffectingAPlayer player == aPlayer ]
 		ifFound:
-			[ :unManejadorCartasAfectandoAUnJugador | ^ unManejadorCartasAfectandoAUnJugador calculateTotalEffectOverThePlayer ]
+			[ :aManagersOfCardsAffectingAPlayer | ^ aManagersOfCardsAffectingAPlayer calculateTotalEffectOverThePlayer ]
 ]
 
 { #category : #'card handling' }

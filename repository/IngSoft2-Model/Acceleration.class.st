@@ -26,5 +26,5 @@ Acceleration >> effect [
 { #category : #initialization }
 Acceleration >> initializeCard [
 	effect := 1.
-	typeOfCard := 'permanent'
+	
 ]

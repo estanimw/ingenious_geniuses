@@ -26,5 +26,5 @@ Speed >> effect [
 { #category : #initialization }
 Speed >> initializeCard [
 	effect := 1.
-	typeOfCard := 'permanent'
+	
 ]

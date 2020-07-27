@@ -26,5 +26,5 @@ Overload >> effect [
 { #category : #initialization }
 Overload >> initializeCard [
 	effect := -2.
-	typeOfCard := 'permanent'
+	
 ]

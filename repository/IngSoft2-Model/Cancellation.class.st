@@ -21,8 +21,3 @@ Cancellation >> applyEffectOverATarget: aTarget on: theGame [
 	theManagerOfCards := theGame managerOfCardsActive.
 	theManagerOfCards cancelCardOnTarget: aTarget
 ]
-
-{ #category : #initialization }
-Cancellation >> initializeCard [
-	typeOfCard := 'instant'.
-]

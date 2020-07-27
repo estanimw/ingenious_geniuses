@@ -4,9 +4,6 @@ A Card
 Class {
 	#name : #Card,
 	#superclass : #Object,
-	#instVars : [
-		'typeOfCard'
-	],
 	#category : #'IngSoft2-Model'
 }
 

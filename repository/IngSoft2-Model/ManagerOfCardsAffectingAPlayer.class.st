@@ -23,11 +23,11 @@ ManagerOfCardsAffectingAPlayer >> addCardToAffectThePlayer: aCard [
 
 { #category : #calculations }
 ManagerOfCardsAffectingAPlayer >> calculateTotalEffectOverThePlayer [
-	| retorno |
-	retorno := 0.
+	| return |
+	return := 0.
 	cardsAffectingThePlayer
-		do: [ :carta | retorno := retorno + carta effect ].
-	^ retorno
+		do: [ :card | return := return + card effect ].
+	^ return
 ]
 
 { #category : #accessing }

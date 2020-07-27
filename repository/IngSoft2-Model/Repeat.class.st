@@ -13,8 +13,3 @@ Repeat >> applyEffectOverATarget: aTarget on: theGame [
 	(theGame hasStarted) ifFalse: [ Error signal: 'At least one turn must be played before using Repeat card.' ].
 	theGame updateLastCardPlayed: self AndApplyEffectOfLastBoardSlotOn: aTarget.
 ]
-
-{ #category : #initialization }
-Repeat >> initializeCard [
-	typeOfCard := 'instant'
-]

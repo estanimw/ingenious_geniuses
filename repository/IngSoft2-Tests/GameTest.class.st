@@ -272,6 +272,31 @@ GameTest >> testCancellationEliminatesOneActiveCardOverAPlayer [
 ]
 
 { #category : #tests }
+GameTest >> testCantPlayTurnIfTheGameHasAWinner [
+	| game players |
+	players := OrderedCollection with: juan with: pancho.
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: cards.
+
+	game play.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
+	
+	"assert that the values in the game do not change after a winner is found, even trying to force to play another turn"
+	self play: 3 turnsIn: game.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
+]
+
+{ #category : #tests }
 GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
@@ -314,23 +339,22 @@ GameTest >> testGameHasNoWinnerYet [
 
 { #category : #tests }
 GameTest >> testHappyPathDeterministic [
-	| game players aDie otherDie builder |
+	| game players |
 	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{SpeedUp createSlot.
+			NoEffect createSlot.
+			(MoonWalk createSlotWithN: 2).
+			AtomicBomb createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			WormHole createSlot.
+			NoEffect createSlot.
+			SpeedUp createSlot}.		
 	
-	1000 timesRepeat: [ 
-	builder := BoardBuilder forABoardOfSize: 100.
-	builder addEffect: AtomicBomb withOccurrencyOf: 2.
-	builder addEffect: NoEffect withOccurrencyOf: 38.
-	builder addEffect: SpeedUp withOccurrencyOf: 20. 
-	builder addEffect: MoonWalk withOccurrencyOf: 10.
-	builder addEffect: WormHole withOccurrencyOf: 20.
-	builder addEffect: CardGiver withOccurrencyOf: 10.
-	
-	aBoard := builder build.
-	
-	aDie := Die ofASlotDistribution: 6.
-	otherDie := Die ofASlotDistribution: 6.
-	aDice := aDie + otherDie.
+	numberOfRoundsToBePlayed := 3.
 	
 	game := Game
 		playedBy: players
@@ -338,9 +362,112 @@ GameTest >> testHappyPathDeterministic [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: cards.
+		
+	"assert initial values"
+	self assertCurrentPositionOf: juan in: game equals: 1.
+	self assertCurrentPositionOf: pancho in: game equals: 1.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 2.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 2.
 	
-	game play.
-	self assert: game hasWinner equals: true ]
+	"Juan's turn"
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	self assertCurrentPositionOf: pancho in: game equals: 1.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 2.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 2.
+	
+	"Pancho's turn"
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 2.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 2.
+	
+	"Juan's turn"
+	game player: juan playsTheCard: Acceleration onTarget: players.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 9.
+	self assertCurrentPositionOf: pancho in: game equals: 4.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 2.
+	
+	"Pancho's turn"
+	game player: pancho playsTheCard: Overload onTarget: juan.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 9.
+	self assertCurrentPositionOf: pancho in: game equals: 7.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 1.
+	
+	"Juan's turn"
+	game player: juan playsTheCard: Cancellation onTarget: { Overload. juan }.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 9.
+	self assertCurrentPositionOf: pancho in: game equals: 7.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 1.
+	
+	"Pancho's turn -> steps on a MoonWalk slot so Juan moves backwards 2 slots (by the given N in MoonWalk initialization)."
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 7.
+	self assertCurrentPositionOf: pancho in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 1.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 1.
+	
+	"Juan's turn"
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 4.
+	self assertCurrentPositionOf: pancho in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 2.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 2.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 1.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 1.
+	
+	"Pancho's turn -> steps on a MoonWalk slot so Juan moves backwards 2 slots (by the given N in MoonWalk initialization)"
+	game player: pancho playsTheCard: Redo onTarget: { Acceleration. juan }.
+	game playTurn.
+	self assertCurrentPositionOf: juan in: game equals: 2.
+	self assertCurrentPositionOf: pancho in: game equals: 3.
+	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 2.
+	self assertCurrentNumberOfRoundsMadeBy: pancho in: game equals: 3.
+	self assert: (game numberOfCardsAffectingPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 1.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: juan) equals: 0.
+	self assert: (game numberOfCardsInTheDeckOfPlayer: pancho) equals: 0.
+	
+	self assert: game hasWinner equals: true.
+	self assertRankingOf: pancho in: game equals: 1.
+	self assertRankingOf: juan in: game equals: 2.
 ]
 
 { #category : #tests }

@@ -18,8 +18,3 @@ Redo >> applyEffectOverATarget: aTarget on: theGame [
 					'Redo can´t be played because no other cards have been played yet.' ]
 		ifFalse: [ lastCardPlayed applyEffectOverATarget: aTarget on: theGame ]
 ]
-
-{ #category : #initialization }
-Redo >> initializeCard [
-	typeOfCard := 'instant'
-]
