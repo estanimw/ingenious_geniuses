@@ -12,11 +12,6 @@ DiscardDeck class >> createDeck [
 	^ (self new) initializeDeckDescarte
 ]
 
-{ #category : #adding }
-DiscardDeck >> addCard: aCard [
-	setOfCards add: aCard
-]
-
 { #category : #initialization }
 DiscardDeck >> initializeDeckDescarte [
 	setOfCards := OrderedCollection new.

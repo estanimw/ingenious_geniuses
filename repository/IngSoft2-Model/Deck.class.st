@@ -17,10 +17,10 @@ Deck >> addCardToDeck: aCard [
 
 { #category : #utilities }
 Deck >> amountOfCards [
-	^setOfCards size.
+	^ setOfCards size
 ]
 
 { #category : #accessing }
 Deck >> setOfCards [
-	^setOfCards.
+	^ setOfCards
 ]

@@ -50,7 +50,7 @@ DeckHandler >> deckOf: aPlayer [
 { #category : #'card handling' }
 DeckHandler >> generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer [
 	| card |
-	card := self giveCard.
+	card := self pickCardFromGameDeck.
 	deckOfAPlayer addCardToDeck: card.
 ]
 
@@ -66,15 +66,10 @@ DeckHandler >> generateDeckForEveryPlayerFrom: allThePlayers [
 ]
 
 { #category : #'card handling' }
-DeckHandler >> give: aCard to: aPlayer [
+DeckHandler >> giveCard: aCard toPlayer: aPlayer [
 	decksOfThePlayers
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | deck addCardToDeck: aCard ]
-]
-
-{ #category : #'card handling' }
-DeckHandler >> giveCard [
-	^ deckOfTheGame getCard
 ]
 
 { #category : #initialization }
@@ -86,13 +81,23 @@ DeckHandler >> initializeWithPlayers: allThePlayers andMainDeck: mainDeck [
 ]
 
 { #category : #'card handling' }
+DeckHandler >> pickCardFromGameDeck [
+	self reloadMainDeckIfNecessary.
+	deckOfTheGame setOfCards isEmpty
+		ifTrue: [ ^ Error
+				signal:
+					'A card can´t be taken from the main deck because it´s empty and no cards have been discarded yet.' ]
+		ifFalse: [ ^ deckOfTheGame getCard ]
+]
+
+{ #category : #'card handling' }
 DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
 	| popedCard |
 	decksOfThePlayers
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | 
 			popedCard := deck popCardFromDeck: aCardClass.
-			deckDiscard addCard: popedCard.
+			deckDiscard addCardToDeck: popedCard.
 			^ popedCard ]
 ]
 

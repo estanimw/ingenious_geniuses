@@ -76,15 +76,15 @@ Game >> currentPlayer [
 ]
 
 { #category : #'card handling' }
-Game >> giveCard: aCard toPlayer: aPlayer [
-	deckHandler give: aCard to: aPlayer
+Game >> giveCard: aCard toDeckOfPlayer: aPlayer [
+	deckHandler giveCard: aCard toPlayer: aPlayer
 ]
 
 { #category : #'card handling' }
 Game >> giveRandomCardToPlayer: aPlayer [
 	| card |
-	card := deckHandler giveCard.
-	deckHandler give: card to: aPlayer
+	card := deckHandler pickCardFromGameDeck.
+	self giveCard: card toDeckOfPlayer: aPlayer
 ]
 
 { #category : #accessing }

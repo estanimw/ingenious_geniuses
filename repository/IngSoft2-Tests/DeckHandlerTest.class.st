@@ -26,7 +26,7 @@ DeckHandlerTest >> calculateAmountOf: anEffect [
 { #category : #tests }
 DeckHandlerTest >> completeASetOfCardsWithThe: deckHandler [
 	setOfCards := OrderedCollection new.
-	60 timesRepeat: [ setOfCards add: deckHandler giveCard ]
+	100 timesRepeat: [ setOfCards add: deckHandler pickCardFromGameDeck ]
 ]
 
 { #category : #running }
@@ -37,12 +37,12 @@ DeckHandlerTest >> setUp [
 	players := OrderedCollection with: juan with: pancho.
 	
 	builder := MainDeckBuilder generateWithSizeOf: 6.
-	builder addEffect: Acceleration createCard withOccurrencyOf: 20.
-	builder addEffect: Overload createCard withOccurrencyOf: 10.
-	builder addEffect: Speed createCard withOccurrencyOf: 30.
-	builder addEffect: Redo createCard withOccurrencyOf: 20.
-	builder addEffect: Repeat createCard withOccurrencyOf: 10.
-	builder addEffect: Cancellation createCard withOccurrencyOf: 10.
+	builder addEffect: Acceleration withOccurrencyOf: 20.
+	builder addEffect: Overload withOccurrencyOf: 10.
+	builder addEffect: Speed withOccurrencyOf: 30.
+	builder addEffect: Redo withOccurrencyOf: 20.
+	builder addEffect: Repeat withOccurrencyOf: 10.
+	builder addEffect: Cancellation withOccurrencyOf: 10.
 	
 	mainDeck := builder build.
 	"setOfCards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }."
@@ -88,16 +88,37 @@ DeckHandlerTest >> testDeckHandlerGivesACardToAPlayer [
 	deckHandler := DeckHandler
 		ofPlayers: players
 		withMainDeck: mainDeck.
-	card := deckHandler giveCard.
-	deckHandler give: card to: juan.
+	card := deckHandler pickCardFromGameDeck.
+	deckHandler giveCard: card toPlayer: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 3.
 	self assert: (deckHandler amountOfCardsOf: pancho) equals: 2
 ]
 
 { #category : #tests }
-DeckHandlerTest >> testDeckHandlerGivesCardsWithAUniformDistribution [
-	| deckHandler amountOfAcceleration amountOfOverload amountOfRedo amountOfSpeed amountOfCancellation amountOfRepeat |
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards.
+DeckHandlerTest >> testDeckHandlerGivesCardsWithAnSpecificOrder [
+	| deckHandler listOfCards |
+	listOfCards := OrderedCollection new. listOfCards add: Acceleration createCard. listOfCards add: Overload createCard. listOfCards add: Redo createCard. listOfCards add: Acceleration createCard.
+	mainDeck := MainDeck generateWithCardDistribution: listOfCards.
+	deckHandler := DeckHandler
+		ofPlayers: players
+		withMainDeck: mainDeck.
+	self
+		assert: ((deckHandler deckOf: juan) setOfCards at: 1)
+		equals: Acceleration createCard.
+	self
+		assert: ((deckHandler deckOf: juan) setOfCards at: 2)
+		equals: Overload createCard.
+	self
+		assert: ((deckHandler deckOf: pancho) setOfCards at: 1)
+		equals: Redo createCard.
+	self
+		assert: ((deckHandler deckOf: pancho) setOfCards at: 2)
+		equals: Acceleration createCard
+]
+
+{ #category : #tests }
+DeckHandlerTest >> testDeckHandlerGivesCardsWithTheGivenDistribution [
+	| deckHandler amountOfAcceleration amountOfOverload amountOfRedo amountOfSpeed amountOfCancellation amountOfRepeat mainDeck2 |
 	amountOfAcceleration := OrderedCollection new.
 	amountOfOverload := OrderedCollection new.
 	amountOfRedo := OrderedCollection new.
@@ -107,6 +128,16 @@ DeckHandlerTest >> testDeckHandlerGivesCardsWithAUniformDistribution [
 	
 	1000
 		timesRepeat: [ 
+			builder := MainDeckBuilder generateWithSizeOf: 1000.
+			builder addEffect: Acceleration withOccurrencyOf: 20.
+			builder addEffect: Overload withOccurrencyOf: 10.
+			builder addEffect: Speed withOccurrencyOf: 30.
+			builder addEffect: Redo withOccurrencyOf: 20.
+			builder addEffect: Repeat withOccurrencyOf: 10.
+			builder addEffect: Cancellation withOccurrencyOf: 10.
+			
+			mainDeck2 := builder build.	
+			deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck2.
 			self completeASetOfCardsWithThe: deckHandler.
 			amountOfAcceleration add: (self calculateAmountOf: Acceleration).
 			amountOfOverload add: (self calculateAmountOf: Overload).
@@ -116,31 +147,12 @@ DeckHandlerTest >> testDeckHandlerGivesCardsWithAUniformDistribution [
 			amountOfRepeat add: (self calculateAmountOf: Repeat) 
 		].
 		
-	self assert: amountOfAcceleration average rounded equals: 10.
+	self assert: amountOfAcceleration average rounded equals: 20.
 	self assert: amountOfOverload average rounded equals: 10.
-	self assert: amountOfRedo average rounded equals: 10.
-	self assert: amountOfSpeed average rounded equals: 10.
+	self assert: amountOfSpeed average rounded equals: 30.
+	self assert: amountOfRedo average rounded equals: 20.
 	self assert: amountOfCancellation average rounded equals: 10.
 	self assert: amountOfRepeat average rounded equals: 10
-]
-
-{ #category : #tests }
-DeckHandlerTest >> testDeckHandlerGivesCardsWithAnSpecificOrder [
-	| deckHandler |
-	deckHandler := DeckHandler
-		ofPlayers: players
-		withTheFollowingTypeOfCards: setOfCards
-		andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
-	self
-		assert: ((deckHandler deckOf: juan) setOfCards at: 1)
-		equals: Acceleration createCard
-]
-
-{ #category : #tests }
-DeckHandlerTest >> testDeckHandlerHasAllTypesOfCardsAtInitialization [
-	| deckHandler |
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards.
-	self assert: deckHandler typesOfCards isNotEmpty.
 ]
 
 { #category : #tests }

@@ -27,8 +27,9 @@ MainDeckBuilder >> addEffect: anEffect withOccurrencyOf: anOcurrency [
 
 { #category : #building }
 MainDeckBuilder >> build [
-	| deck |
-	deck := MainDeck generateWithCardDistribution: cardsWithOccurrency.
+	| deck aCardsDistribution |
+	aCardsDistribution := self loadCardsAccordingToOdd.
+	deck := MainDeck generateWithCardDistribution: aCardsDistribution.
 	^ deck
 ]
 
@@ -48,13 +49,14 @@ MainDeckBuilder >> initializeMainDeckWithSizeOf: numberOfCards [
 
 { #category : #utilities }
 MainDeckBuilder >> loadCardsAccordingToOdd [
-	| aNumber |
+	| aNumber cardDistribution |
+	cardDistribution := OrderedCollection new.
 	1 to: numberOfCardsOfTheDeck do: [ :number | 
 		aNumber := Random new next * 100 asInteger.
 		cardsWithOccurrency
 			detect:
 				[ :anEffectWithOccurrency | aNumber <= anEffectWithOccurrency occurrency ]
 			ifFound:
-				[ :anEffectWithOccurrency | cardsWithOccurrency add: anEffectWithOccurrency effect createCard ] ].
-	^ cardsWithOccurrency.
+				[ :anEffectWithOccurrency | cardDistribution add: ((anEffectWithOccurrency effect) createCard) ] ].
+	^ cardDistribution
 ]

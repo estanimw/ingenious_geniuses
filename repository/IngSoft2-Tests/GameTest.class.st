@@ -84,7 +84,7 @@ GameTest >> testAccelerationIncreasesTheTotalRollOfAllPlayersByOne [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Acceleration createCard toPlayer: juan.
+	game giveCard: Acceleration createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Acceleration onTarget: players.
 	game playTurn.
 	game playTurn.
@@ -114,8 +114,8 @@ GameTest >> testAccelerationIsAccumulative [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Acceleration createCard toPlayer: juan.
-	game giveCard: Acceleration createCard toPlayer: pancho.
+	game giveCard: Acceleration createCard toDeckOfPlayer: juan.
+	game giveCard: Acceleration createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Acceleration onTarget: players.
 	game playTurn.
 	game player: pancho playsTheCard: Acceleration onTarget: players.
@@ -146,10 +146,10 @@ GameTest >> testAllEffectsAreAccumulative [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Acceleration createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Acceleration createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Acceleration onTarget: players.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
@@ -224,9 +224,9 @@ GameTest >> testCancellationCantCancellACardThatIsntAffectingThePlayer [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Cancellation createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Cancellation createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Overload onTarget: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -259,10 +259,10 @@ GameTest >> testCancellationEliminatesOneActiveCardOverAPlayer [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Cancellation createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Cancellation createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Overload onTarget: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -661,8 +661,8 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwards [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -694,10 +694,10 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwardsAndChangeTheNumberOfRoundsMad
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
 	self play: 4 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 8.
 	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
@@ -737,10 +737,10 @@ GameTest >> testOverloadCantMakeAPlayerMoveBackwardsAtFirstPositionOfFirstRound 
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentNumberOfRoundsMadeBy: juan in: game equals: 0. 
@@ -775,7 +775,7 @@ GameTest >> testOverloadCombinedWithAnSlotEffect [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Overload onTarget: pancho.
 	
 	self play: 3 turnsIn: game.
@@ -805,8 +805,8 @@ GameTest >> testOverloadCombinedWithAnotherCardOfAnotherType [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Speed createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Speed createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -837,8 +837,8 @@ GameTest >> testOverloadIsAccumulative [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	game player: pancho playsTheCard: Overload onTarget: juan.
@@ -870,7 +870,7 @@ GameTest >> testOverloadReduceTheTotalRollOfAPlayerByTwoAndDoesntAffectTheOtherP
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Overload onTarget: juan.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
@@ -901,7 +901,7 @@ GameTest >> testPlayerCantPlayCancellationBecauseThereAreNotActiveCardsInGame [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Cancellation createCard toPlayer: juan.
+	game giveCard: Cancellation createCard toDeckOfPlayer: juan.
 	self
 		should: [ game
 				player: juan
@@ -935,8 +935,8 @@ GameTest >> testPlayerCantUseAPermanentCardIfItsNotHisTurn [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Acceleration createCard toPlayer: pancho.
-	game giveCard: Speed createCard toPlayer: pancho.
+	game giveCard: Acceleration createCard toDeckOfPlayer: pancho.
+	game giveCard: Speed createCard toDeckOfPlayer: pancho.
 	self
 		should: [ game player: pancho playsTheCard: Overload onTarget: juan ]
 		raise: Error
@@ -1011,8 +1011,8 @@ GameTest >> testPlayersPlaySomeCards [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Acceleration createCard toPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Acceleration createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Overload onTarget: pancho.
 	game playTurn.
 	game
@@ -1047,7 +1047,7 @@ GameTest >> testRedoCantBeUsedBecauseNoOtherCardHaveBeenPlayedYet [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
 	game playTurn.
 	self should: [game player: juan playsTheCard: Redo onTarget: pancho] raise: Error withMessageText: 'Redo can´t be played because no other cards have been played yet.'.
 ]
@@ -1074,10 +1074,10 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingACancellation [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Cancellation createCard toPlayer: pancho.
-	game giveCard: Speed createCard toPlayer: pancho.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Cancellation createCard toDeckOfPlayer: pancho.
+	game giveCard: Speed createCard toDeckOfPlayer: pancho.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game playTurn.
 	game player: pancho playsTheCard: Speed onTarget: pancho.
@@ -1125,8 +1125,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingARepeat [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
@@ -1165,8 +1165,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingASpeed [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: pancho.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Speed onTarget: pancho.
 	game player: juan playsTheCard: Redo onTarget: juan.
@@ -1202,8 +1202,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnAcceleration [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
-	game giveCard: Acceleration createCard toPlayer: pancho.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
+	game giveCard: Acceleration createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game
 		player: pancho
@@ -1242,8 +1242,8 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnOverload [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Redo createCard toPlayer: juan.
-	game giveCard: Overload createCard toPlayer: pancho.
+	game giveCard: Redo createCard toDeckOfPlayer: juan.
+	game giveCard: Overload createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Overload onTarget: juan.
 	game player: juan playsTheCard: Redo onTarget: pancho.
@@ -1279,7 +1279,7 @@ GameTest >> testRepeatCantBeUsedIfTheGameHasntStarted [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	self should: [game player: pancho playsTheCard: Repeat onTarget: pancho] raise: Error withMessageText: 'At least one turn must be played before using Repeat card.'.
 ]
 
@@ -1305,7 +1305,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayer [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.	"mueve juan"
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
@@ -1335,7 +1335,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingAtomicBo
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
@@ -1369,7 +1369,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingCardGive
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	self assert: (game amountOfCardsOf: juan) equals: 3.
@@ -1400,7 +1400,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingMoonWalk
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
@@ -1432,7 +1432,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingNoEffect
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
@@ -1462,7 +1462,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingSpeedUp 
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
 	self assert: (game numberOfCardsAffectingPlayer: pancho) equals: 0.
@@ -1492,7 +1492,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingWormHole
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Repeat createCard toPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: pancho.
 	game playTurn.
 	game playTurn.
 	game playTurn.
@@ -1524,7 +1524,7 @@ GameTest >> testSpeedCombinedWithAnSlotEffect [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Speed createCard toPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 8.
@@ -1552,7 +1552,7 @@ GameTest >> testSpeedIncreasesTheTotalRollOfAPlayerByOneAndDoesntAffectTheOtherP
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Speed createCard toPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	self play: 2 turnsIn: game.
 	self assertCurrentPositionOf: juan in: game equals: 4.
@@ -1581,9 +1581,9 @@ GameTest >> testSpeedIsAccumulative [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
@@ -1680,11 +1680,11 @@ GameTest >> testValidationOfTheTargetThatTheCardsReceive [
 		on: aBoard
 		for: numberOfRoundsToBePlayed
 		withASetOf: mainDeck.
-	game giveCard: Acceleration createCard toPlayer: juan.
-	game giveCard: Speed createCard toPlayer: pancho.
-	game giveCard: Overload createCard toPlayer: juan.
-	game giveCard: Cancellation createCard toPlayer: pancho.
-	game giveCard: Repeat createCard toPlayer: juan.
+	game giveCard: Acceleration createCard toDeckOfPlayer: juan.
+	game giveCard: Speed createCard toDeckOfPlayer: pancho.
+	game giveCard: Overload createCard toDeckOfPlayer: juan.
+	game giveCard: Cancellation createCard toDeckOfPlayer: pancho.
+	game giveCard: Repeat createCard toDeckOfPlayer: juan.
 	self
 		should: [ game
 				player: juan
