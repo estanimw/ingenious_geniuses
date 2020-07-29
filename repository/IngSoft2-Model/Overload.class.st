@@ -15,11 +15,6 @@ Overload >> applyEffectOverATarget: aPlayer on: theGame [
 	theManagerOfCards addCard: self toPlayer: aPlayer.
 ]
 
-{ #category : #accessing }
-Overload >> effect [
-	^ effect
-]
-
 { #category : #initialization }
 Overload >> initializeCard [
 	effect := -2.

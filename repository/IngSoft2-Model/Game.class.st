@@ -35,6 +35,16 @@ Game >> amountOfCardsOf: aPlayer [
 	^ deckHandler amountOfCardsOf: aPlayer
 ]
 
+{ #category : #'card handling' }
+Game >> amountOfCardsOnDiscardDeck [
+	^ deckHandler amountOfCardsOnDiscardDeck
+]
+
+{ #category : #'card handling' }
+Game >> amountOfCardsOnMainDeck [
+	^ deckHandler amountOfCardsOnMainDeck
+]
+
 { #category : #playing }
 Game >> applyEffectOfLastBoardSlotOn: aPlayer [
 	| lastSlot |
@@ -88,7 +98,7 @@ Game >> hasWinner [
 ]
 
 { #category : #initialization }
-Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds withSetOf: cards [
+Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRounds withSetOf: mainDeck [
 	board := aBoard.
 	players := allThePlayers.
 	dice := aDice.
@@ -96,7 +106,8 @@ Game >> initializeWith: allThePlayers with: aDice and: aBoard until: aNumberOfRo
 	numberOfTurnsPlayed := 0.
 	roundsForTheGameToBeOver := aNumberOfRounds.
 	leaderBoard := LeaderBoard with: players.
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: cards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
+	"deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: cards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6))."
+	deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck.
 	managerOfCardsActive := ManagerOfTheCardsActiveInGame createFor: players.
 ]
 
@@ -156,7 +167,7 @@ Game >> playTurn [
 			leaderBoard updateOrderOfRows.
 			numberOfTurnsPlayed := numberOfTurnsPlayed + 1 ].
 	self hasWinner
-		ifFalse: [ self chooseNextPlayer ]
+		ifFalse: [ self chooseNextPlayer. self reloadDeckOfTheGameIfNecessary ]
 ]
 
 { #category : #'card handling' }
@@ -178,6 +189,11 @@ Game >> positionOf: aPlayer [
 { #category : #'player information' }
 Game >> rankingOf: aPlayer [
 	^ leaderBoard rankingOf: aPlayer
+]
+
+{ #category : #'card handling' }
+Game >> reloadDeckOfTheGameIfNecessary [
+	deckHandler reloadMainDeckIfNecessary
 ]
 
 { #category : #utilities }

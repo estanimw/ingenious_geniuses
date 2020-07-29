@@ -15,6 +15,11 @@ Permanent >> applyEffectOverATarget: aTarget on: theGame [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #accessing }
+Permanent >> effect [
+	^ effect
+]
+
 { #category : #initialization }
 Permanent >> initializeCard [
 	^ self subclassResponsibility

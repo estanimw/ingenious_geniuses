@@ -5,32 +5,21 @@ Class {
 	#name : #DeckHandler,
 	#superclass : #Object,
 	#instVars : [
-		'decks',
-		'typesOfCards',
-		'generator'
+		'decksOfThePlayers',
+		'deckOfTheGame',
+		'deckDiscard'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #'instance creation' }
-DeckHandler class >> ofPlayers: allThePlayers withTheFollowingTypeOfCards: aSetOfCards [
-	^ self new
-		initializeWith: allThePlayers
-		withCards: aSetOfCards
-		andDistributionGenerator: SharedRandom globalGenerator
-]
-
-{ #category : #'instance creation' }
-DeckHandler class >> ofPlayers: allThePlayers withTheFollowingTypeOfCards: aSetOfCards andGenerator: aGenerator [
-	^ self new
-		initializeWith: allThePlayers
-		withCards: aSetOfCards
-		andDistributionGenerator: aGenerator
+DeckHandler class >> ofPlayers: allThePlayers withMainDeck: mainDeck [
+	^ (self new) initializeWithPlayers: allThePlayers andMainDeck: mainDeck.
 ]
 
 { #category : #validation }
-DeckHandler >> allDecksHaveTwoCards [
-	decks
+DeckHandler >> allDecksOfPlayersHaveTwoCards [
+	decksOfThePlayers
 		detect: [ :deck | deck setOfCards size ~= 2 ]
 		ifFound: [ ^ false ].
 	^ true
@@ -42,8 +31,18 @@ DeckHandler >> amountOfCardsOf: aPlayer [
 ]
 
 { #category : #'card handling' }
+DeckHandler >> amountOfCardsOnDiscardDeck [
+	^ deckDiscard amountOfCards
+]
+
+{ #category : #'card handling' }
+DeckHandler >> amountOfCardsOnMainDeck [
+	^ deckOfTheGame amountOfCards
+]
+
+{ #category : #'card handling' }
 DeckHandler >> deckOf: aPlayer [
-	decks
+	decksOfThePlayers
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | ^ deck ]
 ]
@@ -60,42 +59,49 @@ DeckHandler >> generateDeckForEveryPlayerFrom: allThePlayers [
 	| deckOfAPlayer |
 	allThePlayers
 		do: [ :aPlayer | 
-			deckOfAPlayer := Deck forPlayer: aPlayer.
+			deckOfAPlayer := DeckOfAPlayer madeFor: aPlayer.
 			self generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer.
 			self generateCardAndAddCardToDeckOfAPlayer: deckOfAPlayer.
-			decks add: deckOfAPlayer ]
+			decksOfThePlayers add: deckOfAPlayer ]
 ]
 
 { #category : #'card handling' }
 DeckHandler >> give: aCard to: aPlayer [
-	decks
+	decksOfThePlayers
 		detect: [ :deck | deck player == aPlayer ]
 		ifFound: [ :deck | deck addCardToDeck: aCard ]
 ]
 
 { #category : #'card handling' }
 DeckHandler >> giveCard [
-	| card |
-	card := (typesOfCards atRandom: generator) createCard.
-	^ card
+	^ deckOfTheGame getCard
 ]
 
 { #category : #initialization }
-DeckHandler >> initializeWith: allThePlayers withCards: aSetOfCards andDistributionGenerator: aGenerator [
-	typesOfCards := aSetOfCards.
-	generator := aGenerator.
-	decks := OrderedCollection new.
-	self generateDeckForEveryPlayerFrom: allThePlayers
+DeckHandler >> initializeWithPlayers: allThePlayers andMainDeck: mainDeck [
+	deckOfTheGame := mainDeck.
+	deckDiscard := DiscardDeck createDeck.
+	decksOfThePlayers := OrderedCollection new.
+	self generateDeckForEveryPlayerFrom: allThePlayers.
 ]
 
 { #category : #'card handling' }
 DeckHandler >> pop: aCardClass fromDeckOf: aPlayer [
-	decks
+	| popedCard |
+	decksOfThePlayers
 		detect: [ :deck | deck player == aPlayer ]
-		ifFound: [ :deck | ^ deck popCardFromDeck: aCardClass ]
+		ifFound: [ :deck | 
+			popedCard := deck popCardFromDeck: aCardClass.
+			deckDiscard addCard: popedCard.
+			^ popedCard ]
 ]
 
 { #category : #accessing }
-DeckHandler >> typesOfCards [
-	^ typesOfCards
+DeckHandler >> reloadMainDeckIfNecessary [
+	deckOfTheGame setOfCards isEmpty
+		ifFalse: [ ^ self ].
+	deckDiscard shuffleCards.
+	deckDiscard setOfCards
+		do: [ :aCard | deckOfTheGame addCardToDeck: aCard ].
+	deckDiscard setOfCards removeAll
 ]

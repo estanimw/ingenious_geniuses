@@ -9,7 +9,7 @@ Class {
 		'dieOf4',
 		'dieOf6',
 		'aDice',
-		'cards'
+		'mainDeck'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -42,9 +42,14 @@ GameTest >> play: aNumber turnsIn: game [
 
 { #category : #running }
 GameTest >> setUp [
+	| aux |
 	super setUp.
 	
 	aBoard := Board ofASlotDistribution: { SpeedUp createSlot . NoEffect createSlot . MoonWalk createSlotWithN: 2 . AtomicBomb createSlot . NoEffect createSlot . NoEffect createSlot . NoEffect createSlot . WormHole createSlot . NoEffect createSlot . SpeedUp createSlot }.
+	
+	aux := OrderedCollection new.
+	10 timesRepeat: [ aux add: Acceleration createCard. aux add: Cancellation createCard. aux add: Overload createCard. aux add: Redo createCard. aux add: Repeat createCard. aux add: Speed createCard].
+	mainDeck := MainDeck generateWithCardDistribution: aux.
 	
 	numberOfRoundsToBePlayed := 3.
 	
@@ -54,7 +59,7 @@ GameTest >> setUp [
 	juan := 'Juan'.
 	pancho := 'Pancho'.
 	
-	cards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }.
+	"cards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }."
 ]
 
 { #category : #tests }
@@ -78,7 +83,7 @@ GameTest >> testAccelerationIncreasesTheTotalRollOfAllPlayersByOne [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Acceleration createCard toPlayer: juan.
 	game player: juan playsTheCard: Acceleration onTarget: players.
 	game playTurn.
@@ -108,7 +113,7 @@ GameTest >> testAccelerationIsAccumulative [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Acceleration createCard toPlayer: juan.
 	game giveCard: Acceleration createCard toPlayer: pancho.
 	game player: juan playsTheCard: Acceleration onTarget: players.
@@ -140,7 +145,7 @@ GameTest >> testAllEffectsAreAccumulative [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Acceleration createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
@@ -182,7 +187,7 @@ GameTest >> testAtomicBombEffect [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 8 turnsIn: game.
@@ -218,7 +223,7 @@ GameTest >> testCancellationCantCancellACardThatIsntAffectingThePlayer [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Cancellation createCard toPlayer: pancho.
@@ -253,7 +258,7 @@ GameTest >> testCancellationEliminatesOneActiveCardOverAPlayer [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
 	game giveCard: Overload createCard toPlayer: pancho.
@@ -280,7 +285,7 @@ GameTest >> testCantPlayTurnIfTheGameHasAWinner [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 
 	game play.
 	self assertCurrentPositionOf: juan in: game equals: 3.
@@ -317,7 +322,7 @@ GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assert: (game amountOfCardsOf: juan) equals: 2. 
 	game playTurn.
 	self assert: (game amountOfCardsOf: juan)  equals: 3. 
@@ -333,7 +338,7 @@ GameTest >> testGameHasNoWinnerYet [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assert: game hasWinner equals: false
 ]
 
@@ -361,7 +366,7 @@ GameTest >> testHappyPathDeterministic [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 		
 	"assert initial values"
 	self assertCurrentPositionOf: juan in: game equals: 1.
@@ -472,7 +477,7 @@ GameTest >> testHappyPathDeterministic [
 
 { #category : #tests }
 GameTest >> testHappyPathNoDeterministic [
-	| game players aDie otherDie builder |
+	| game players aDie otherDie builder aux |
 	players := OrderedCollection with: juan with: pancho.
 	
 	1000 timesRepeat: [ 
@@ -490,15 +495,61 @@ GameTest >> testHappyPathNoDeterministic [
 	otherDie := Die ofASlotDistribution: 6.
 	aDice := aDie + otherDie.
 	
+	aux := OrderedCollection new.
+	1000 timesRepeat: [ aux add: Acceleration createCard. aux add: Cancellation createCard. aux add: Overload createCard. aux add: Redo createCard. aux add: Repeat createCard. aux add: Speed createCard].
+	mainDeck := MainDeck generateWithCardDistribution: aux.
+	
 	game := Game
 		playedBy: players
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	
 	game play.
 	self assert: game hasWinner equals: true ]
+]
+
+{ #category : #tests }
+GameTest >> testMainAndDiscardDecksWorkAndMainReloadsWhenEmpty [
+	| game players aux deck |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	
+	aux := OrderedCollection new.
+	aux add: Acceleration createCard. aux add: Overload createCard. aux add: Cancellation createCard. aux add: Redo createCard.
+	deck := MainDeck generateWithCardDistribution: aux.
+	
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: deck.
+	
+	self assert: game amountOfCardsOnDiscardDeck equals: 0.
+	
+	game player: juan playsTheCard: Overload onTarget: pancho.
+	game player: pancho playsTheCard: Redo onTarget: juan.
+	
+	self assert: game amountOfCardsOnDiscardDeck equals: 2.
+	self assert: game amountOfCardsOnMainDeck equals: 0.
+	
+	game playTurn.
+	
+	self assert: game amountOfCardsOnDiscardDeck equals: 0.
+	self assert: game amountOfCardsOnMainDeck equals: 2.
 ]
 
 { #category : #tests }
@@ -522,7 +573,7 @@ GameTest >> testMoonWalkEffectChangesRoundsMadeIfNecessary [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 4 turnsIn: game.
@@ -558,7 +609,7 @@ GameTest >> testMoonWalkEffectMakesAllThePlayersMoveBackwardNSlots [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 2 turnsIn: game.
@@ -582,7 +633,7 @@ GameTest >> testOnePlayerWinsAndTheOtherLoses [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game play.
 	self assertRankingOf: juan in: game equals: 1.
 	self assertRankingOf: pancho in: game equals: 2
@@ -609,7 +660,7 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwards [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game playTurn.
@@ -642,7 +693,7 @@ GameTest >> testOverloadCanMakeAPlayerMoveBackwardsAndChangeTheNumberOfRoundsMad
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game giveCard: Overload createCard toPlayer: juan.
 	game giveCard: Overload createCard toPlayer: juan.
@@ -685,7 +736,7 @@ GameTest >> testOverloadCantMakeAPlayerMoveBackwardsAtFirstPositionOfFirstRound 
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: pancho.
@@ -723,7 +774,7 @@ GameTest >> testOverloadCombinedWithAnSlotEffect [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game player: juan playsTheCard: Overload onTarget: pancho.
 	
@@ -753,7 +804,7 @@ GameTest >> testOverloadCombinedWithAnotherCardOfAnotherType [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Speed createCard toPlayer: pancho.
 	game playTurn.
@@ -785,7 +836,7 @@ GameTest >> testOverloadIsAccumulative [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game playTurn.
@@ -818,7 +869,7 @@ GameTest >> testOverloadReduceTheTotalRollOfAPlayerByTwoAndDoesntAffectTheOtherP
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game player: juan playsTheCard: Overload onTarget: juan.
 	self assertCurrentPositionOf: juan in: game equals: 1.
@@ -849,7 +900,7 @@ GameTest >> testPlayerCantPlayCancellationBecauseThereAreNotActiveCardsInGame [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Cancellation createCard toPlayer: juan.
 	self
 		should: [ game
@@ -883,7 +934,7 @@ GameTest >> testPlayerCantUseAPermanentCardIfItsNotHisTurn [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Acceleration createCard toPlayer: pancho.
 	game giveCard: Speed createCard toPlayer: pancho.
 	self
@@ -922,7 +973,7 @@ GameTest >> testPlayerWinsThanksToASpeedUpEffect [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 7 turnsIn: game.
@@ -959,7 +1010,7 @@ GameTest >> testPlayersPlaySomeCards [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Overload createCard toPlayer: juan.
 	game giveCard: Acceleration createCard toPlayer: pancho.
 	game player: juan playsTheCard: Overload onTarget: pancho.
@@ -995,7 +1046,7 @@ GameTest >> testRedoCantBeUsedBecauseNoOtherCardHaveBeenPlayedYet [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game playTurn.
 	self should: [game player: juan playsTheCard: Redo onTarget: pancho] raise: Error withMessageText: 'Redo can´t be played because no other cards have been played yet.'.
@@ -1022,7 +1073,7 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingACancellation [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
 	game giveCard: Cancellation createCard toPlayer: pancho.
@@ -1073,7 +1124,7 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingARepeat [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
@@ -1113,7 +1164,7 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingASpeed [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: pancho.
 	game playTurn.
@@ -1150,7 +1201,7 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnAcceleration [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game giveCard: Acceleration createCard toPlayer: pancho.
 	game playTurn.
@@ -1190,7 +1241,7 @@ GameTest >> testRedoRepeatsTheEffectOfLastCardPlayedThisOneBeingAnOverload [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Redo createCard toPlayer: juan.
 	game giveCard: Overload createCard toPlayer: pancho.
 	game playTurn.
@@ -1227,7 +1278,7 @@ GameTest >> testRepeatCantBeUsedIfTheGameHasntStarted [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	self should: [game player: pancho playsTheCard: Repeat onTarget: pancho] raise: Error withMessageText: 'At least one turn must be played before using Repeat card.'.
 ]
@@ -1253,7 +1304,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayer [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.	"mueve juan"
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
@@ -1283,7 +1334,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingAtomicBo
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
@@ -1317,7 +1368,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingCardGive
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
@@ -1348,7 +1399,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingMoonWalk
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	self assertCurrentPositionOf: juan in: game equals: 3.
@@ -1380,7 +1431,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingNoEffect
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
@@ -1410,7 +1461,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingSpeedUp 
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game player: pancho playsTheCard: Repeat onTarget: pancho.
@@ -1440,7 +1491,7 @@ GameTest >> testRepeatRepeatsTheEffectOfTheLastSlotOfAPlayerThisOneBeingWormHole
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Repeat createCard toPlayer: pancho.
 	game playTurn.
 	game playTurn.
@@ -1472,7 +1523,7 @@ GameTest >> testSpeedCombinedWithAnSlotEffect [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Speed createCard toPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	game playTurn.
@@ -1500,7 +1551,7 @@ GameTest >> testSpeedIncreasesTheTotalRollOfAPlayerByOneAndDoesntAffectTheOtherP
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Speed createCard toPlayer: juan.
 	game player: juan playsTheCard: Speed onTarget: juan.
 	self play: 2 turnsIn: game.
@@ -1529,7 +1580,7 @@ GameTest >> testSpeedIsAccumulative [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Speed createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: juan.
@@ -1561,7 +1612,7 @@ GameTest >> testSpeedUpEffectChangesRoundsMadeAfterMakingOneLap [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	game playTurn.
@@ -1597,7 +1648,7 @@ GameTest >> testSpeedUpEffectMakesPlayerMoveForwardFourSlots [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	game playTurn.
@@ -1628,7 +1679,7 @@ GameTest >> testValidationOfTheTargetThatTheCardsReceive [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	game giveCard: Acceleration createCard toPlayer: juan.
 	game giveCard: Speed createCard toPlayer: pancho.
 	game giveCard: Overload createCard toPlayer: juan.
@@ -1688,7 +1739,7 @@ GameTest >> testWormHoleEffectChangesRoundsMadeIfNecessary [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	self play: 3 turnsIn: game.
@@ -1724,7 +1775,7 @@ GameTest >> testWormHoleEffectMakesPlayerMoveBackwardFourSlots [
 		thatUse: aDice
 		on: aBoard
 		for: numberOfRoundsToBePlayed
-		withASetOf: cards.
+		withASetOf: mainDeck.
 	self assertCurrentPositionOf: juan in: game equals: 1.
 	self assertCurrentPositionOf: pancho in: game equals: 1.
 	game playTurn.

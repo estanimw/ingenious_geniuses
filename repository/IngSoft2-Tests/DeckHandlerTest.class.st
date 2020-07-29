@@ -5,7 +5,9 @@ Class {
 		'juan',
 		'pancho',
 		'players',
-		'setOfCards'
+		'setOfCards',
+		'mainDeck',
+		'builder'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -33,27 +35,51 @@ DeckHandlerTest >> setUp [
 	juan := 'Juan'.
 	pancho := 'Pancho'.
 	players := OrderedCollection with: juan with: pancho.
-	setOfCards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }.
+	
+	builder := MainDeckBuilder generateWithSizeOf: 6.
+	builder addEffect: Acceleration createCard withOccurrencyOf: 20.
+	builder addEffect: Overload createCard withOccurrencyOf: 10.
+	builder addEffect: Speed createCard withOccurrencyOf: 30.
+	builder addEffect: Redo createCard withOccurrencyOf: 20.
+	builder addEffect: Repeat createCard withOccurrencyOf: 10.
+	builder addEffect: Cancellation createCard withOccurrencyOf: 10.
+	
+	mainDeck := builder build.
+	"setOfCards := { Acceleration. Cancellation. Overload. Redo. Repeat. Speed }."
 ]
 
 { #category : #tests }
 DeckHandlerTest >> testAllPlayersStartsWithTwoRandomCards [
 	| deckHandler |
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards.
-	self assert: deckHandler allDecksHaveTwoCards
+	deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck.
+	self assert: deckHandler allDecksOfPlayersHaveTwoCards
 ]
 
 { #category : #tests }
 DeckHandlerTest >> testDeckHandlerCantRemoveACardThatIsntAtThePlayersDeck [
-	| deckHandler |
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
+	| deckHandler listOfCards |
+	listOfCards := OrderedCollection new.
+	listOfCards add: Acceleration createCard.
+	listOfCards add: Overload createCard.
+	listOfCards add: Cancellation createCard.
+	listOfCards add: Speed createCard.
+	
+	mainDeck := MainDeck generateWithCardDistribution: listOfCards.
+	deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck.
+	
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 2.
 	deckHandler pop: Acceleration fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 1.
-	self should: [ deckHandler pop: Speed fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
-	deckHandler pop: Cancellation fromDeckOf: juan.
-	self assert: (deckHandler amountOfCardsOf: juan) equals: 0.
-	self should: [ deckHandler pop: Cancellation fromDeckOf: juan. ] raise: Error withMessageText: 'The player doesn`t have that card in his deck'.
+	self
+		should: [ deckHandler pop: Speed fromDeckOf: juan ]
+		raise: Error
+		withMessageText: 'The player doesn`t have that card in his deck'.
+	deckHandler pop: Cancellation fromDeckOf: pancho.
+	self assert: (deckHandler amountOfCardsOf: pancho) equals: 1.
+	self
+		should: [ deckHandler pop: Cancellation fromDeckOf: pancho ]
+		raise: Error
+		withMessageText: 'The player doesn`t have that card in his deck'
 ]
 
 { #category : #tests }
@@ -61,7 +87,7 @@ DeckHandlerTest >> testDeckHandlerGivesACardToAPlayer [
 	| deckHandler card |
 	deckHandler := DeckHandler
 		ofPlayers: players
-		withTheFollowingTypeOfCards: setOfCards.
+		withMainDeck: mainDeck.
 	card := deckHandler giveCard.
 	deckHandler give: card to: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 3.
@@ -118,12 +144,27 @@ DeckHandlerTest >> testDeckHandlerHasAllTypesOfCardsAtInitialization [
 ]
 
 { #category : #tests }
-DeckHandlerTest >> testDeckHandlerRemovesACardFromAPlayersDeck [
+DeckHandlerTest >> testDeckHandlerHasVariousTypesOfCardsAtInitialization [
 	| deckHandler |
-	deckHandler := DeckHandler ofPlayers: players withTheFollowingTypeOfCards: setOfCards andGenerator: (SequentialNaturalNumberProvider providing: #(1 2 3 4 5 6)).
+	deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck.
+	self assert: deckHandler amountOfCardsOnMainDeck > 1 equals: true.
+]
+
+{ #category : #tests }
+DeckHandlerTest >> testDeckHandlerRemovesACardFromAPlayersDeck [
+	| deckHandler listOfCards |
+	listOfCards := OrderedCollection new.
+	listOfCards add: Acceleration createCard.
+	listOfCards add: Overload createCard.
+	listOfCards add: Cancellation createCard.
+	listOfCards add: Speed createCard.
+	mainDeck := MainDeck generateWithCardDistribution: listOfCards.
+	deckHandler := DeckHandler ofPlayers: players withMainDeck: mainDeck.
+	
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 2.
 	deckHandler pop: Acceleration fromDeckOf: juan.
 	self assert: (deckHandler amountOfCardsOf: juan) equals: 1.
-	deckHandler pop: Cancellation fromDeckOf: juan.
-	self assert: (deckHandler amountOfCardsOf: juan) equals: 0.
+	self assert: (deckHandler amountOfCardsOf: pancho) equals: 2.
+	deckHandler pop: Speed fromDeckOf: pancho.
+	self assert: (deckHandler amountOfCardsOf: juan) equals: 1.
 ]

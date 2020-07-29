@@ -15,11 +15,6 @@ Acceleration >> applyEffectOverATarget: allThePlayers on: theGame [
 	theManagerOfCards addCardToAllPlayers: self.
 ]
 
-{ #category : #accessing }
-Acceleration >> effect [
-	^ effect
-]
-
 { #category : #initialization }
 Acceleration >> initializeCard [
 	effect := 1.

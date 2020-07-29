@@ -15,11 +15,6 @@ Speed >> applyEffectOverATarget: aPlayer on: theGame [
 	theManagerOfCards addCard: self toPlayer: aPlayer.
 ]
 
-{ #category : #accessing }
-Speed >> effect [
-	^ effect
-]
-
 { #category : #initialization }
 Speed >> initializeCard [
 	effect := 1.
