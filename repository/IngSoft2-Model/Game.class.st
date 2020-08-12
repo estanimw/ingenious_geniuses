@@ -83,8 +83,8 @@ Game >> giveCard: aCard toDeckOfPlayer: aPlayer [
 { #category : #'card handling' }
 Game >> giveRandomCardToPlayer: aPlayer [
 	| card |
-	card := deckHandler pickCardFromGameDeck.
-	self giveCard: card toDeckOfPlayer: aPlayer
+	[ card := deckHandler pickCardFromGameDeck ] on: Error do: [ :ex | ^ self ].
+	^ self giveCard: card toDeckOfPlayer: aPlayer.
 ]
 
 { #category : #accessing }

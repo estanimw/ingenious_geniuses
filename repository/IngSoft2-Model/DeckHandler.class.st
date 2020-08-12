@@ -84,7 +84,8 @@ DeckHandler >> initializeWithPlayers: allThePlayers andMainDeck: mainDeck [
 DeckHandler >> pickCardFromGameDeck [
 	self reloadMainDeckIfNecessary.
 	deckOfTheGame setOfCards isEmpty
-		ifTrue: [ ^ Error
+		ifTrue: [
+			^ Error
 				signal:
 					'A card can´t be taken from the main deck because it´s empty and no cards have been discarded yet.' ]
 		ifFalse: [ ^ deckOfTheGame getCard ]

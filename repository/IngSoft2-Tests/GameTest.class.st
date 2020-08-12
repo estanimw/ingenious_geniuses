@@ -330,6 +330,42 @@ GameTest >> testCardGiverGivesOneCardToTheCurrentPlayer [
 ]
 
 { #category : #tests }
+GameTest >> testFinal [
+	| game players setOfCards |
+	players := OrderedCollection with: juan with: pancho.
+	aBoard := Board
+		ofASlotDistribution:
+			{NoEffect createSlot.
+			NoEffect createSlot.
+			CardGiver createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot.
+			NoEffect createSlot}.
+	
+	setOfCards := OrderedCollection new.
+	setOfCards add: Acceleration createCard. setOfCards add: Cancellation createCard. setOfCards add: Overload createCard. setOfCards add: Redo createCard.
+	mainDeck := MainDeck generateWithCardDistribution: setOfCards.
+			
+	game := Game
+		playedBy: players
+		thatUse: aDice
+		on: aBoard
+		for: numberOfRoundsToBePlayed
+		withASetOf: mainDeck.
+	
+	self assert: game amountOfCardsOnMainDeck equals: 0.
+	self assert: (game amountOfCardsOf: juan) equals: 2.
+	game playTurn.
+	self assert: game amountOfCardsOnMainDeck equals: 0.
+	self assert: (game amountOfCardsOf: juan) equals: 2.
+	self assertCurrentPositionOf: juan in: game equals: 3.
+]
+
+{ #category : #tests }
 GameTest >> testGameHasNoWinnerYet [
 	| game players |
 	players := OrderedCollection with: juan with: pancho.
